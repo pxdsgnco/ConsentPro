@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build core package
+        run: pnpm --filter @consentpro/core build
+
+      - name: Verify bundle size
+        run: |
+          JS_SIZE=$(gzip -c packages/consentpro-core/dist/consentpro.min.js | wc -c)
+          CSS_SIZE=$(gzip -c packages/consentpro-core/dist/consentpro.min.css | wc -c)
+          TOTAL=$((JS_SIZE + CSS_SIZE))
+          echo "JS: ${JS_SIZE} bytes gzipped"
+          echo "CSS: ${CSS_SIZE} bytes gzipped"
+          echo "Total: ${TOTAL} bytes gzipped"
+          if [ $TOTAL -gt 5120 ]; then
+            echo "::error::Bundle size exceeds 5KB gzipped limit! Total: ${TOTAL} bytes"
+            exit 1
+          fi
+          echo "::notice::Bundle size OK: ${TOTAL} bytes (limit: 5120)"
+
+      - name: Create release artifacts
+        run: |
+          cd packages/consentpro-core
+          mkdir -p release
+          cp -r dist/* release/
+          cd release
+          zip -r ../consentpro-core-${{ github.ref_name }}.zip .
+          tar -czvf ../consentpro-core-${{ github.ref_name }}.tar.gz .
+
+      - name: Generate checksums
+        run: |
+          cd packages/consentpro-core
+          sha256sum consentpro-core-${{ github.ref_name }}.zip > consentpro-core-${{ github.ref_name }}.zip.sha256
+          sha256sum consentpro-core-${{ github.ref_name }}.tar.gz > consentpro-core-${{ github.ref_name }}.tar.gz.sha256
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            packages/consentpro-core/consentpro-core-*.zip
+            packages/consentpro-core/consentpro-core-*.tar.gz
+            packages/consentpro-core/consentpro-core-*.sha256
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            packages/consentpro-core/consentpro-core-*.zip
+            packages/consentpro-core/consentpro-core-*.tar.gz
+            packages/consentpro-core/consentpro-core-*.sha256
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "rollup -c && pnpm build:css",
-    "build:css": "sass src/scss/main.scss dist/consentpro.css --style=compressed --no-source-map && postcss dist/consentpro.css -o dist/consentpro.min.css",
+    "build:css": "sass src/scss/main.scss dist/consentpro.css --style=compressed --source-map && postcss dist/consentpro.css -o dist/consentpro.min.css --map",
     "dev": "rollup -c -w",
     "test": "jest",
     "test:watch": "jest --watch",

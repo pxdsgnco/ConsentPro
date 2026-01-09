@@ -14,12 +14,12 @@ export default [
         file: 'dist/consentpro.min.js',
         format: 'iife',
         name: 'ConsentPro',
-        sourcemap: !production,
+        sourcemap: true,
       },
       {
         file: 'dist/consentpro.esm.js',
         format: 'es',
-        sourcemap: !production,
+        sourcemap: true,
       },
     ],
     plugins: [
@@ -27,7 +27,7 @@ export default [
       typescript({
         tsconfig: './tsconfig.json',
         declaration: false,
-        sourceMap: !production,
+        sourceMap: true,
       }),
       production &&
         terser({
@@ -44,6 +44,7 @@ export default [
           format: {
             comments: false,
           },
+          sourceMap: true,
         }),
     ].filter(Boolean),
   },
