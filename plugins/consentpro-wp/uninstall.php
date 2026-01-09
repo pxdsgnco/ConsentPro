@@ -7,7 +7,7 @@
 
 // Exit if not called by WordPress.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-    exit;
+	exit;
 }
 
 // Delete options.
@@ -18,7 +18,7 @@ delete_option( 'consentpro_license' );
 delete_option( 'consentpro_license_key' );
 
 // Clear scheduled events.
-$timestamp = wp_next_scheduled( 'consentpro_validate_license' );
-if ( $timestamp ) {
-    wp_unschedule_event( $timestamp, 'consentpro_validate_license' );
+$consentpro_timestamp = wp_next_scheduled( 'consentpro_validate_license' );
+if ( $consentpro_timestamp ) {
+	wp_unschedule_event( $consentpro_timestamp, 'consentpro_validate_license' );
 }

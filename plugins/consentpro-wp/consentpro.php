@@ -18,7 +18,7 @@
 
 // Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 // Plugin constants.
@@ -34,8 +34,8 @@ define( 'CONSENTPRO_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
  * @return void
  */
 function consentpro_activate(): void {
-    require_once CONSENTPRO_PLUGIN_DIR . 'includes/class-activator.php';
-    ConsentPro_Activator::activate();
+	require_once CONSENTPRO_PLUGIN_DIR . 'includes/class-consentpro-activator.php';
+	ConsentPro_Activator::activate();
 }
 register_activation_hook( __FILE__, 'consentpro_activate' );
 
@@ -45,8 +45,8 @@ register_activation_hook( __FILE__, 'consentpro_activate' );
  * @return void
  */
 function consentpro_deactivate(): void {
-    require_once CONSENTPRO_PLUGIN_DIR . 'includes/class-deactivator.php';
-    ConsentPro_Deactivator::deactivate();
+	require_once CONSENTPRO_PLUGIN_DIR . 'includes/class-consentpro-deactivator.php';
+	ConsentPro_Deactivator::deactivate();
 }
 register_deactivation_hook( __FILE__, 'consentpro_deactivate' );
 
@@ -56,8 +56,8 @@ register_deactivation_hook( __FILE__, 'consentpro_deactivate' );
  * @return void
  */
 function consentpro_init(): void {
-    require_once CONSENTPRO_PLUGIN_DIR . 'includes/class-consentpro.php';
-    $plugin = new ConsentPro();
-    $plugin->run();
+	require_once CONSENTPRO_PLUGIN_DIR . 'includes/class-consentpro.php';
+	$plugin = new ConsentPro();
+	$plugin->run();
 }
 add_action( 'plugins_loaded', 'consentpro_init' );

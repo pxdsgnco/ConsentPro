@@ -36,6 +36,7 @@ Thumbs.db
 
 # Package manager
 .pnpm-store/
+composer.lock
 
 # WordPress specific
 plugins/consentpro-wp/assets/consentpro.min.*
