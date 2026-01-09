@@ -1,0 +1,56 @@
+@use 'variables' as *;
+
+// Banner transition
+.consentpro {
+  transition:
+    transform $consentpro-transition-duration $consentpro-transition-easing,
+    visibility $consentpro-transition-duration;
+
+  // Respect reduced motion preference
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Slide-in from bottom
+@keyframes consentpro-slide-in {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+// Slide-out to bottom
+@keyframes consentpro-slide-out {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+
+// Fade for layer transitions
+@keyframes consentpro-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes consentpro-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}

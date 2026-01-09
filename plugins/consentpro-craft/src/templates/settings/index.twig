@@ -1,0 +1,88 @@
+{# ConsentPro Settings Template #}
+
+{% import '_includes/forms.twig' as forms %}
+
+{{ forms.lightswitchField({
+    label: 'Enable Banner'|t('consentpro'),
+    instructions: 'Show consent banner to visitors.'|t('consentpro'),
+    id: 'enabled',
+    name: 'enabled',
+    on: settings.enabled,
+}) }}
+
+{{ forms.textField({
+    label: 'Privacy Policy URL'|t('consentpro'),
+    instructions: 'Link to your privacy policy page.'|t('consentpro'),
+    id: 'policyUrl',
+    name: 'policyUrl',
+    value: settings.policyUrl,
+    type: 'url',
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Geo-Targeting'|t('consentpro'),
+    instructions: 'Only show banner to EU and California visitors. Requires Cloudflare for geo-detection.'|t('consentpro'),
+    id: 'geoEnabled',
+    name: 'geoEnabled',
+    on: settings.geoEnabled,
+}) }}
+
+<hr>
+
+<h2>{{ 'Appearance'|t('consentpro') }}</h2>
+
+{{ forms.colorField({
+    label: 'Primary Color'|t('consentpro'),
+    instructions: 'Used for buttons and links.'|t('consentpro'),
+    id: 'colorPrimary',
+    name: 'colorPrimary',
+    value: settings.colorPrimary,
+}) }}
+
+{{ forms.colorField({
+    label: 'Secondary Color'|t('consentpro'),
+    instructions: 'Used for secondary text and borders.'|t('consentpro'),
+    id: 'colorSecondary',
+    name: 'colorSecondary',
+    value: settings.colorSecondary,
+}) }}
+
+{{ forms.colorField({
+    label: 'Background Color'|t('consentpro'),
+    id: 'colorBackground',
+    name: 'colorBackground',
+    value: settings.colorBackground,
+}) }}
+
+{{ forms.colorField({
+    label: 'Text Color'|t('consentpro'),
+    id: 'colorText',
+    name: 'colorText',
+    value: settings.colorText,
+}) }}
+
+<hr>
+
+<h2>{{ 'License'|t('consentpro') }}</h2>
+
+{{ forms.textField({
+    label: 'License Key'|t('consentpro'),
+    instructions: 'Enter your license key to unlock Pro features.'|t('consentpro'),
+    id: 'licenseKey',
+    name: 'licenseKey',
+    value: settings.licenseKey,
+}) }}
+
+{% set isPro = craft.consentpro.license.isPro() %}
+<div class="field">
+    <div class="heading">
+        <label>{{ 'Status'|t('consentpro') }}</label>
+    </div>
+    <div class="input">
+        {% if isPro %}
+            <span class="status green"></span> {{ 'Pro - Active'|t('consentpro') }}
+        {% else %}
+            <span class="status"></span> {{ 'Core (Free)'|t('consentpro') }}
+        {% endif %}
+    </div>
+</div>

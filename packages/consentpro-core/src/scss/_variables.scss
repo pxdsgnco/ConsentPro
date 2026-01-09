@@ -1,0 +1,42 @@
+// ConsentPro SCSS Variables
+// All variables use !default for easy overriding
+
+// Colors
+$consentpro-primary: #2563eb !default;
+$consentpro-secondary: #64748b !default;
+$consentpro-background: #fff !default;
+$consentpro-text: #1e293b !default;
+$consentpro-border: #e2e8f0 !default;
+
+// Spacing
+$consentpro-spacing-xs: 0.25rem !default;
+$consentpro-spacing-sm: 0.5rem !default;
+$consentpro-spacing-md: 1rem !default;
+$consentpro-spacing-lg: 1.5rem !default;
+$consentpro-spacing-xl: 2rem !default;
+
+// Typography
+$consentpro-font-family:
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  sans-serif !default;
+$consentpro-font-size-base: 1rem !default;
+$consentpro-font-size-sm: 0.875rem !default;
+$consentpro-line-height: 1.5 !default;
+
+// Breakpoints
+$consentpro-bp-mobile: 768px !default;
+
+// Layout
+$consentpro-max-width: 960px !default;
+$consentpro-z-index: 999999 !default;
+$consentpro-border-radius: 0.5rem !default;
+
+// Touch targets (WCAG 2.5.5)
+$consentpro-touch-target: 44px !default;
+
+// Animation
+$consentpro-transition-duration: 300ms !default;
+$consentpro-transition-easing: ease-out !default;

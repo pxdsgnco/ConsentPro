@@ -1,0 +1,141 @@
+@use 'variables' as *;
+
+// Layer 2 Settings Panel
+.consentpro__settings {
+  display: none;
+
+  &--visible {
+    display: block;
+  }
+}
+
+.consentpro__settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $consentpro-spacing-md;
+  padding-bottom: $consentpro-spacing-md;
+  border-bottom: 1px solid $consentpro-border;
+}
+
+.consentpro__settings-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+// Category list
+.consentpro__categories {
+  margin: 0 0 $consentpro-spacing-lg;
+  padding: 0;
+  list-style: none;
+}
+
+.consentpro__category {
+  display: flex;
+  align-items: flex-start;
+  gap: $consentpro-spacing-md;
+  padding: $consentpro-spacing-md 0;
+  border-bottom: 1px solid $consentpro-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.consentpro__category-info {
+  flex: 1;
+}
+
+.consentpro__category-name {
+  font-weight: 600;
+  margin-bottom: $consentpro-spacing-xs;
+}
+
+.consentpro__category-desc {
+  font-size: $consentpro-font-size-sm;
+  color: $consentpro-secondary;
+  margin: 0;
+}
+
+.consentpro__category-required {
+  font-size: $consentpro-font-size-sm;
+  color: $consentpro-secondary;
+  font-style: italic;
+}
+
+// Toggle switch (role="switch")
+.consentpro__toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+  min-height: $consentpro-touch-target;
+  min-width: $consentpro-touch-target;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  // Track
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 28px;
+    background-color: $consentpro-border;
+    border-radius: 14px;
+    transition: background-color 200ms;
+  }
+
+  // Thumb
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: left 200ms;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+  }
+
+  // Checked state
+  &[aria-checked='true'] {
+    &::before {
+      background-color: $consentpro-primary;
+    }
+
+    &::after {
+      left: 22px;
+    }
+  }
+
+  // Disabled state (essential category)
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $consentpro-primary;
+    outline-offset: 2px;
+  }
+}
+
+// Settings footer
+.consentpro__settings-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: $consentpro-spacing-sm;
+
+  @media (max-width: $consentpro-bp-mobile) {
+    flex-direction: column-reverse;
+  }
+}
