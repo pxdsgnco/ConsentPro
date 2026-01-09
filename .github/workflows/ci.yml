@@ -184,7 +184,7 @@ jobs:
 
       - name: Run Jest tests
         run: pnpm --filter @consentpro/core test:coverage
-        continue-on-error: true  # Tests are stubs for now
+        continue-on-error: true # Tests are stubs for now
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4

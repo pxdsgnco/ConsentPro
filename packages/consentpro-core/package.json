@@ -7,8 +7,13 @@
   "module": "dist/consentpro.esm.js",
   "types": "dist/consentpro.d.ts",
   "style": "dist/consentpro.min.css",
-  "files": ["dist"],
-  "sideEffects": ["*.css", "*.scss"],
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "scripts": {
     "build": "rollup -c && pnpm build:css",
     "build:css": "sass src/scss/main.scss dist/consentpro.css --style=compressed --no-source-map && postcss dist/consentpro.css -o dist/consentpro.min.css",
@@ -37,7 +42,14 @@
     "ts-jest": "^29.2.5",
     "tslib": "^2.8.1"
   },
-  "keywords": ["consent", "banner", "gdpr", "ccpa", "cookie", "privacy"],
+  "keywords": [
+    "consent",
+    "banner",
+    "gdpr",
+    "ccpa",
+    "cookie",
+    "privacy"
+  ],
   "author": "ConsentPro Team",
   "license": "UNLICENSED"
 }

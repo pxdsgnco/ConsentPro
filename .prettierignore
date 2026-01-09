@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+*.min.js
+*.min.css
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+composer.lock
+
+# Documentation (preserved formatting)
+docs/
+CLAUDE.md
+.claude/
+
+# Generated files
+coverage/
+*.map
