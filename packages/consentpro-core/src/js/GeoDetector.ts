@@ -41,9 +41,7 @@ export class GeoDetector {
    * @param selector - Optional custom selector for the banner element
    * @returns 'EU', 'CA', or null
    */
-  static getGeoFromDOM(
-    selector: string = GeoDetector.BANNER_SELECTOR
-  ): 'EU' | 'CA' | null {
+  static getGeoFromDOM(selector: string = GeoDetector.BANNER_SELECTOR): 'EU' | 'CA' | null {
     const config = GeoDetector.parseConfigFromDOM(selector);
     if (!config) {
       return null;
@@ -54,9 +52,7 @@ export class GeoDetector {
   /**
    * Normalize geo value to valid region or null
    */
-  private static normalizeGeo(
-    geo: string | null | undefined
-  ): 'EU' | 'CA' | null {
+  private static normalizeGeo(geo: string | null | undefined): 'EU' | 'CA' | null {
     if (geo === 'EU' || geo === 'CA') {
       return geo;
     }

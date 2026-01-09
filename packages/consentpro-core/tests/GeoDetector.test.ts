@@ -3,9 +3,7 @@ import type { BannerConfig } from '../src/js/types';
 
 describe('GeoDetector', () => {
   // Helper to create a minimal valid config
-  const createConfig = (
-    overrides: Partial<BannerConfig> = {}
-  ): BannerConfig => ({
+  const createConfig = (overrides: Partial<BannerConfig> = {}): BannerConfig => ({
     geo: null,
     geoEnabled: true,
     policyUrl: 'https://example.com/privacy',
@@ -146,21 +144,15 @@ describe('GeoDetector', () => {
   describe('shouldShowBanner', () => {
     describe('when geoEnabled is false', () => {
       it('returns true regardless of geo region', () => {
-        expect(
-          GeoDetector.shouldShowBanner(
-            createConfig({ geoEnabled: false, geo: null })
-          )
-        ).toBe(true);
-        expect(
-          GeoDetector.shouldShowBanner(
-            createConfig({ geoEnabled: false, geo: 'EU' })
-          )
-        ).toBe(true);
-        expect(
-          GeoDetector.shouldShowBanner(
-            createConfig({ geoEnabled: false, geo: 'CA' })
-          )
-        ).toBe(true);
+        expect(GeoDetector.shouldShowBanner(createConfig({ geoEnabled: false, geo: null }))).toBe(
+          true
+        );
+        expect(GeoDetector.shouldShowBanner(createConfig({ geoEnabled: false, geo: 'EU' }))).toBe(
+          true
+        );
+        expect(GeoDetector.shouldShowBanner(createConfig({ geoEnabled: false, geo: 'CA' }))).toBe(
+          true
+        );
       });
     });
 
