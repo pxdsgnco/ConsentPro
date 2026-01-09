@@ -1,0 +1,39 @@
+{
+  "name": "consentpro/craft-plugin",
+  "description": "ConsentPro consent banner plugin for Craft CMS",
+  "type": "craft-plugin",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.2",
+    "craftcms/cms": "^5.0"
+  },
+  "require-dev": {
+    "codeception/codeception": "^5.1",
+    "codeception/module-asserts": "^3.0",
+    "codeception/module-yii2": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "consentpro\\consentpro\\": "src/"
+    }
+  },
+  "extra": {
+    "handle": "consentpro",
+    "name": "ConsentPro",
+    "developer": "ConsentPro Team",
+    "developerUrl": "https://consentpro.io",
+    "documentationUrl": "https://docs.consentpro.io/craft",
+    "changelogUrl": "https://raw.githubusercontent.com/consentpro/craft-plugin/main/CHANGELOG.md",
+    "class": "consentpro\\consentpro\\ConsentPro"
+  },
+  "scripts": {
+    "test": "codecept run"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
+  },
+  "minimum-stability": "stable"
+}

@@ -1,0 +1,112 @@
+@use 'variables' as *;
+
+// Layer 1 Banner - Fixed bottom bar
+.consentpro {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: $consentpro-z-index;
+  font-family: $consentpro-font-family;
+  font-size: $consentpro-font-size-base;
+  line-height: $consentpro-line-height;
+  color: $consentpro-text;
+  background-color: $consentpro-background;
+  box-shadow: 0 -4px 20px rgb(0 0 0 / 10%);
+
+  // Hidden by default
+  transform: translateY(100%);
+  visibility: hidden;
+
+  &--visible {
+    transform: translateY(0);
+    visibility: visible;
+  }
+}
+
+.consentpro__container {
+  max-width: $consentpro-max-width;
+  margin: 0 auto;
+  padding: $consentpro-spacing-lg;
+}
+
+.consentpro__content {
+  margin-bottom: $consentpro-spacing-md;
+}
+
+.consentpro__heading {
+  margin: 0 0 $consentpro-spacing-sm;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.consentpro__description {
+  margin: 0;
+  font-size: $consentpro-font-size-sm;
+  color: $consentpro-secondary;
+}
+
+.consentpro__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $consentpro-spacing-sm;
+
+  @media (max-width: $consentpro-bp-mobile) {
+    flex-direction: column;
+  }
+}
+
+// Buttons
+.consentpro__btn {
+  min-height: $consentpro-touch-target;
+  padding: $consentpro-spacing-sm $consentpro-spacing-lg;
+  border: 2px solid transparent;
+  border-radius: $consentpro-border-radius;
+  font-family: inherit;
+  font-size: $consentpro-font-size-base;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 200ms,
+    border-color 200ms;
+
+  &:focus-visible {
+    outline: 2px solid $consentpro-primary;
+    outline-offset: 2px;
+  }
+
+  &--primary {
+    background-color: $consentpro-primary;
+    color: #fff;
+    border-color: $consentpro-primary;
+
+    &:hover {
+      background-color: color-mix(in srgb, $consentpro-primary 85%, #000);
+    }
+  }
+
+  &--secondary {
+    background-color: transparent;
+    color: $consentpro-text;
+    border-color: $consentpro-border;
+
+    &:hover {
+      border-color: $consentpro-text;
+    }
+  }
+}
+
+// Policy link
+.consentpro__link {
+  color: $consentpro-primary;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $consentpro-primary;
+    outline-offset: 2px;
+  }
+}

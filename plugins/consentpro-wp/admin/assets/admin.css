@@ -1,0 +1,34 @@
+/**
+ * ConsentPro Admin Styles
+ */
+
+.consentpro-category-card {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+}
+
+.consentpro-category-card h3 {
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #c3c4c7;
+}
+
+.consentpro-license-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.consentpro-license-status--active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.consentpro-license-status--inactive {
+  background: #f3f4f6;
+  color: #374151;
+}
