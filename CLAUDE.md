@@ -24,6 +24,23 @@ ConsentPro is a cross-platform consent banner solution for WordPress and Craft C
 
 ## Development Commands
 
+### Monorepo Commands
+```bash
+# Install all workspace dependencies
+pnpm install
+
+# Build all packages
+pnpm -r build
+
+# Run command in specific workspace
+pnpm --filter @consentpro/core build
+pnpm --filter @consentpro/core test
+
+# Run command in all workspaces
+pnpm -r test
+pnpm -r lint
+```
+
 ### Core Package (`packages/consentpro-core/`)
 ```bash
 # Install dependencies
@@ -35,11 +52,29 @@ pnpm build
 # Watch mode for development
 pnpm dev
 
-# Run tests
+# Run all tests
 pnpm test
+
+# Run single test file
+pnpm test -- ConsentManager.test.ts
+
+# Run tests in watch mode
+pnpm test -- --watch
 
 # Lint
 pnpm lint
+```
+
+### Integration Tests (Cypress)
+```bash
+# Run all E2E tests (from monorepo root)
+pnpm cypress:run
+
+# Run single test spec
+pnpm cypress:run --spec "cypress/e2e/consent-flow.cy.ts"
+
+# Open Cypress UI for debugging
+pnpm cypress:open
 ```
 
 ### WordPress Plugin (`plugins/consentpro-wp/`)
@@ -47,11 +82,17 @@ pnpm lint
 # Install Composer dependencies
 composer install
 
-# Run PHPUnit tests
+# Run all PHPUnit tests
 composer test
+
+# Run single test file
+composer test -- --filter ConsentManagerTest
 
 # Code standards check
 composer phpcs
+
+# Auto-fix code standards
+composer phpcbf
 ```
 
 ### Craft CMS Plugin (`plugins/consentpro-craft/`)
@@ -59,8 +100,12 @@ composer phpcs
 # Install Composer dependencies
 composer install
 
-# Run Codeception tests
+# Run all Codeception tests
 composer test
+
+# Run specific test suite
+composer test -- unit
+composer test -- functional
 ```
 
 ## Core Architecture
@@ -219,6 +264,98 @@ return ['geo' => $region, 'geoEnabled' => $settings['geo_enabled']];
 - Mobile: iOS Safari, Android Chrome (real devices preferred)
 - Accessibility: VoiceOver, NVDA, keyboard-only navigation
 - Performance: Lighthouse score impact <5 points, no CLS
+
+## Debugging
+
+### Browser Console
+```javascript
+// Access global API
+window.ConsentPro
+
+// Check stored consent
+localStorage.getItem('consentpro_consent')
+// Or parse it:
+JSON.parse(localStorage.getItem('consentpro_consent'))
+
+// Check cookie fallback
+document.cookie.split('; ').find(row => row.startsWith('consentpro='))
+
+// Listen for consent events
+document.addEventListener('consentpro_consent', (e) => {
+  console.log('Consent given:', e.detail);
+});
+
+document.addEventListener('consentpro_ready', (e) => {
+  console.log('ConsentPro initialized:', e.detail);
+});
+
+// Manually trigger banner (if hidden)
+window.ConsentPro?.show()
+
+// Get current consent state
+window.ConsentPro?.getConsent()
+
+// Clear consent (for testing)
+localStorage.removeItem('consentpro_consent')
+document.cookie = 'consentpro=; max-age=0; path=/;'
+```
+
+### WordPress Debugging
+```php
+// Enable WP_DEBUG in wp-config.php
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
+
+// Check ConsentPro options
+var_dump(get_option('consentpro_general'));
+var_dump(get_option('consentpro_appearance'));
+var_dump(get_option('consentpro_categories'));
+
+// Test hooks
+add_filter('consentpro_config', function($config) {
+    error_log('ConsentPro config: ' . print_r($config, true));
+    return $config;
+});
+```
+
+### Craft CMS Debugging
+```php
+// Enable Dev Mode in config/general.php
+'devMode' => true,
+
+// Check ConsentPro settings
+\Craft::dump(\Craft::$app->plugins->getPlugin('consentpro')->getSettings());
+
+// Test events
+Event::on(
+    ConsentService::class,
+    ConsentService::EVENT_BEFORE_RENDER,
+    function(Event $event) {
+        \Craft::info('ConsentPro config: ' . json_encode($event->config), 'consentpro');
+    }
+);
+```
+
+### Common Debug Scenarios
+
+**Banner not appearing:**
+1. Check `data-config` attribute exists on `#consentpro-banner`
+2. Verify JS/CSS assets loaded (Network tab)
+3. Check console for errors
+4. Verify `wp_footer()` called (WordPress) or auto-inject enabled (Craft)
+
+**Scripts not unblocking:**
+1. Check script has correct `type="text/plain"` and `data-consentpro="category"`
+2. Verify consent event fired: `document.addEventListener('consentpro_consent', console.log)`
+3. Check category name matches exactly (case-sensitive)
+4. Ensure scripts are in DOM when consent given (not dynamically added before)
+
+**Consent not persisting:**
+1. Check localStorage quota not exceeded
+2. Verify browser not in private/incognito mode
+3. Check Safari ITP - cookie fallback should work
+4. Verify no conflicting scripts clearing storage
 
 ## Accessibility Requirements
 
