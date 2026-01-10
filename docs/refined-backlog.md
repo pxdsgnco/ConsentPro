@@ -15,7 +15,9 @@ Every story must satisfy these criteria before closure:
 
 -----
 
-## Iteration 1: Core Foundation + Banner UI (E1 + E2)
+## Iteration 1: Core Foundation + Banner UI (E1 + E2) ✅ COMPLETE
+
+**Status:** All 18 stories completed and merged to master.
 
 **Goal:** Standalone HTML demo with full Layer 1/2 consent flow, no platform integration.
 
@@ -46,7 +48,9 @@ Every story must satisfy these criteria before closure:
 
 -----
 
-## Iteration 2: Consent Logic + WordPress MVP (E3 + E4)
+## Iteration 2: Consent Logic + WordPress MVP (E3 + E4) ✅ COMPLETE
+
+**Status:** All 14 stories completed and merged to master.
 
 **Goal:** Working WordPress plugin with admin settings and frontend banner.
 
@@ -139,13 +143,13 @@ Every story must satisfy these criteria before closure:
 
 ## Story Point Capacity Check
 
-|Iteration|Epics    |Stories|Points |Capacity (40)|Status           |
-|---------|---------|-------|-------|-------------|-----------------|
-|1        |E1 + E2  |18     |35     |40           |✅ OK (-5 buffer) |
-|2        |E3 + E4  |14     |34     |40           |✅ OK (-6 buffer) |
-|3        |E5 + E6  |17     |37     |40           |✅ OK (-3 buffer) |
-|4        |E7       |21     |43     |40           |⚠️ OVER (+3)      |
-|**Total**|**E1-E7**|**70** |**149**|**160**      |✅ OK (-11 buffer)|
+|Iteration|Epics    |Stories|Points |Capacity (40)|Status              |
+|---------|---------|-------|-------|-------------|---------------------|
+|1        |E1 + E2  |18     |35     |40           |✅ **COMPLETE**      |
+|2        |E3 + E4  |14     |34     |40           |✅ **COMPLETE**      |
+|3        |E5 + E6  |17     |37     |40           |🔲 Pending           |
+|4        |E7       |21     |43     |40           |🔲 Pending           |
+|**Total**|**E1-E7**|**70** |**149**|**160**      |**32/70 stories done**|
 
 ### Iteration 4 Mitigation Options
 
@@ -210,31 +214,31 @@ Every story must satisfy these criteria before closure:
 ## Dependency Graph (Critical Path)
 
 ```
-Iteration 1:
-US-001 (monorepo) 
-  └─→ US-002 (build) 
-       └─→ US-003 (ConsentManager) + US-004 (Storage) + US-005 (Geo)
-            └─→ US-006a/b/c (Layer 1) + US-015 (SCSS)
-                 └─→ US-007a/b (Layer 2)
-                      └─→ US-008, US-009, US-010, US-011 (actions)
-                           └─→ US-013, US-014a/b (toggle, a11y)
+Iteration 1: ✅ COMPLETE
+US-001 (monorepo) ✓
+  └─→ US-002 (build) ✓
+       └─→ US-003 (ConsentManager) + US-004 (Storage) + US-005 (Geo) ✓
+            └─→ US-006a/b/c (Layer 1) + US-015 (SCSS) ✓
+                 └─→ US-007a/b (Layer 2) ✓
+                      └─→ US-008, US-009, US-010, US-011 (actions) ✓
+                           └─→ US-013, US-014a/b (toggle, a11y) ✓
 
-Iteration 2:
-[Iteration 1 complete]
-  └─→ US-012a/b (script blocking)
-       └─→ US-016 (WP scaffold)
-            └─→ US-017 (general) + US-018a/b (appearance) + US-019 (categories)
-                 └─→ US-020a/b (consent log) + US-021a/b (preview)
-                      └─→ US-022 (frontend) + US-023 (hooks) + US-026 (geo)
+Iteration 2: ✅ COMPLETE
+[Iteration 1 complete] ✓
+  └─→ US-012a/b (script blocking) ✓
+       └─→ US-016 (WP scaffold) ✓
+            └─→ US-017 (general) + US-018a/b (appearance) + US-019 (categories) ✓
+                 └─→ US-020a/b (consent log) + US-021a/b (preview) ✓
+                      └─→ US-022 (frontend) + US-023 (hooks) + US-026 (geo) ✓
 
-Iteration 3:
-[Iteration 2 complete]
+Iteration 3: 🔲 NEXT
+[Iteration 2 complete] ✓
   └─→ US-027 (Craft scaffold)
        └─→ US-028, US-029, US-030, US-031a/b, US-032, US-033, US-036 (Craft features)
   └─→ US-024a/b/c (WP license) ─→ US-025 (WP gating)
   └─→ US-034a/b/c (Craft license) ─→ US-035 (Craft gating)
 
-Iteration 4:
+Iteration 4: 🔲 PENDING
 [Iteration 3 complete]
   └─→ All US-037-047 can parallelize across team members
        └─→ Final integration testing
@@ -257,12 +261,19 @@ Iteration 4:
 
 ## Summary
 
-|Metric            |Original  |Refined    |Change                   |
+|Metric            |Original  |Refined    |Current Status           |
 |------------------|----------|-----------|-------------------------|
-|Total Stories     |47        |70         |+23 (from splits)        |
-|Total Points      |169       |149        |-20 (efficiency gains)   |
-|Max Story Size    |5         |3          |-2 (all stories ≤3pt)    |
-|Iteration Variance|Unbalanced|35/34/37/43|More even distribution   |
-|Risk Items        |5         |5          |Same, updated mitigations|
+|Total Stories     |47        |70         |**32/70 complete (46%)** |
+|Total Points      |169       |149        |**69/149 delivered (46%)**|
+|Iterations Done   |-         |4          |**2/4 complete**         |
+|Max Story Size    |5         |3          |All stories ≤3pt         |
+|Iteration Variance|Unbalanced|35/34/37/43|Even distribution        |
 
-**The backlog is now ready for sprint planning with single-iteration epics and properly sized stories.**
+### Progress Summary
+
+- ✅ **Iteration 1** (Core Foundation + Banner UI): 18 stories, 35 points — **COMPLETE**
+- ✅ **Iteration 2** (WordPress MVP): 14 stories, 34 points — **COMPLETE**
+- 🔲 **Iteration 3** (Craft CMS + Licensing): 17 stories, 37 points — **NEXT**
+- 🔲 **Iteration 4** (Compliance, QA & Release): 21 stories, 43 points — **PENDING**
+
+**Next milestone:** Iteration 3 — Craft CMS Port + Licensing (E5 + E6)

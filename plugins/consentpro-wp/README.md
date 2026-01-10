@@ -29,6 +29,7 @@ A GDPR/CCPA-compliant cookie consent banner for WordPress with geo-targeting, ca
 ### Categories Settings
 
 Configure the four consent categories:
+
 - **Essential**: Always enabled (required for site functionality)
 - **Analytics**: Tracking and analytics scripts
 - **Marketing**: Advertising and remarketing scripts
@@ -43,7 +44,11 @@ To block scripts until consent is given, change the script type and add a data a
 <script src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
 
 <!-- After -->
-<script type="text/plain" data-consentpro="analytics" src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
+<script
+  type="text/plain"
+  data-consentpro="analytics"
+  src="https://www.googletagmanager.com/gtag/js?id=GA_ID"
+></script>
 ```
 
 Scripts will automatically execute when the user consents to the corresponding category.
@@ -57,6 +62,7 @@ ConsentPro provides four filter hooks for customization:
 Modify the banner configuration array before it is output to the frontend.
 
 **Parameters:**
+
 - `$config` (array) - Banner configuration containing geo, geoEnabled, policyUrl, categories, text, and colors.
 
 **Returns:** array
@@ -93,6 +99,7 @@ add_filter( 'consentpro_config', function( $config ) {
 Modify the consent categories array. Use this to add custom categories or change descriptions.
 
 **Parameters:**
+
 - `$categories` (array) - Array of category objects with id, name, description, and required fields.
 
 **Returns:** array
@@ -133,6 +140,7 @@ add_filter( 'consentpro_categories', function( $categories ) {
 Control whether the consent banner should be displayed. Useful for hiding the banner on specific pages or for certain user roles.
 
 **Parameters:**
+
 - `$should_show` (bool) - Whether to show the banner. Default true.
 
 **Returns:** bool
@@ -175,6 +183,7 @@ add_filter( 'consentpro_should_show', function( $should_show ) {
 Override the base URL for ConsentPro assets (JS and CSS). Useful for serving assets from a CDN.
 
 **Parameters:**
+
 - `$url` (string) - The base URL for assets. Default is the plugin URL.
 
 **Returns:** string
@@ -213,9 +222,9 @@ window.ConsentPro.getConsent();
 window.ConsentPro.show();
 
 // Listen for consent events
-document.addEventListener( 'consentpro_consent', function( e ) {
-    console.log( 'Consent given:', e.detail.categories );
-} );
+document.addEventListener('consentpro_consent', function (e) {
+  console.log('Consent given:', e.detail.categories);
+});
 ```
 
 ## Debugging
