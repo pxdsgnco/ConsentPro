@@ -1,0 +1,450 @@
+{#
+ # Consent Log Settings Tab
+ #
+ # @link      https://consentpro.io
+ # @copyright Copyright (c) ConsentPro Team
+ #}
+
+{% import '_includes/forms.twig' as forms %}
+
+{% set isPro = craft.consentpro.license.isPro() ?? false %}
+
+<h2>{{ 'Consent Log'|t('consentpro') }}</h2>
+<p class="light">{{ 'View consent metrics and event logs to understand how visitors interact with your consent banner.'|t('consentpro') }}</p>
+
+{% if isPro %}
+    {# ===== Metrics Card ===== #}
+    <div class="pane" id="consentpro-metrics-card" style="margin-bottom: 24px;">
+        <h3 style="margin-top: 0;">{{ 'Consent Metrics (Last 30 Days)'|t('consentpro') }}</h3>
+
+        {# Loading State #}
+        <div id="consentpro-metrics-loading">
+            <p class="light">{{ 'Loading metrics...'|t('consentpro') }}</p>
+        </div>
+
+        {# Metrics Content (hidden until loaded) #}
+        <div id="consentpro-metrics-content" style="display: none;">
+            {# Stats Grid #}
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div style="text-align: center; padding: 16px; background: var(--gray-050); border-radius: 6px;">
+                    <div id="metric-total" style="font-size: 28px; font-weight: 700; color: var(--gray-800);">0</div>
+                    <div style="font-size: 12px; color: var(--gray-600); margin-top: 4px;">{{ 'Total'|t('consentpro') }}</div>
+                </div>
+                <div style="text-align: center; padding: 16px; background: #dcfce7; border-radius: 6px;">
+                    <div id="metric-accept" style="font-size: 28px; font-weight: 700; color: #166534;">0</div>
+                    <div style="font-size: 12px; color: #166534; margin-top: 4px;">{{ 'Accept All'|t('consentpro') }}</div>
+                </div>
+                <div style="text-align: center; padding: 16px; background: #fee2e2; border-radius: 6px;">
+                    <div id="metric-reject" style="font-size: 28px; font-weight: 700; color: #dc2626;">0</div>
+                    <div style="font-size: 12px; color: #dc2626; margin-top: 4px;">{{ 'Reject Non-Essential'|t('consentpro') }}</div>
+                </div>
+                <div style="text-align: center; padding: 16px; background: #fef3c7; border-radius: 6px;">
+                    <div id="metric-custom" style="font-size: 28px; font-weight: 700; color: #92400e;">0</div>
+                    <div style="font-size: 12px; color: #92400e; margin-top: 4px;">{{ 'Custom'|t('consentpro') }}</div>
+                </div>
+            </div>
+
+            {# Bar Chart #}
+            <div style="display: flex; height: 24px; border-radius: 4px; overflow: hidden; background: var(--gray-100);">
+                <div id="bar-accept" style="background: #22c55e; height: 100%; width: 0%; transition: width 0.5s ease;"></div>
+                <div id="bar-reject" style="background: #ef4444; height: 100%; width: 0%; transition: width 0.5s ease;"></div>
+                <div id="bar-custom" style="background: #f59e0b; height: 100%; width: 0%; transition: width 0.5s ease;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--gray-600);">
+                <span><span style="display: inline-block; width: 10px; height: 10px; background: #22c55e; border-radius: 2px; margin-right: 4px;"></span>{{ 'Accept All'|t('consentpro') }} (<span id="percent-accept">0</span>%)</span>
+                <span><span style="display: inline-block; width: 10px; height: 10px; background: #ef4444; border-radius: 2px; margin-right: 4px;"></span>{{ 'Reject'|t('consentpro') }} (<span id="percent-reject">0</span>%)</span>
+                <span><span style="display: inline-block; width: 10px; height: 10px; background: #f59e0b; border-radius: 2px; margin-right: 4px;"></span>{{ 'Custom'|t('consentpro') }} (<span id="percent-custom">0</span>%)</span>
+            </div>
+        </div>
+
+        {# Error State #}
+        <div id="consentpro-metrics-error" style="display: none;">
+            <p style="color: var(--red-600);">{{ 'Failed to load metrics.'|t('consentpro') }}</p>
+        </div>
+    </div>
+
+    {# ===== Log Table Card ===== #}
+    <div class="pane">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="margin: 0;">{{ 'Event Log'|t('consentpro') }}</h3>
+            <button type="button" id="consentpro-clear-log-btn" class="btn">
+                {{ 'Clear Log'|t('consentpro') }}
+            </button>
+        </div>
+
+        {# Log Table #}
+        <div id="consentpro-log-container">
+            <table id="consentpro-log-table" class="data fullwidth">
+                <thead>
+                    <tr>
+                        <th>{{ 'Timestamp'|t('consentpro') }}</th>
+                        <th>{{ 'Type'|t('consentpro') }}</th>
+                        <th>{{ 'Categories'|t('consentpro') }}</th>
+                        <th>{{ 'Region'|t('consentpro') }}</th>
+                    </tr>
+                </thead>
+                <tbody id="consentpro-log-tbody">
+                    <tr>
+                        <td colspan="4" class="light" style="text-align: center;">
+                            {{ 'Loading...'|t('consentpro') }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        {# Pagination #}
+        <div id="consentpro-log-pagination" style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div id="consentpro-log-info" class="light"></div>
+            <div id="consentpro-log-pages"></div>
+        </div>
+    </div>
+
+    {# Auto-prune Info #}
+    <p class="light" style="margin-top: 16px;">
+        {{ 'Entries older than 90 days are automatically pruned.'|t('consentpro') }}
+    </p>
+
+{% else %}
+    {# ===== Pro Upgrade Prompt ===== #}
+    <div class="pane" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 48px 24px;">
+        <h3 style="margin-top: 0; color: white;">{{ 'Consent Log is a Pro Feature'|t('consentpro') }}</h3>
+        <p style="margin-bottom: 24px; opacity: 0.9;">
+            {{ 'Upgrade to Pro to access consent metrics, event logging, and analytics dashboard.'|t('consentpro') }}
+        </p>
+        <ul style="text-align: left; display: inline-block; margin-bottom: 24px; opacity: 0.9;">
+            <li>{{ 'View consent metrics and percentages'|t('consentpro') }}</li>
+            <li>{{ 'Browse paginated event log'|t('consentpro') }}</li>
+            <li>{{ 'Automatic 90-day log retention'|t('consentpro') }}</li>
+            <li>{{ 'Export consent data'|t('consentpro') }}</li>
+        </ul>
+        <div>
+            <a href="https://consentpro.io/pricing" target="_blank" class="btn" style="background: white; color: #764ba2;">
+                {{ 'Upgrade to Pro'|t('consentpro') }}
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+{# ===== JavaScript for AJAX operations ===== #}
+{% if isPro %}
+{% js %}
+(function() {
+    var currentPage = 1;
+    var perPage = 50;
+
+    // Load metrics on page load
+    loadMetrics();
+    loadLogEntries(1);
+
+    // Clear log button
+    var clearBtn = document.getElementById('consentpro-clear-log-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            if (!confirm('{{ 'Are you sure you want to clear all consent log entries? This cannot be undone.'|t('consentpro')|e('js') }}')) {
+                return;
+            }
+            clearLog();
+        });
+    }
+
+    /**
+     * Load consent metrics via AJAX.
+     */
+    function loadMetrics() {
+        var loadingEl = document.getElementById('consentpro-metrics-loading');
+        var contentEl = document.getElementById('consentpro-metrics-content');
+        var errorEl = document.getElementById('consentpro-metrics-error');
+
+        Craft.sendActionRequest('POST', 'consentpro/settings/get-metrics')
+            .then(function(response) {
+                loadingEl.style.display = 'none';
+
+                if (response.data.error) {
+                    errorEl.style.display = 'block';
+                    return;
+                }
+
+                var data = response.data;
+
+                // Update stat numbers using textContent (safe)
+                document.getElementById('metric-total').textContent = data.total || 0;
+                document.getElementById('metric-accept').textContent = data.accept_all || 0;
+                document.getElementById('metric-reject').textContent = data.reject_non_essential || 0;
+                document.getElementById('metric-custom').textContent = data.custom || 0;
+
+                // Update percentages using textContent (safe)
+                document.getElementById('percent-accept').textContent = data.accept_percent || 0;
+                document.getElementById('percent-reject').textContent = data.reject_percent || 0;
+                document.getElementById('percent-custom').textContent = data.custom_percent || 0;
+
+                // Update bar chart widths (style manipulation only, safe)
+                document.getElementById('bar-accept').style.width = (data.accept_percent || 0) + '%';
+                document.getElementById('bar-reject').style.width = (data.reject_percent || 0) + '%';
+                document.getElementById('bar-custom').style.width = (data.custom_percent || 0) + '%';
+
+                contentEl.style.display = 'block';
+            })
+            .catch(function(error) {
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                console.error('ConsentPro: Failed to load metrics', error);
+            });
+    }
+
+    /**
+     * Load log entries via AJAX.
+     */
+    function loadLogEntries(page) {
+        currentPage = page;
+        var tbody = document.getElementById('consentpro-log-tbody');
+        var infoEl = document.getElementById('consentpro-log-info');
+        var pagesEl = document.getElementById('consentpro-log-pages');
+
+        // Show loading state
+        clearElement(tbody);
+        var loadingRow = createTableRow(['{{ 'Loading...'|t('consentpro')|e('js') }}'], 4);
+        loadingRow.querySelector('td').className = 'light';
+        loadingRow.querySelector('td').style.textAlign = 'center';
+        tbody.appendChild(loadingRow);
+
+        Craft.sendActionRequest('POST', 'consentpro/settings/get-log-entries', {
+            data: {
+                page: page,
+                perPage: perPage
+            }
+        })
+            .then(function(response) {
+                if (response.data.error) {
+                    clearElement(tbody);
+                    var errorRow = createTableRow(['{{ 'Failed to load entries.'|t('consentpro')|e('js') }}'], 4);
+                    errorRow.querySelector('td').className = 'light';
+                    errorRow.querySelector('td').style.textAlign = 'center';
+                    tbody.appendChild(errorRow);
+                    return;
+                }
+
+                var data = response.data;
+                var entries = data.entries || [];
+
+                clearElement(tbody);
+
+                if (entries.length === 0) {
+                    var emptyRow = createTableRow(['{{ 'No consent events recorded yet.'|t('consentpro')|e('js') }}'], 4);
+                    emptyRow.querySelector('td').className = 'light';
+                    emptyRow.querySelector('td').style.textAlign = 'center';
+                    tbody.appendChild(emptyRow);
+                    infoEl.textContent = '';
+                    clearElement(pagesEl);
+                    return;
+                }
+
+                // Build table rows using safe DOM methods
+                entries.forEach(function(entry) {
+                    var row = document.createElement('tr');
+
+                    // Timestamp cell
+                    var timestampCell = document.createElement('td');
+                    timestampCell.textContent = entry.timestamp || '';
+                    row.appendChild(timestampCell);
+
+                    // Type cell with colored label
+                    var typeCell = document.createElement('td');
+                    var typeSpan = document.createElement('span');
+                    typeSpan.style.fontWeight = '500';
+                    setConsentTypeStyle(typeSpan, entry.consentType);
+                    typeCell.appendChild(typeSpan);
+                    row.appendChild(typeCell);
+
+                    // Categories cell
+                    var categoriesCell = document.createElement('td');
+                    categoriesCell.textContent = formatCategories(entry.categories);
+                    row.appendChild(categoriesCell);
+
+                    // Region cell
+                    var regionCell = document.createElement('td');
+                    regionCell.textContent = entry.region || '—';
+                    row.appendChild(regionCell);
+
+                    tbody.appendChild(row);
+                });
+
+                // Update info text
+                var start = (data.page - 1) * data.perPage + 1;
+                var end = Math.min(data.page * data.perPage, data.total);
+                infoEl.textContent = '{{ 'Showing'|t('consentpro')|e('js') }} ' + start + '-' + end + ' {{ 'of'|t('consentpro')|e('js') }} ' + data.total;
+
+                // Build pagination using safe DOM methods
+                buildPagination(pagesEl, data.page, data.totalPages);
+            })
+            .catch(function(error) {
+                clearElement(tbody);
+                var errorRow = createTableRow(['{{ 'Failed to load entries.'|t('consentpro')|e('js') }}'], 4);
+                errorRow.querySelector('td').className = 'light';
+                errorRow.querySelector('td').style.textAlign = 'center';
+                tbody.appendChild(errorRow);
+                console.error('ConsentPro: Failed to load log entries', error);
+            });
+    }
+
+    /**
+     * Clear the consent log.
+     */
+    function clearLog() {
+        var clearBtn = document.getElementById('consentpro-clear-log-btn');
+        clearBtn.classList.add('loading');
+        clearBtn.disabled = true;
+
+        Craft.sendActionRequest('POST', 'consentpro/settings/clear-log')
+            .then(function(response) {
+                clearBtn.classList.remove('loading');
+                clearBtn.disabled = false;
+
+                if (response.data.success) {
+                    Craft.cp.displayNotice('{{ 'Consent log cleared.'|t('consentpro')|e('js') }}');
+                    loadMetrics();
+                    loadLogEntries(1);
+                } else {
+                    Craft.cp.displayError(response.data.error || '{{ 'Failed to clear log.'|t('consentpro')|e('js') }}');
+                }
+            })
+            .catch(function(error) {
+                clearBtn.classList.remove('loading');
+                clearBtn.disabled = false;
+                Craft.cp.displayError('{{ 'An error occurred while clearing the log.'|t('consentpro')|e('js') }}');
+                console.error('ConsentPro: Failed to clear log', error);
+            });
+    }
+
+    /**
+     * Set consent type style and text.
+     */
+    function setConsentTypeStyle(element, type) {
+        var labels = {
+            'accept_all': { text: '{{ 'Accept All'|t('consentpro')|e('js') }}', color: '#166534' },
+            'reject_non_essential': { text: '{{ 'Reject Non-Essential'|t('consentpro')|e('js') }}', color: '#dc2626' },
+            'custom': { text: '{{ 'Custom'|t('consentpro')|e('js') }}', color: '#92400e' }
+        };
+        var config = labels[type] || { text: type || '', color: 'inherit' };
+        element.textContent = config.text;
+        element.style.color = config.color;
+    }
+
+    /**
+     * Format categories for display.
+     */
+    function formatCategories(categories) {
+        if (!categories || typeof categories !== 'object') {
+            return '—';
+        }
+
+        var enabled = [];
+        for (var key in categories) {
+            if (categories.hasOwnProperty(key) && categories[key]) {
+                enabled.push(key.charAt(0).toUpperCase() + key.slice(1));
+            }
+        }
+        return enabled.length > 0 ? enabled.join(', ') : '—';
+    }
+
+    /**
+     * Clear all children from an element.
+     */
+    function clearElement(element) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    }
+
+    /**
+     * Create a table row with a single cell spanning columns.
+     */
+    function createTableRow(content, colspan) {
+        var row = document.createElement('tr');
+        var cell = document.createElement('td');
+        cell.setAttribute('colspan', colspan);
+        cell.textContent = content[0] || '';
+        row.appendChild(cell);
+        return row;
+    }
+
+    /**
+     * Build pagination controls using safe DOM methods.
+     */
+    function buildPagination(container, currentPage, totalPages) {
+        clearElement(container);
+
+        if (totalPages <= 1) {
+            return;
+        }
+
+        var wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.gap = '4px';
+
+        // Previous button
+        if (currentPage > 1) {
+            wrapper.appendChild(createPageButton('{{ 'Prev'|t('consentpro')|e('js') }}', currentPage - 1, false));
+        }
+
+        // Page numbers
+        var startPage = Math.max(1, currentPage - 2);
+        var endPage = Math.min(totalPages, currentPage + 2);
+
+        if (startPage > 1) {
+            wrapper.appendChild(createPageButton('1', 1, false));
+            if (startPage > 2) {
+                var ellipsis = document.createElement('span');
+                ellipsis.style.padding = '0 8px';
+                ellipsis.textContent = '...';
+                wrapper.appendChild(ellipsis);
+            }
+        }
+
+        for (var i = startPage; i <= endPage; i++) {
+            wrapper.appendChild(createPageButton(String(i), i, i === currentPage));
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                var ellipsis2 = document.createElement('span');
+                ellipsis2.style.padding = '0 8px';
+                ellipsis2.textContent = '...';
+                wrapper.appendChild(ellipsis2);
+            }
+            wrapper.appendChild(createPageButton(String(totalPages), totalPages, false));
+        }
+
+        // Next button
+        if (currentPage < totalPages) {
+            wrapper.appendChild(createPageButton('{{ 'Next'|t('consentpro')|e('js') }}', currentPage + 1, false));
+        }
+
+        container.appendChild(wrapper);
+    }
+
+    /**
+     * Create a pagination button.
+     */
+    function createPageButton(label, page, isActive) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'btn small' + (isActive ? ' submit' : '');
+        button.textContent = label;
+        if (isActive) {
+            button.disabled = true;
+        } else {
+            button.addEventListener('click', function() {
+                loadLogEntries(page);
+            });
+        }
+        return button;
+    }
+
+    // Expose pagination function globally for legacy support
+    window.ConsentProLog = {
+        goToPage: loadLogEntries
+    };
+})();
+{% endjs %}
+{% endif %}

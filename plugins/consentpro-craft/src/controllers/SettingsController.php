@@ -21,7 +21,7 @@ class SettingsController extends Controller
     /**
      * Valid tab identifiers.
      */
-    private const VALID_TABS = ['general', 'appearance', 'categories', 'license'];
+    private const VALID_TABS = ['general', 'appearance', 'categories', 'consent-log', 'license'];
 
     /**
      * @inheritdoc
@@ -345,5 +345,93 @@ class SettingsController extends Controller
         $css = preg_replace('/-moz-binding\s*:/i', '', $css);
 
         return trim($css);
+    }
+
+    // =========================================================================
+    // Consent Log AJAX Actions (US-031a)
+    // =========================================================================
+
+    /**
+     * Get consent metrics via AJAX.
+     *
+     * @return Response
+     */
+    public function actionGetMetrics(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        // Check Pro license
+        if (!ConsentPro::getInstance()->license->isPro()) {
+            return $this->asJson([
+                'error' => Craft::t('consentpro', 'Pro license required.'),
+            ]);
+        }
+
+        $request = Craft::$app->getRequest();
+        $days = (int) $request->getBodyParam('days', 30);
+
+        // Enforce reasonable limits
+        $days = max(1, min(365, $days));
+
+        $metrics = ConsentPro::getInstance()->consentLog->getMetrics($days);
+
+        return $this->asJson($metrics);
+    }
+
+    /**
+     * Get consent log entries via AJAX.
+     *
+     * @return Response
+     */
+    public function actionGetLogEntries(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        // Check Pro license
+        if (!ConsentPro::getInstance()->license->isPro()) {
+            return $this->asJson([
+                'error' => Craft::t('consentpro', 'Pro license required.'),
+            ]);
+        }
+
+        $request = Craft::$app->getRequest();
+        $page = (int) $request->getBodyParam('page', 1);
+        $perPage = (int) $request->getBodyParam('perPage', 50);
+
+        $data = ConsentPro::getInstance()->consentLog->getEntries($page, $perPage);
+
+        return $this->asJson($data);
+    }
+
+    /**
+     * Clear consent log via AJAX.
+     *
+     * @return Response
+     */
+    public function actionClearLog(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        // Check Pro license
+        if (!ConsentPro::getInstance()->license->isPro()) {
+            return $this->asJson([
+                'error' => Craft::t('consentpro', 'Pro license required.'),
+            ]);
+        }
+
+        $deleted = ConsentPro::getInstance()->consentLog->clearLog();
+
+        Craft::info(
+            "[ConsentPro] Consent log cleared by admin. {$deleted} entries deleted.",
+            'consentpro'
+        );
+
+        return $this->asJson([
+            'success' => true,
+            'deleted' => $deleted,
+        ]);
     }
 }

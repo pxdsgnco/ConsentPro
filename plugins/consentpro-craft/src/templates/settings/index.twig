@@ -21,6 +21,10 @@
         label: 'Categories'|t('consentpro'),
         url: url('consentpro/settings', {tab: 'categories'}),
     },
+    'consent-log': {
+        label: 'Consent Log'|t('consentpro'),
+        url: url('consentpro/settings', {tab: 'consent-log'}),
+    },
     license: {
         label: 'License'|t('consentpro'),
         url: url('consentpro/settings', {tab: 'license'}),
@@ -57,6 +61,11 @@
             {# ============ CATEGORIES TAB ============ #}
             <div id="tab-categories"{% if selectedTab != 'categories' %} class="hidden"{% endif %}>
                 {% include 'consentpro/settings/_tabs/categories.twig' with {settings: settings} only %}
+            </div>
+
+            {# ============ CONSENT LOG TAB ============ #}
+            <div id="tab-consent-log"{% if selectedTab != 'consent-log' %} class="hidden"{% endif %}>
+                {% include 'consentpro/settings/_tabs/consent-log.twig' with {settings: settings} only %}
             </div>
 
             {# ============ LICENSE TAB ============ #}

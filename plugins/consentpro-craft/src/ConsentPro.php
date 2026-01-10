@@ -19,16 +19,19 @@ use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 use consentpro\consentpro\models\Settings;
 use consentpro\consentpro\services\ConsentService;
+use consentpro\consentpro\services\ConsentLogService;
 use consentpro\consentpro\services\LicenseService;
 use consentpro\consentpro\twig\ConsentProVariable;
 use consentpro\consentpro\twig\ConsentProExtension;
 use consentpro\consentpro\jobs\ValidateLicenseJob;
+use consentpro\consentpro\jobs\PruneConsentLogJob;
 use yii\base\Event;
 
 /**
  * ConsentPro Plugin
  *
  * @property-read ConsentService $consent
+ * @property-read ConsentLogService $consentLog
  * @property-read LicenseService $license
  * @property-read Settings $settings
  *
@@ -64,6 +67,7 @@ class ConsentPro extends Plugin
         // Register services
         $this->setComponents([
             'consent' => ConsentService::class,
+            'consentLog' => ConsentLogService::class,
             'license' => LicenseService::class,
         ]);
 
@@ -93,9 +97,10 @@ class ConsentPro extends Plugin
             }
         );
 
-        // Schedule weekly license validation
+        // Schedule background jobs (weekly license validation, daily log prune)
         if (Craft::$app->getRequest()->getIsCpRequest() && !Craft::$app->getRequest()->getIsConsoleRequest()) {
             $this->scheduleValidationJob();
+            $this->schedulePruneJob();
         }
 
         Craft::info('ConsentPro plugin loaded', __METHOD__);
@@ -142,6 +147,32 @@ class ConsentPro extends Plugin
                 // Mark as scheduled for 1 hour to prevent duplicate pushes
                 $cache->set($cacheKey, true, 3600);
             }
+        }
+    }
+
+    /**
+     * Schedule daily consent log prune job.
+     *
+     * Only pushes a job if:
+     * - Pro license is active
+     * - Last prune was more than 24 hours ago
+     */
+    private function schedulePruneJob(): void
+    {
+        // Only prune for Pro users
+        if (!$this->license->isPro()) {
+            return;
+        }
+
+        // Check if prune needed (24 hours = 86400 seconds)
+        $cache = Craft::$app->getCache();
+        $cacheKey = 'consentpro_prune_job_scheduled';
+
+        if (!$cache->get($cacheKey)) {
+            $queue = Craft::$app->getQueue();
+            $queue->push(new PruneConsentLogJob());
+            // Mark as scheduled for 24 hours
+            $cache->set($cacheKey, true, 86400);
         }
     }
 
