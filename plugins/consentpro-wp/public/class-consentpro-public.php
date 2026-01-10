@@ -224,4 +224,36 @@ JS;
 		// Allow filtering.
 		return apply_filters( 'consentpro_should_show', true );
 	}
+
+	/**
+	 * Check for consent cookie and log if present.
+	 *
+	 * Reads the consent cookie set by the frontend JS and logs
+	 * the consent event to the database for metrics tracking.
+	 *
+	 * @return void
+	 */
+	public function maybe_log_consent(): void {
+		// Only log if Pro license active.
+		if ( ! ConsentPro_License::is_pro() ) {
+			return;
+		}
+
+		// Check for consent cookie.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		if ( ! isset( $_COOKIE['consentpro'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		$cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['consentpro'] ) );
+		$consent_data = json_decode( urldecode( $cookie_value ), true );
+
+		if ( ! is_array( $consent_data ) || empty( $consent_data['categories'] ) ) {
+			return;
+		}
+
+		$consent_log = new ConsentPro_Consent_Log();
+		$consent_log->log_consent( $consent_data );
+	}
 }
