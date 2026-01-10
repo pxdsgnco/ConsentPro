@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ConsentPro Layer 2 Settings Panel - Mockup</title>
+    <style>
+      /* ========================================
+       ConsentPro Layer 2 Settings Panel Mockup
+       Design: Trustworthy Minimalism
+       - Clean, professional privacy UI
+       - WCAG AA compliant
+       - Mobile-first responsive
+       ======================================== */
+
+      /* CSS Custom Properties - Using ConsentPro tokens */
+      :root {
+        /* Brand Colors */
+        --cp-primary: #2563eb;
+        --cp-primary-hover: #1d4ed8;
+        --cp-primary-light: #dbeafe;
+        --cp-secondary: #64748b;
+        --cp-secondary-hover: #475569;
+        --cp-background: #ffffff;
+        --cp-text: #1e293b;
+        --cp-text-muted: #64748b;
+        --cp-border: #e2e8f0;
+        --cp-border-strong: #cbd5e1;
+
+        /* Toggle States */
+        --cp-toggle-off: #cbd5e1;
+        --cp-toggle-on: #2563eb;
+        --cp-toggle-disabled: #94a3b8;
+
+        /* Spacing Scale */
+        --cp-space-xs: 0.25rem;
+        --cp-space-sm: 0.5rem;
+        --cp-space-md: 1rem;
+        --cp-space-lg: 1.5rem;
+        --cp-space-xl: 2rem;
+
+        /* Typography */
+        --cp-font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        --cp-font-size-sm: 0.875rem;
+        --cp-font-size-base: 1rem;
+        --cp-font-size-lg: 1.125rem;
+        --cp-line-height: 1.5;
+
+        /* Layout */
+        --cp-max-width: 960px;
+        --cp-radius: 0.5rem;
+        --cp-radius-sm: 0.25rem;
+        --cp-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        --cp-z-index: 999999;
+
+        /* Animation */
+        --cp-transition-fast: 150ms ease;
+        --cp-transition-normal: 200ms ease;
+        --cp-transition-slow: 300ms ease-out;
+      }
+
+      /* Reset */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Demo page background */
+      body {
+        font-family: var(--cp-font-family);
+        font-size: var(--cp-font-size-base);
+        line-height: var(--cp-line-height);
+        color: var(--cp-text);
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .demo-content {
+        max-width: 800px;
+        margin: 0 auto 200px;
+        padding: 2rem;
+        background: white;
+        border-radius: var(--cp-radius);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-content h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--cp-text);
+      }
+
+      .demo-content p {
+        color: var(--cp-text-muted);
+        margin-bottom: 1rem;
+      }
+
+      /* ========================================
+       Banner Container (shared with Layer 1)
+       ======================================== */
+      .consentpro {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: var(--cp-z-index);
+        background: var(--cp-background);
+        box-shadow: var(--cp-shadow);
+        transform: translateY(0);
+        visibility: visible;
+        transition:
+          transform var(--cp-transition-slow),
+          visibility var(--cp-transition-slow);
+      }
+
+      .consentpro--hidden {
+        transform: translateY(100%);
+        visibility: hidden;
+      }
+
+      .consentpro__container {
+        max-width: var(--cp-max-width);
+        margin: 0 auto;
+        padding: var(--cp-space-lg);
+      }
+
+      /* ========================================
+       Layer 2: Settings Panel
+       ======================================== */
+
+      /* Header with back link and title */
+      .consentpro__settings-header {
+        display: flex;
+        align-items: center;
+        gap: var(--cp-space-md);
+        padding-bottom: var(--cp-space-md);
+        border-bottom: 1px solid var(--cp-border);
+        margin-bottom: var(--cp-space-lg);
+      }
+
+      .consentpro__back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        background: transparent;
+        border: 1px solid var(--cp-border);
+        border-radius: var(--cp-radius-sm);
+        color: var(--cp-text);
+        cursor: pointer;
+        transition:
+          background-color var(--cp-transition-fast),
+          border-color var(--cp-transition-fast);
+      }
+
+      .consentpro__back:hover {
+        background: var(--cp-primary-light);
+        border-color: var(--cp-primary);
+      }
+
+      .consentpro__back:focus-visible {
+        outline: 2px solid var(--cp-primary);
+        outline-offset: 2px;
+      }
+
+      .consentpro__back svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .consentpro__settings-title {
+        font-size: var(--cp-font-size-lg);
+        font-weight: 600;
+        color: var(--cp-text);
+        margin: 0;
+        flex: 1;
+      }
+
+      /* Category List */
+      .consentpro__categories {
+        list-style: none;
+        margin: 0 0 var(--cp-space-lg);
+        padding: 0;
+      }
+
+      .consentpro__category {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--cp-space-md);
+        padding: var(--cp-space-md) 0;
+        border-bottom: 1px solid var(--cp-border);
+      }
+
+      .consentpro__category:last-child {
+        border-bottom: none;
+      }
+
+      .consentpro__category-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .consentpro__category-header {
+        display: flex;
+        align-items: center;
+        gap: var(--cp-space-sm);
+        margin-bottom: var(--cp-space-xs);
+      }
+
+      .consentpro__category-name {
+        font-weight: 600;
+        color: var(--cp-text);
+      }
+
+      .consentpro__category-required {
+        font-size: var(--cp-font-size-sm);
+        font-style: italic;
+        color: var(--cp-text-muted);
+      }
+
+      .consentpro__category-desc {
+        font-size: var(--cp-font-size-sm);
+        color: var(--cp-text-muted);
+        line-height: 1.4;
+      }
+
+      /* Toggle Switch - role="switch" with aria-checked */
+      .consentpro__toggle {
+        position: relative;
+        width: 52px;
+        height: 28px;
+        min-width: 52px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        /* 44px touch target via padding */
+        margin: -8px;
+        padding: 8px;
+      }
+
+      .consentpro__toggle::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 8px;
+        transform: translateY(-50%);
+        width: 52px;
+        height: 28px;
+        background: var(--cp-toggle-off);
+        border-radius: 14px;
+        transition: background-color var(--cp-transition-normal);
+      }
+
+      .consentpro__toggle::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: left var(--cp-transition-normal);
+      }
+
+      /* Toggle ON state */
+      .consentpro__toggle[aria-checked='true']::before {
+        background: var(--cp-toggle-on);
+      }
+
+      .consentpro__toggle[aria-checked='true']::after {
+        left: 34px;
+      }
+
+      /* Toggle disabled (Essential category) */
+      .consentpro__toggle:disabled {
+        cursor: not-allowed;
+      }
+
+      .consentpro__toggle:disabled::before {
+        background: var(--cp-toggle-disabled);
+        opacity: 0.7;
+      }
+
+      .consentpro__toggle:disabled::after {
+        opacity: 0.9;
+      }
+
+      /* Toggle focus state */
+      .consentpro__toggle:focus-visible::before {
+        outline: 2px solid var(--cp-primary);
+        outline-offset: 2px;
+      }
+
+      /* Footer with policy link and save button */
+      .consentpro__settings-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--cp-space-md);
+        padding-top: var(--cp-space-md);
+        border-top: 1px solid var(--cp-border);
+      }
+
+      .consentpro__policy-link {
+        font-size: var(--cp-font-size-sm);
+        color: var(--cp-primary);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        transition: color var(--cp-transition-fast);
+      }
+
+      .consentpro__policy-link:hover {
+        color: var(--cp-primary-hover);
+        text-decoration: none;
+      }
+
+      .consentpro__policy-link:focus-visible {
+        outline: 2px solid var(--cp-primary);
+        outline-offset: 2px;
+        border-radius: var(--cp-radius-sm);
+      }
+
+      /* Save Preferences Button */
+      .consentpro__btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: var(--cp-space-sm) var(--cp-space-lg);
+        font-family: inherit;
+        font-size: var(--cp-font-size-base);
+        font-weight: 500;
+        border-radius: var(--cp-radius);
+        cursor: pointer;
+        transition:
+          background-color var(--cp-transition-fast),
+          border-color var(--cp-transition-fast),
+          transform var(--cp-transition-fast);
+      }
+
+      .consentpro__btn:active {
+        transform: scale(0.98);
+      }
+
+      .consentpro__btn:focus-visible {
+        outline: 2px solid var(--cp-primary);
+        outline-offset: 2px;
+      }
+
+      .consentpro__btn--primary {
+        background: var(--cp-primary);
+        color: white;
+        border: 2px solid var(--cp-primary);
+      }
+
+      .consentpro__btn--primary:hover {
+        background: var(--cp-primary-hover);
+        border-color: var(--cp-primary-hover);
+      }
+
+      /* ========================================
+       Footer Privacy Toggle (US-013)
+       Appears after consent is given
+       ======================================== */
+      .consentpro-footer-toggle {
+        position: fixed;
+        bottom: var(--cp-space-md);
+        left: var(--cp-space-md);
+        z-index: calc(var(--cp-z-index) - 1);
+
+        /* Minimal text-link style */
+        display: inline-flex;
+        align-items: center;
+        gap: var(--cp-space-xs);
+        min-height: 44px;
+        padding: var(--cp-space-sm) var(--cp-space-md);
+
+        background: var(--cp-background);
+        border: 1px solid var(--cp-border);
+        border-radius: var(--cp-radius);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+        font-family: var(--cp-font-family);
+        font-size: var(--cp-font-size-sm);
+        color: var(--cp-text-muted);
+        text-decoration: none;
+        cursor: pointer;
+
+        transition:
+          color var(--cp-transition-fast),
+          border-color var(--cp-transition-fast),
+          box-shadow var(--cp-transition-fast);
+      }
+
+      .consentpro-footer-toggle:hover {
+        color: var(--cp-primary);
+        border-color: var(--cp-primary);
+        box-shadow: 0 2px 12px rgba(37, 99, 235, 0.15);
+      }
+
+      .consentpro-footer-toggle:focus-visible {
+        outline: 2px solid var(--cp-primary);
+        outline-offset: 2px;
+      }
+
+      .consentpro-footer-toggle svg {
+        width: 16px;
+        height: 16px;
+        opacity: 0.7;
+      }
+
+      .consentpro-footer-toggle:hover svg {
+        opacity: 1;
+      }
+
+      /* Hidden state for footer toggle (before consent) */
+      .consentpro-footer-toggle--hidden {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition:
+          opacity var(--cp-transition-normal),
+          visibility var(--cp-transition-normal),
+          transform var(--cp-transition-normal);
+      }
+
+      /* ========================================
+       Responsive: Mobile-first at 768px
+       ======================================== */
+      @media (max-width: 768px) {
+        .consentpro__container {
+          padding: var(--cp-space-md);
+        }
+
+        .consentpro__settings-header {
+          gap: var(--cp-space-sm);
+        }
+
+        .consentpro__settings-title {
+          font-size: var(--cp-font-size-base);
+        }
+
+        .consentpro__category {
+          flex-direction: column;
+          gap: var(--cp-space-sm);
+        }
+
+        .consentpro__toggle {
+          align-self: flex-start;
+          margin-left: -8px;
+        }
+
+        .consentpro__settings-footer {
+          flex-direction: column-reverse;
+          gap: var(--cp-space-sm);
+        }
+
+        .consentpro__btn--primary {
+          width: 100%;
+        }
+
+        .consentpro__policy-link {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .consentpro-footer-toggle {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ========================================
+       Reduced Motion Preference
+       ======================================== */
+      @media (prefers-reduced-motion: reduce) {
+        .consentpro,
+        .consentpro__toggle::before,
+        .consentpro__toggle::after,
+        .consentpro__btn,
+        .consentpro-footer-toggle {
+          transition: none;
+        }
+      }
+
+      /* ========================================
+       Demo Controls
+       ======================================== */
+      .demo-controls {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        gap: 0.5rem;
+        z-index: 1000000;
+      }
+
+      .demo-btn {
+        padding: 0.5rem 1rem;
+        background: var(--cp-text);
+        color: white;
+        border: none;
+        border-radius: var(--cp-radius-sm);
+        font-size: var(--cp-font-size-sm);
+        cursor: pointer;
+      }
+
+      .demo-btn:hover {
+        background: var(--cp-secondary-hover);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+      <button class="demo-btn" onclick="toggleBanner()">Toggle Banner</button>
+      <button class="demo-btn" onclick="toggleFooter()">Toggle Footer</button>
+    </div>
+
+    <!-- Demo Page Content -->
+    <div class="demo-content">
+      <h1>ConsentPro Layer 2 Settings Panel Mockup</h1>
+      <p>
+        This mockup demonstrates the Layer 2 settings panel that replaces Layer 1 when users click
+        "Settings". It includes:
+      </p>
+      <ul>
+        <li>Header with back button and title</li>
+        <li>4 category toggles with accessible role="switch"</li>
+        <li>Essential category is disabled (always on)</li>
+        <li>Privacy Policy link opens in new tab</li>
+        <li>Save Preferences button</li>
+      </ul>
+      <p>
+        The footer toggle (bottom-left) appears after consent is saved and allows users to reopen
+        the banner.
+      </p>
+    </div>
+
+    <!-- ========================================
+       Layer 2: Settings Panel
+       Semantic HTML with ARIA attributes
+       ======================================== -->
+    <aside
+      class="consentpro"
+      role="dialog"
+      aria-labelledby="consentpro-settings-title"
+      aria-describedby="consentpro-settings-desc"
+      aria-modal="false"
+    >
+      <div class="consentpro__container">
+        <!-- Settings Header -->
+        <header class="consentpro__settings-header">
+          <button
+            type="button"
+            class="consentpro__back"
+            aria-label="Back to consent options"
+            data-action="back"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h2 id="consentpro-settings-title" class="consentpro__settings-title">
+            Privacy Preferences
+          </h2>
+        </header>
+
+        <!-- Hidden description for screen readers -->
+        <p id="consentpro-settings-desc" class="visually-hidden">
+          Manage your cookie preferences by category. Essential cookies are always enabled.
+        </p>
+
+        <!-- Category Toggles -->
+        <ul class="consentpro__categories" role="list">
+          <!-- Essential (Always On, Disabled) -->
+          <li class="consentpro__category">
+            <div class="consentpro__category-info">
+              <div class="consentpro__category-header">
+                <span class="consentpro__category-name" id="category-essential-label"
+                  >Essential</span
+                >
+                <span class="consentpro__category-required">(Always active)</span>
+              </div>
+              <p class="consentpro__category-desc" id="category-essential-desc">
+                Required for the website to function. Cannot be disabled.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              class="consentpro__toggle"
+              aria-checked="true"
+              aria-labelledby="category-essential-label"
+              aria-describedby="category-essential-desc"
+              disabled
+              data-category="essential"
+            ></button>
+          </li>
+
+          <!-- Analytics -->
+          <li class="consentpro__category">
+            <div class="consentpro__category-info">
+              <div class="consentpro__category-header">
+                <span class="consentpro__category-name" id="category-analytics-label"
+                  >Analytics</span
+                >
+              </div>
+              <p class="consentpro__category-desc" id="category-analytics-desc">
+                Help us understand how visitors interact with our website.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              class="consentpro__toggle"
+              aria-checked="false"
+              aria-labelledby="category-analytics-label"
+              aria-describedby="category-analytics-desc"
+              data-category="analytics"
+            ></button>
+          </li>
+
+          <!-- Marketing -->
+          <li class="consentpro__category">
+            <div class="consentpro__category-info">
+              <div class="consentpro__category-header">
+                <span class="consentpro__category-name" id="category-marketing-label"
+                  >Marketing</span
+                >
+              </div>
+              <p class="consentpro__category-desc" id="category-marketing-desc">
+                Used to deliver personalized advertisements.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              class="consentpro__toggle"
+              aria-checked="false"
+              aria-labelledby="category-marketing-label"
+              aria-describedby="category-marketing-desc"
+              data-category="marketing"
+            ></button>
+          </li>
+
+          <!-- Personalization -->
+          <li class="consentpro__category">
+            <div class="consentpro__category-info">
+              <div class="consentpro__category-header">
+                <span class="consentpro__category-name" id="category-personalization-label"
+                  >Personalization</span
+                >
+              </div>
+              <p class="consentpro__category-desc" id="category-personalization-desc">
+                Allow us to remember your preferences and customize your experience.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              class="consentpro__toggle"
+              aria-checked="false"
+              aria-labelledby="category-personalization-label"
+              aria-describedby="category-personalization-desc"
+              data-category="personalization"
+            ></button>
+          </li>
+        </ul>
+
+        <!-- Footer with Policy Link and Save Button -->
+        <footer class="consentpro__settings-footer">
+          <a
+            href="/privacy-policy"
+            class="consentpro__policy-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+          <button type="button" class="consentpro__btn consentpro__btn--primary" data-action="save">
+            Save Preferences
+          </button>
+        </footer>
+      </div>
+    </aside>
+
+    <!-- ========================================
+       Footer Privacy Toggle (US-013)
+       Shows after consent, reopens banner
+       ======================================== -->
+    <button
+      type="button"
+      class="consentpro-footer-toggle consentpro-footer-toggle--hidden"
+      aria-label="Manage privacy preferences"
+      data-action="reopen"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+      <span>Privacy Settings</span>
+    </button>
+
+    <!-- Demo JavaScript -->
+    <script>
+      // Toggle switch interaction (Space/Enter keys + click)
+      document.querySelectorAll('.consentpro__toggle:not(:disabled)').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const isChecked = toggle.getAttribute('aria-checked') === 'true';
+          toggle.setAttribute('aria-checked', !isChecked);
+        });
+
+        toggle.addEventListener('keydown', (e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            toggle.click();
+          }
+        });
+      });
+
+      // Demo: Toggle banner visibility
+      function toggleBanner() {
+        document.querySelector('.consentpro').classList.toggle('consentpro--hidden');
+      }
+
+      // Demo: Toggle footer visibility
+      function toggleFooter() {
+        document
+          .querySelector('.consentpro-footer-toggle')
+          .classList.toggle('consentpro-footer-toggle--hidden');
+      }
+
+      // Demo: Back button
+      document.querySelector('[data-action="back"]').addEventListener('click', () => {
+        alert('Back to Layer 1 (quick actions)');
+      });
+
+      // Demo: Save button
+      document.querySelector('[data-action="save"]').addEventListener('click', () => {
+        const categories = {};
+        document.querySelectorAll('.consentpro__toggle').forEach((toggle) => {
+          categories[toggle.dataset.category] = toggle.getAttribute('aria-checked') === 'true';
+        });
+        console.log('Saved preferences:', categories);
+
+        // Hide banner, show footer toggle
+        document.querySelector('.consentpro').classList.add('consentpro--hidden');
+        document
+          .querySelector('.consentpro-footer-toggle')
+          .classList.remove('consentpro-footer-toggle--hidden');
+
+        alert('Preferences saved! Footer toggle now visible.');
+      });
+
+      // Demo: Footer toggle reopens banner
+      document.querySelector('[data-action="reopen"]').addEventListener('click', () => {
+        document.querySelector('.consentpro').classList.remove('consentpro--hidden');
+      });
+    </script>
+  </body>
+</html>
