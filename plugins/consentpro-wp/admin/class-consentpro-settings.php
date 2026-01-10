@@ -82,11 +82,16 @@ class ConsentPro_Settings {
 	 * @return array Sanitized input.
 	 */
 	public function sanitize_appearance( array $input ): array {
+		$primary    = sanitize_hex_color( $input['color_primary'] ?? '' );
+		$secondary  = sanitize_hex_color( $input['color_secondary'] ?? '' );
+		$background = sanitize_hex_color( $input['color_background'] ?? '' );
+		$text       = sanitize_hex_color( $input['color_text'] ?? '' );
+
 		return [
-			'color_primary'    => sanitize_hex_color( $input['color_primary'] ?? '#2563eb' ),
-			'color_secondary'  => sanitize_hex_color( $input['color_secondary'] ?? '#64748b' ),
-			'color_background' => sanitize_hex_color( $input['color_background'] ?? '#ffffff' ),
-			'color_text'       => sanitize_hex_color( $input['color_text'] ?? '#1e293b' ),
+			'color_primary'    => $primary ? $primary : '#2563eb',
+			'color_secondary'  => $secondary ? $secondary : '#64748b',
+			'color_background' => $background ? $background : '#ffffff',
+			'color_text'       => $text ? $text : '#1e293b',
 		];
 	}
 

@@ -76,7 +76,10 @@ class ConsentPro {
 
 		add_action( 'wp_enqueue_scripts', [ $public, 'enqueue_styles' ] );
 		add_action( 'wp_enqueue_scripts', [ $public, 'enqueue_scripts' ] );
+		add_action( 'wp_head', [ $public, 'output_css_variables' ], 99 );
 		add_action( 'wp_footer', [ $public, 'render_banner' ] );
+		add_filter( 'script_loader_tag', [ $public, 'add_defer_attribute' ], 10, 2 );
+		add_filter( 'wp_resource_hints', [ $public, 'add_resource_hints' ], 10, 2 );
 	}
 
 	/**
