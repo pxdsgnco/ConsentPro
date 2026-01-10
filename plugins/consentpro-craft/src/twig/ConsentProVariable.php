@@ -11,15 +11,17 @@ namespace consentpro\consentpro\twig;
 use Craft;
 use craft\web\View;
 use consentpro\consentpro\ConsentPro;
+use consentpro\consentpro\assetbundles\ConsentProAsset;
 use Twig\Markup;
 
 /**
  * Template variable for ConsentPro.
  *
  * Usage in Twig:
- * - {{ craft.consentpro.banner() }}
- * - {% do craft.consentpro.autoInject() %}
- * - {{ craft.consentpro.license.isPro() }}
+ * - {{ craft.consentpro.banner() }} - Outputs banner HTML
+ * - {{ craft.consentpro.scripts() }} - Outputs CSS/JS tags only
+ * - {% do craft.consentpro.autoInject() %} - Registers assets via AssetBundle
+ * - {{ craft.consentpro.license.isPro() }} - Check Pro license status
  */
 class ConsentProVariable
 {
@@ -47,9 +49,45 @@ class ConsentProVariable
     }
 
     /**
-     * Auto-inject banner assets.
+     * Output just the script and style tags.
      *
-     * Call this in templates to automatically inject CSS and JS.
+     * Use this when you want to manually control asset placement
+     * without using the full banner() output.
+     *
+     * @return Markup
+     */
+    public function scripts(): Markup
+    {
+        $settings = ConsentPro::getInstance()->getSettings();
+
+        if (!$settings->enabled) {
+            return new Markup('', 'UTF-8');
+        }
+
+        $view = Craft::$app->getView();
+
+        // Register the asset bundle to get published URLs
+        $bundle = $view->registerAssetBundle(ConsentProAsset::class);
+
+        // Build the HTML tags
+        $cssUrl = $bundle->baseUrl . '/consentpro.min.css';
+        $jsUrl = $bundle->baseUrl . '/consentpro.min.js';
+
+        $html = sprintf(
+            '<link rel="stylesheet" href="%s">' . "\n" .
+            '<script src="%s" defer></script>',
+            htmlspecialchars($cssUrl, ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($jsUrl, ENT_QUOTES, 'UTF-8')
+        );
+
+        return new Markup($html, 'UTF-8');
+    }
+
+    /**
+     * Auto-inject banner assets via AssetBundle.
+     *
+     * Call this in templates to automatically register CSS and JS
+     * through Craft's asset pipeline with proper versioning.
      */
     public function autoInject(): void
     {
@@ -59,18 +97,8 @@ class ConsentProVariable
             return;
         }
 
-        $view = Craft::$app->getView();
-
-        // Register CSS
-        $view->registerCssFile('@web/cpresources/consentpro/consentpro.min.css', [
-            'position' => View::POS_HEAD,
-        ]);
-
-        // Register JS
-        $view->registerJsFile('@web/cpresources/consentpro/consentpro.min.js', [
-            'position' => View::POS_END,
-            'defer' => true,
-        ]);
+        // Register the asset bundle
+        Craft::$app->getView()->registerAssetBundle(ConsentProAsset::class);
     }
 
     /**

@@ -57,6 +57,9 @@ class ConsentPro extends Plugin
     {
         parent::init();
 
+        // Register alias for asset bundle
+        Craft::setAlias('@consentpro', __DIR__);
+
         // Register services
         $this->setComponents([
             'consent' => ConsentService::class,

@@ -11,6 +11,8 @@ namespace consentpro\consentpro\services;
 use Craft;
 use craft\base\Component;
 use consentpro\consentpro\ConsentPro;
+use consentpro\consentpro\events\ConfigEvent;
+use consentpro\consentpro\events\RegisterCategoriesEvent;
 
 /**
  * Consent service for building banner configuration.
@@ -45,7 +47,7 @@ class ConsentService extends Component
     {
         $settings = ConsentPro::getInstance()->getSettings();
 
-        return [
+        $config = [
             'geo' => $this->detectGeo(),
             'geoEnabled' => $settings->getEnvValue('geoEnabled'),
             'policyUrl' => $settings->getEnvValue('policyUrl'),
@@ -58,6 +60,15 @@ class ConsentService extends Component
                 'text' => $settings->colorText,
             ],
         ];
+
+        // Fire event to allow config modification
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_RENDER)) {
+            $event = new ConfigEvent(['config' => $config]);
+            $this->trigger(self::EVENT_BEFORE_RENDER, $event);
+            $config = $event->config;
+        }
+
+        return $config;
     }
 
     /**
@@ -135,6 +146,13 @@ class ConsentService extends Component
                     : $default['description'],
                 'required' => $id === 'essential',
             ];
+        }
+
+        // Fire event to allow category registration/modification
+        if ($this->hasEventHandlers(self::EVENT_REGISTER_CATEGORIES)) {
+            $event = new RegisterCategoriesEvent(['categories' => $categories]);
+            $this->trigger(self::EVENT_REGISTER_CATEGORIES, $event);
+            $categories = $event->categories;
         }
 
         return $categories;
