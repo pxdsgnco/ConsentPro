@@ -13,10 +13,30 @@ describe('BannerUI', () => {
     geoEnabled: true,
     policyUrl: 'https://example.com/privacy',
     categories: [
-      { id: 'essential', name: 'Essential', description: 'Required for site functionality', required: true },
-      { id: 'analytics', name: 'Analytics', description: 'Help us understand usage', required: false },
-      { id: 'marketing', name: 'Marketing', description: 'Personalized advertisements', required: false },
-      { id: 'personalization', name: 'Personalization', description: 'Remember your preferences', required: false },
+      {
+        id: 'essential',
+        name: 'Essential',
+        description: 'Required for site functionality',
+        required: true,
+      },
+      {
+        id: 'analytics',
+        name: 'Analytics',
+        description: 'Help us understand usage',
+        required: false,
+      },
+      {
+        id: 'marketing',
+        name: 'Marketing',
+        description: 'Personalized advertisements',
+        required: false,
+      },
+      {
+        id: 'personalization',
+        name: 'Personalization',
+        description: 'Remember your preferences',
+        required: false,
+      },
     ],
     text: {
       heading: 'We value your privacy',
@@ -350,15 +370,21 @@ describe('BannerUI', () => {
     });
 
     it('renders Essential toggle as disabled', () => {
-      const essentialToggle = container.querySelector('[data-category="essential"]') as HTMLButtonElement;
+      const essentialToggle = container.querySelector(
+        '[data-category="essential"]'
+      ) as HTMLButtonElement;
       expect(essentialToggle).not.toBeNull();
       expect(essentialToggle.disabled).toBe(true);
       expect(essentialToggle.getAttribute('aria-checked')).toBe('true');
     });
 
     it('renders non-essential toggles as enabled', () => {
-      const analyticsToggle = container.querySelector('[data-category="analytics"]') as HTMLButtonElement;
-      const marketingToggle = container.querySelector('[data-category="marketing"]') as HTMLButtonElement;
+      const analyticsToggle = container.querySelector(
+        '[data-category="analytics"]'
+      ) as HTMLButtonElement;
+      const marketingToggle = container.querySelector(
+        '[data-category="marketing"]'
+      ) as HTMLButtonElement;
       expect(analyticsToggle.disabled).toBe(false);
       expect(marketingToggle.disabled).toBe(false);
     });
@@ -416,36 +442,50 @@ describe('BannerUI', () => {
     });
 
     it('click updates aria-checked state', () => {
-      const analyticsToggle = container.querySelector('[data-category="analytics"]') as HTMLButtonElement;
+      const analyticsToggle = container.querySelector(
+        '[data-category="analytics"]'
+      ) as HTMLButtonElement;
       const initialState = analyticsToggle.getAttribute('aria-checked');
 
       analyticsToggle.click();
 
-      expect(analyticsToggle.getAttribute('aria-checked')).toBe(initialState === 'true' ? 'false' : 'true');
+      expect(analyticsToggle.getAttribute('aria-checked')).toBe(
+        initialState === 'true' ? 'false' : 'true'
+      );
     });
 
     it('Space key toggles state', () => {
-      const analyticsToggle = container.querySelector('[data-category="analytics"]') as HTMLButtonElement;
+      const analyticsToggle = container.querySelector(
+        '[data-category="analytics"]'
+      ) as HTMLButtonElement;
       const initialState = analyticsToggle.getAttribute('aria-checked');
 
       const spaceEvent = new KeyboardEvent('keydown', { key: ' ', bubbles: true });
       analyticsToggle.dispatchEvent(spaceEvent);
 
-      expect(analyticsToggle.getAttribute('aria-checked')).toBe(initialState === 'true' ? 'false' : 'true');
+      expect(analyticsToggle.getAttribute('aria-checked')).toBe(
+        initialState === 'true' ? 'false' : 'true'
+      );
     });
 
     it('Enter key toggles state', () => {
-      const analyticsToggle = container.querySelector('[data-category="analytics"]') as HTMLButtonElement;
+      const analyticsToggle = container.querySelector(
+        '[data-category="analytics"]'
+      ) as HTMLButtonElement;
       const initialState = analyticsToggle.getAttribute('aria-checked');
 
       const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
       analyticsToggle.dispatchEvent(enterEvent);
 
-      expect(analyticsToggle.getAttribute('aria-checked')).toBe(initialState === 'true' ? 'false' : 'true');
+      expect(analyticsToggle.getAttribute('aria-checked')).toBe(
+        initialState === 'true' ? 'false' : 'true'
+      );
     });
 
     it('disabled toggle does not respond to clicks', () => {
-      const essentialToggle = container.querySelector('[data-category="essential"]') as HTMLButtonElement;
+      const essentialToggle = container.querySelector(
+        '[data-category="essential"]'
+      ) as HTMLButtonElement;
 
       essentialToggle.click();
 
@@ -457,7 +497,9 @@ describe('BannerUI', () => {
       const setConsentSpy = jest.spyOn(manager, 'setConsent');
 
       // Toggle analytics on
-      const analyticsToggle = container.querySelector('[data-category="analytics"]') as HTMLButtonElement;
+      const analyticsToggle = container.querySelector(
+        '[data-category="analytics"]'
+      ) as HTMLButtonElement;
       analyticsToggle.click();
 
       // Save
@@ -689,7 +731,9 @@ describe('BannerUI', () => {
 
       it('returns focus to footer toggle after consent', (done) => {
         bannerUI.renderFooterToggle();
-        const footerToggle = document.querySelector('.consentpro-footer-toggle') as HTMLButtonElement;
+        const footerToggle = document.querySelector(
+          '.consentpro-footer-toggle'
+        ) as HTMLButtonElement;
 
         // Give initial consent to show footer toggle
         bannerUI.show();
@@ -734,7 +778,9 @@ describe('BannerUI', () => {
 
       it('renders aria-live region in Layer 2', () => {
         bannerUI.show();
-        const settingsBtn = container.querySelector('[data-action="settings"]') as HTMLButtonElement;
+        const settingsBtn = container.querySelector(
+          '[data-action="settings"]'
+        ) as HTMLButtonElement;
         settingsBtn.click();
 
         const liveRegion = container.querySelector('#consentpro-live-region');
@@ -762,7 +808,9 @@ describe('BannerUI', () => {
 
       it('announces "Preferences saved" on Save from Layer 2', () => {
         bannerUI.show();
-        const settingsBtn = container.querySelector('[data-action="settings"]') as HTMLButtonElement;
+        const settingsBtn = container.querySelector(
+          '[data-action="settings"]'
+        ) as HTMLButtonElement;
         settingsBtn.click();
 
         const saveBtn = container.querySelector('[data-action="save"]') as HTMLButtonElement;

@@ -33,7 +33,9 @@
   border-radius: $consentpro-radius-sm;
   color: $consentpro-text;
   cursor: pointer;
-  transition: background-color 150ms, border-color 150ms;
+  transition:
+    background-color 150ms,
+    border-color 150ms;
 
   svg {
     width: 20px;
