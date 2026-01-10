@@ -56,6 +56,25 @@ class ConsentPro_Banner {
 	 */
 	public function render(): void {
 		$config = $this->get_config();
+
+		/**
+		 * Filter the banner configuration array.
+		 *
+		 * Allows modification of the banner configuration before it is
+		 * output to the frontend as JSON in the data-config attribute.
+		 *
+		 * @since 1.0.0
+		 * @param array $config {
+		 *     Banner configuration.
+		 *
+		 *     @type string|null $geo        Detected region ('EU', 'CA', or null).
+		 *     @type bool        $geoEnabled Whether geo-targeting is enabled.
+		 *     @type string      $policyUrl  Privacy policy URL.
+		 *     @type array       $categories Consent categories array.
+		 *     @type array       $text       Banner text strings.
+		 *     @type array       $colors     Banner color settings.
+		 * }
+		 */
 		$config = apply_filters( 'consentpro_config', $config );
 
 		printf(
@@ -157,6 +176,23 @@ class ConsentPro_Banner {
 			];
 		}
 
+		/**
+		 * Filter the consent categories array.
+		 *
+		 * Allows modification of categories before they are included
+		 * in the banner configuration. Use this to add custom categories
+		 * or modify existing category descriptions.
+		 *
+		 * @since 1.0.0
+		 * @param array $formatted {
+		 *     Array of category objects.
+		 *
+		 *     @type string $id          Category identifier (e.g., 'analytics').
+		 *     @type string $name        Display name.
+		 *     @type string $description Category description.
+		 *     @type bool   $required    Whether category is required (true for 'essential').
+		 * }
+		 */
 		return apply_filters( 'consentpro_categories', $formatted );
 	}
 

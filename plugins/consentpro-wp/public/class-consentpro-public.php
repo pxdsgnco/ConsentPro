@@ -40,9 +40,19 @@ class ConsentPro_Public {
 			return;
 		}
 
+		/**
+		 * Filter the base URL for ConsentPro assets.
+		 *
+		 * Useful for serving assets from a CDN or custom location.
+		 *
+		 * @since 1.0.0
+		 * @param string $url The base URL for assets. Default is plugin URL.
+		 */
+		$assets_url = apply_filters( 'consentpro_assets_url', CONSENTPRO_PLUGIN_URL );
+
 		wp_enqueue_style(
 			'consentpro',
-			CONSENTPRO_PLUGIN_URL . 'assets/consentpro.min.css',
+			$assets_url . 'assets/consentpro.min.css',
 			[],
 			$this->version
 		);
@@ -58,9 +68,12 @@ class ConsentPro_Public {
 			return;
 		}
 
+		/** This filter is documented in public/class-consentpro-public.php */
+		$assets_url = apply_filters( 'consentpro_assets_url', CONSENTPRO_PLUGIN_URL );
+
 		wp_enqueue_script(
 			'consentpro',
-			CONSENTPRO_PLUGIN_URL . 'assets/consentpro.min.js',
+			$assets_url . 'assets/consentpro.min.js',
 			[],
 			$this->version,
 			true
@@ -110,8 +123,11 @@ class ConsentPro_Public {
 			return $urls;
 		}
 
+		/** This filter is documented in public/class-consentpro-public.php */
+		$assets_url = apply_filters( 'consentpro_assets_url', CONSENTPRO_PLUGIN_URL );
+
 		$urls[] = [
-			'href' => CONSENTPRO_PLUGIN_URL . 'assets/consentpro.min.css',
+			'href' => $assets_url . 'assets/consentpro.min.css',
 			'as'   => 'style',
 		];
 
@@ -220,7 +236,12 @@ JS;
 			return false;
 		}
 
-		// Allow filtering.
+		/**
+		 * Filter whether the consent banner should be displayed.
+		 *
+		 * @since 1.0.0
+		 * @param bool $should_show Whether to show the banner. Default true.
+		 */
 		return apply_filters( 'consentpro_should_show', true );
 	}
 

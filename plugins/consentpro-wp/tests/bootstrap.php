@@ -17,6 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $consentpro_test_options;
 $consentpro_test_options = [];
 
+// Global test filters storage.
+global $consentpro_test_filters;
+$consentpro_test_filters = [];
+
 // Stub WordPress functions used in tests.
 if ( ! function_exists( 'get_option' ) ) {
 	/**
@@ -166,5 +170,137 @@ if ( ! function_exists( 'register_setting' ) ) {
 	}
 }
 
+if ( ! function_exists( 'apply_filters' ) ) {
+	/**
+	 * Mock apply_filters for testing.
+	 *
+	 * @param string $hook_name Filter hook name.
+	 * @param mixed  $value     Value to filter.
+	 * @param mixed  ...$args   Additional arguments.
+	 * @return mixed
+	 */
+	function apply_filters( $hook_name, $value, ...$args ) {
+		global $consentpro_test_filters;
+		if ( isset( $consentpro_test_filters[ $hook_name ] ) ) {
+			foreach ( $consentpro_test_filters[ $hook_name ] as $callback ) {
+				$value = call_user_func_array( $callback, array_merge( [ $value ], $args ) );
+			}
+		}
+		return $value;
+	}
+}
+
+if ( ! function_exists( 'add_filter' ) ) {
+	/**
+	 * Mock add_filter for testing.
+	 *
+	 * @param string   $hook_name     Filter hook name.
+	 * @param callable $callback      Callback function.
+	 * @param int      $priority      Priority (unused in mock).
+	 * @param int      $accepted_args Number of args (unused in mock).
+	 * @return bool
+	 */
+	function add_filter( $hook_name, $callback, $priority = 10, $accepted_args = 1 ) {
+		global $consentpro_test_filters;
+		if ( ! isset( $consentpro_test_filters[ $hook_name ] ) ) {
+			$consentpro_test_filters[ $hook_name ] = [];
+		}
+		$consentpro_test_filters[ $hook_name ][] = $callback;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'remove_all_filters' ) ) {
+	/**
+	 * Mock remove_all_filters for testing.
+	 *
+	 * @param string $hook_name Filter hook name.
+	 * @return bool
+	 */
+	function remove_all_filters( $hook_name ) {
+		global $consentpro_test_filters;
+		unset( $consentpro_test_filters[ $hook_name ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_json_encode' ) ) {
+	/**
+	 * Mock wp_json_encode for testing.
+	 *
+	 * @param mixed $data Data to encode.
+	 * @param int   $options JSON options.
+	 * @param int   $depth Max depth.
+	 * @return string|false
+	 */
+	function wp_json_encode( $data, $options = 0, $depth = 512 ) {
+		return json_encode( $data, $options, $depth );
+	}
+}
+
+if ( ! function_exists( 'esc_attr' ) ) {
+	/**
+	 * Mock esc_attr for testing.
+	 *
+	 * @param string $text Text to escape.
+	 * @return string
+	 */
+	function esc_attr( $text ) {
+		return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+
+if ( ! function_exists( 'wp_unslash' ) ) {
+	/**
+	 * Mock wp_unslash for testing.
+	 *
+	 * @param string|array $value Value to unslash.
+	 * @return string|array
+	 */
+	function wp_unslash( $value ) {
+		return is_array( $value ) ? array_map( 'stripslashes', $value ) : stripslashes( $value );
+	}
+}
+
+if ( ! function_exists( '__' ) ) {
+	/**
+	 * Mock __ for testing.
+	 *
+	 * @param string $text   Text to translate.
+	 * @param string $domain Text domain.
+	 * @return string
+	 */
+	function __( $text, $domain = 'default' ) {
+		return $text;
+	}
+}
+
+if ( ! function_exists( 'wp_kses' ) ) {
+	/**
+	 * Mock wp_kses for testing.
+	 *
+	 * @param string $content Content to filter.
+	 * @param array  $allowed_html Allowed HTML elements.
+	 * @param array  $allowed_protocols Allowed protocols.
+	 * @return string
+	 */
+	function wp_kses( $content, $allowed_html, $allowed_protocols = [] ) {
+		// Simple implementation: strip all tags except allowed ones.
+		$allowed_tags = '';
+		if ( is_array( $allowed_html ) ) {
+			foreach ( array_keys( $allowed_html ) as $tag ) {
+				$allowed_tags .= '<' . $tag . '>';
+			}
+		}
+		return strip_tags( $content, $allowed_tags );
+	}
+}
+
+// Define plugin URL constant for testing.
+if ( ! defined( 'CONSENTPRO_PLUGIN_URL' ) ) {
+	define( 'CONSENTPRO_PLUGIN_URL', 'https://example.com/wp-content/plugins/consentpro/' );
+}
+
 // Load plugin files for testing.
 require_once dirname( __DIR__ ) . '/admin/class-consentpro-settings.php';
+require_once dirname( __DIR__ ) . '/public/class-consentpro-banner.php';
