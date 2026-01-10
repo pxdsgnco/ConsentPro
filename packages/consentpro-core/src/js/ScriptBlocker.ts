@@ -5,12 +5,14 @@ import type {
 } from './types';
 
 /**
- * Default options for ScriptBlocker
+ * Default options for ScriptBlocker (observeRoot deferred for SSR safety)
  */
-const DEFAULT_OPTIONS: Required<ScriptBlockerOptions> = {
+const DEFAULT_OPTIONS: Omit<Required<ScriptBlockerOptions>, 'observeRoot'> & {
+  observeRoot: Element | null;
+} = {
   attributeName: 'data-consentpro',
   observeDynamicScripts: true,
-  observeRoot: document.documentElement,
+  observeRoot: null, // Deferred to constructor/runtime to avoid SSR issues
 };
 
 /**
@@ -41,7 +43,13 @@ export class ScriptBlocker {
   private _initialized = false;
 
   constructor(options?: ScriptBlockerOptions) {
-    this._options = { ...DEFAULT_OPTIONS, ...options };
+    // Set observeRoot at runtime for SSR safety
+    const runtimeDefaults = {
+      ...DEFAULT_OPTIONS,
+      observeRoot:
+        typeof document !== 'undefined' ? document.documentElement : null,
+    };
+    this._options = { ...runtimeDefaults, ...options } as Required<ScriptBlockerOptions>;
     this._executedScripts = new WeakSet();
     this._boundHandleConsentEvent = this._handleConsentEvent.bind(this);
   }
@@ -273,7 +281,9 @@ export class ScriptBlocker {
 
     // Handle external vs inline scripts
     if (original.src) {
-      // External script - set src to trigger load
+      // External script - set async=false BEFORE src to preserve DOM order execution
+      // (dynamically inserted scripts default to async=true in browsers)
+      newScript.async = false;
       newScript.src = original.src;
     } else {
       // Inline script - copy content
