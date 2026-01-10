@@ -51,8 +51,26 @@ class ConsentPro {
 	 * @return void
 	 */
 	public function run(): void {
+		$this->maybe_upgrade();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+	}
+
+	/**
+	 * Check for database upgrades and run migrations if needed.
+	 *
+	 * WordPress does not re-run activation hooks on plugin updates,
+	 * so we must check for needed migrations on each load.
+	 *
+	 * @return void
+	 */
+	private function maybe_upgrade(): void {
+		$current_db_version = get_option( 'consentpro_db_version', '0' );
+
+		// Create consent log table if it doesn't exist (upgrade from pre-1.0.0).
+		if ( version_compare( $current_db_version, '1.0.0', '<' ) ) {
+			ConsentPro_Consent_Log::create_table();
+		}
 	}
 
 	/**
