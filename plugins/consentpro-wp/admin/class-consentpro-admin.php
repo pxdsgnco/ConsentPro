@@ -66,10 +66,12 @@ class ConsentPro_Admin {
 			return;
 		}
 
+		wp_enqueue_style( 'wp-color-picker' );
+
 		wp_enqueue_style(
 			'consentpro-admin',
 			CONSENTPRO_PLUGIN_URL . 'admin/assets/admin.css',
-			[],
+			[ 'wp-color-picker' ],
 			$this->version
 		);
 	}
@@ -88,7 +90,7 @@ class ConsentPro_Admin {
 		wp_enqueue_script(
 			'consentpro-admin',
 			CONSENTPRO_PLUGIN_URL . 'admin/assets/admin.js',
-			[],
+			[ 'jquery', 'wp-color-picker' ],
 			$this->version,
 			true
 		);
