@@ -99,6 +99,10 @@ class ConsentPro {
 		if ( ! wp_next_scheduled( 'consentpro_prune_consent_log' ) ) {
 			wp_schedule_event( time(), 'daily', 'consentpro_prune_consent_log' );
 		}
+
+		// Schedule weekly license validation.
+		add_action( 'consentpro_validate_license', [ $this, 'validate_license_cron' ] );
+		ConsentPro_License::schedule_validation();
 	}
 
 	/**
@@ -113,6 +117,28 @@ class ConsentPro {
 
 		$consent_log = new ConsentPro_Consent_Log();
 		$consent_log->prune_old_entries( 90 );
+	}
+
+	/**
+	 * Validate license via cron.
+	 *
+	 * @return void
+	 */
+	public function validate_license_cron(): void {
+		$license_key = get_option( 'consentpro_license_key', '' );
+
+		if ( empty( $license_key ) ) {
+			return;
+		}
+
+		$result = ConsentPro_License::validate( $license_key );
+
+		// Log validation failures.
+		if ( empty( $result['valid'] ) ) {
+			$error = $result['error'] ?? 'Unknown error';
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( '[ConsentPro] License validation failed: %s', $error ) );
+		}
 	}
 
 	/**

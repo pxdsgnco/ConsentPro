@@ -462,3 +462,245 @@
 .consentpro-log-info {
   margin-top: 15px;
 }
+
+/* ====================== */
+/* License Tab Styles     */
+/* ====================== */
+.consentpro-license-container {
+  max-width: 800px;
+}
+
+.consentpro-license-card {
+  background: #fff;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.consentpro-license-card__header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #c3c4c7;
+  background: #f9fafb;
+}
+
+.consentpro-license-card__header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.consentpro-license-card__body {
+  padding: 20px;
+}
+
+/* License Status Display */
+.consentpro-license-status-display {
+  padding: 10px 0;
+}
+
+.consentpro-license-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 6px;
+}
+
+.consentpro-license-indicator--active {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border: 1px solid #6ee7b7;
+}
+
+.consentpro-license-indicator--inactive {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.consentpro-license-indicator__icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.consentpro-license-indicator--active .consentpro-license-indicator__icon {
+  color: #059669;
+}
+
+.consentpro-license-indicator--inactive .consentpro-license-indicator__icon {
+  color: #6b7280;
+}
+
+.consentpro-license-indicator__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.consentpro-license-indicator__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.consentpro-license-indicator__tier {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.consentpro-license-indicator--active .consentpro-license-indicator__label {
+  color: #065f46;
+}
+
+.consentpro-license-indicator--active .consentpro-license-indicator__tier {
+  color: #047857;
+}
+
+/* License Expiry */
+.consentpro-license-expiry {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Grace Period Warning */
+.consentpro-license-grace-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.consentpro-license-grace-warning .dashicons {
+  color: #d97706;
+}
+
+/* License Form */
+.consentpro-license-form {
+  max-width: 500px;
+}
+
+.consentpro-license-input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.consentpro-license-input-group input[type="text"] {
+  flex: 1;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
+.consentpro-license-input-group .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.consentpro-license-input-group .consentpro-btn-spinner {
+  margin: 0;
+  float: none;
+}
+
+.consentpro-license-input-group .consentpro-btn-spinner.is-active {
+  visibility: visible;
+}
+
+/* License Message Area */
+.consentpro-license-message {
+  margin-top: 15px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.consentpro-license-message--success {
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+}
+
+.consentpro-license-message--error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+/* Pro Features List */
+.consentpro-features-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.consentpro-features-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.consentpro-features-list li:last-child {
+  border-bottom: none;
+}
+
+.consentpro-features-list .dashicons-yes {
+  color: #059669;
+}
+
+/* Upgrade CTA */
+.consentpro-upgrade-cta {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ====================== */
+/* Custom CSS Field       */
+/* ====================== */
+.consentpro-custom-css-wrapper {
+  max-width: 600px;
+}
+
+.consentpro-custom-css-field {
+  width: 100%;
+  min-height: 200px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  tab-size: 2;
+  resize: vertical;
+}
+
+.consentpro-custom-css-help {
+  margin-top: 10px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+.consentpro-custom-css-help p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.consentpro-custom-css-help code {
+  display: block;
+  margin-top: 4px;
+  padding: 8px;
+  background: #1f2937;
+  color: #e5e7eb;
+  border-radius: 3px;
+  font-size: 11px;
+  white-space: pre-wrap;
+}

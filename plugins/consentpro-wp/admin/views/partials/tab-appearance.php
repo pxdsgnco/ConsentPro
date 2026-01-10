@@ -186,5 +186,40 @@ $consentpro_text_defaults = [
 		</tr>
 	</table>
 
+	<h2 class="consentpro-section-title"><?php esc_html_e( 'Custom CSS', 'consentpro' ); ?></h2>
+	<?php if ( ConsentPro_License::is_pro() ) : ?>
+		<p class="description"><?php esc_html_e( 'Add custom CSS to style the consent banner. Styles are injected in the frontend.', 'consentpro' ); ?></p>
+		<div class="consentpro-custom-css-wrapper">
+			<textarea
+				id="consentpro-custom-css"
+				name="consentpro_appearance[custom_css]"
+				class="consentpro-custom-css-field"
+				rows="12"
+				placeholder="/* Custom banner styles */
+.consentpro-banner {
+  /* Your styles here */
+}"
+				aria-describedby="consentpro-custom-css-desc"
+			><?php echo esc_textarea( $consentpro_options['custom_css'] ?? '' ); ?></textarea>
+			<div class="consentpro-custom-css-help" id="consentpro-custom-css-desc">
+				<p><?php esc_html_e( 'Example: Change button border radius and banner shadow', 'consentpro' ); ?></p>
+				<code>.consentpro-banner {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+.consentpro-btn {
+  border-radius: 20px;
+}</code>
+			</div>
+		</div>
+	<?php else : ?>
+		<div class="consentpro-pro-notice">
+			<h3><?php esc_html_e( 'Custom CSS is a Pro Feature', 'consentpro' ); ?></h3>
+			<p><?php esc_html_e( 'Upgrade to ConsentPro Pro to add custom CSS styling to your consent banner.', 'consentpro' ); ?></p>
+			<a href="https://consentpro.io/pricing" target="_blank" class="button button-primary">
+				<?php esc_html_e( 'Upgrade to Pro', 'consentpro' ); ?>
+			</a>
+		</div>
+	<?php endif; ?>
+
 	<?php submit_button(); ?>
 </form>

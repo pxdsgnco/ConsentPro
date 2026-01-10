@@ -763,10 +763,84 @@
     });
   }
 
+  // =====================
+  // License Validation
+  // =====================
+
+  /**
+   * Initialize license validation functionality.
+   */
+  function initLicenseValidation() {
+    var $validateBtn = $('#consentpro-validate-license');
+    if (!$validateBtn.length) return;
+
+    $validateBtn.on('click', function () {
+      var $btn = $(this);
+      var $input = $('#consentpro-license-key');
+      var $message = $('#consentpro-license-message');
+      var $spinner = $btn.find('.consentpro-btn-spinner');
+      var $btnText = $btn.find('.consentpro-btn-text');
+      var admin = window.consentproAdmin || {};
+      var licenseKey = $input.val().trim();
+
+      if (!licenseKey) {
+        showLicenseMessage($message, 'Please enter a license key.', 'error');
+        return;
+      }
+
+      // Show loading state.
+      $btn.prop('disabled', true);
+      $spinner.css('display', 'inline-block').addClass('is-active');
+      $btnText.text('Validating...');
+      $message.hide();
+
+      $.post(admin.ajaxUrl, {
+        action: 'consentpro_validate_license',
+        nonce: admin.nonce,
+        license_key: licenseKey,
+      })
+        .done(function (response) {
+          if (response.success) {
+            showLicenseMessage($message, response.data.message, 'success');
+            // Reload after short delay to show updated status.
+            setTimeout(function () {
+              location.reload();
+            }, 1500);
+          } else {
+            showLicenseMessage($message, response.data.message || 'Validation failed.', 'error');
+          }
+        })
+        .fail(function () {
+          showLicenseMessage($message, 'Connection error. Please try again.', 'error');
+        })
+        .always(function () {
+          $btn.prop('disabled', false);
+          $spinner.css('display', 'none').removeClass('is-active');
+          $btnText.text('Activate License');
+        });
+    });
+  }
+
+  /**
+   * Show license validation message.
+   *
+   * @param {jQuery} $container Message container.
+   * @param {string} message Message text.
+   * @param {string} type Message type (success|error).
+   */
+  function showLicenseMessage($container, message, type) {
+    $container
+      .removeClass('consentpro-license-message--success consentpro-license-message--error')
+      .addClass('consentpro-license-message--' + type)
+      .html('<span class="dashicons dashicons-' + (type === 'success' ? 'yes' : 'no') + '"></span> ' + escapeHtml(message))
+      .show();
+  }
+
   // Initialize on DOM ready.
   $(document).ready(function () {
     initColorPickers();
     initPreview();
     initConsentLog();
+    initLicenseValidation();
   });
 })(jQuery);

@@ -162,6 +162,77 @@ class ConsentPro_Public {
 		$css .= '}';
 
 		printf( '<style id="consentpro-css-vars">%s</style>', $css ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSS is escaped above.
+
+		// Output custom CSS if Pro license and CSS is set.
+		$this->output_custom_css( $appearance );
+	}
+
+	/**
+	 * Output custom CSS for banner styling.
+	 *
+	 * Only outputs if Pro license is active and custom CSS is set.
+	 * Sanitizes CSS to remove potentially harmful content.
+	 *
+	 * @param array $appearance Appearance settings.
+	 * @return void
+	 */
+	private function output_custom_css( array $appearance ): void {
+		// Only output for Pro users.
+		if ( ! ConsentPro_License::is_pro() ) {
+			return;
+		}
+
+		$custom_css = $appearance['custom_css'] ?? '';
+
+		if ( empty( $custom_css ) ) {
+			return;
+		}
+
+		// Sanitize CSS: strip script tags and other potentially harmful content.
+		$custom_css = $this->sanitize_css( $custom_css );
+
+		if ( empty( $custom_css ) ) {
+			return;
+		}
+
+		printf( '<style id="consentpro-custom-css">%s</style>', $custom_css ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSS sanitized above.
+	}
+
+	/**
+	 * Sanitize CSS input.
+	 *
+	 * Removes potentially harmful content from CSS:
+	 * - Script tags
+	 * - JavaScript URLs
+	 * - Expression() functions
+	 * - Behavior URLs
+	 *
+	 * @param string $css Raw CSS input.
+	 * @return string Sanitized CSS.
+	 */
+	private function sanitize_css( string $css ): string {
+		// Remove any script tags.
+		$css = preg_replace( '/<script\b[^>]*>.*?<\/script>/is', '', $css );
+
+		// Remove JavaScript protocol URLs.
+		$css = preg_replace( '/javascript\s*:/i', '', $css );
+
+		// Remove expression() - IE CSS expressions.
+		$css = preg_replace( '/expression\s*\(/i', '', $css );
+
+		// Remove behavior URLs - IE behavior.
+		$css = preg_replace( '/behavior\s*:/i', '', $css );
+
+		// Remove -moz-binding - Mozilla XBL.
+		$css = preg_replace( '/-moz-binding\s*:/i', '', $css );
+
+		// Remove data: URLs (can contain JavaScript).
+		$css = preg_replace( '/url\s*\(\s*[\'"]?\s*data:/i', 'url(', $css );
+
+		// Trim whitespace.
+		$css = trim( $css );
+
+		return $css;
 	}
 
 	/**

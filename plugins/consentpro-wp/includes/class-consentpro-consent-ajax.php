@@ -24,6 +24,7 @@ class ConsentPro_Consent_Ajax {
 		add_action( 'wp_ajax_consentpro_get_metrics', [ $this, 'get_metrics' ] );
 		add_action( 'wp_ajax_consentpro_get_log_entries', [ $this, 'get_log_entries' ] );
 		add_action( 'wp_ajax_consentpro_clear_log', [ $this, 'clear_log' ] );
+		add_action( 'wp_ajax_consentpro_validate_license', [ $this, 'validate_license' ] );
 	}
 
 	/**
@@ -106,5 +107,44 @@ class ConsentPro_Consent_Ajax {
 				'deleted' => $deleted,
 			]
 		);
+	}
+
+	/**
+	 * Validate license key via remote API.
+	 *
+	 * @return void
+	 */
+	public function validate_license(): void {
+		check_ajax_referer( 'consentpro_admin_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Unauthorized', 'consentpro' ) ], 403 );
+		}
+
+		$license_key = isset( $_POST['license_key'] ) ? sanitize_text_field( wp_unslash( $_POST['license_key'] ) ) : '';
+
+		if ( empty( $license_key ) ) {
+			wp_send_json_error( [ 'message' => __( 'Please enter a license key.', 'consentpro' ) ] );
+		}
+
+		// Save the license key.
+		update_option( 'consentpro_license_key', $license_key );
+
+		// Validate with remote API.
+		$result = ConsentPro_License::validate( $license_key );
+
+		if ( ! empty( $result['valid'] ) ) {
+			wp_send_json_success(
+				[
+					'message' => __( 'License activated successfully!', 'consentpro' ),
+					'tier'    => $result['tier'] ?? 'pro',
+					'expires' => $result['expires'] ?? null,
+					'valid'   => true,
+				]
+			);
+		} else {
+			$error_message = $result['error'] ?? __( 'Invalid license key.', 'consentpro' );
+			wp_send_json_error( [ 'message' => $error_message ] );
+		}
 	}
 }
