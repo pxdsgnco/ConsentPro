@@ -65,6 +65,9 @@ class ConsentPro_Public {
 			$this->version,
 			true
 		);
+
+		// Add init script inline after the main script.
+		wp_add_inline_script( 'consentpro', $this->get_init_script(), 'after' );
 	}
 
 	/**
@@ -157,12 +160,10 @@ class ConsentPro_Public {
 
 		$banner = new ConsentPro_Banner();
 		$banner->render();
-
-		$this->output_init_script();
 	}
 
 	/**
-	 * Output inline initialization script.
+	 * Get inline initialization script.
 	 *
 	 * The core JS (IIFE) exports window.ConsentPro with:
 	 * - ConsentManager
@@ -170,10 +171,10 @@ class ConsentPro_Public {
 	 * - GeoDetector
 	 * - ScriptBlocker
 	 *
-	 * @return void
+	 * @return string Initialization script.
 	 */
-	private function output_init_script(): void {
-		$init_script = <<<'JS'
+	private function get_init_script(): string {
+		return <<<'JS'
 (function(){
 'use strict';
 function initConsentPro(){
@@ -204,8 +205,6 @@ initConsentPro();
 }
 })();
 JS;
-
-		printf( '<script id="consentpro-init">%s</script>', $init_script ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static script, no user input.
 	}
 
 	/**
@@ -223,5 +222,37 @@ JS;
 
 		// Allow filtering.
 		return apply_filters( 'consentpro_should_show', true );
+	}
+
+	/**
+	 * Check for consent cookie and log if present.
+	 *
+	 * Reads the consent cookie set by the frontend JS and logs
+	 * the consent event to the database for metrics tracking.
+	 *
+	 * @return void
+	 */
+	public function maybe_log_consent(): void {
+		// Only log if Pro license active.
+		if ( ! ConsentPro_License::is_pro() ) {
+			return;
+		}
+
+		// Check for consent cookie.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		if ( ! isset( $_COOKIE['consentpro'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		$cookie_value = sanitize_text_field( wp_unslash( $_COOKIE['consentpro'] ) );
+		$consent_data = json_decode( urldecode( $cookie_value ), true );
+
+		if ( ! is_array( $consent_data ) || empty( $consent_data['categories'] ) ) {
+			return;
+		}
+
+		$consent_log = new ConsentPro_Consent_Log();
+		$consent_log->log_consent( $consent_data );
 	}
 }

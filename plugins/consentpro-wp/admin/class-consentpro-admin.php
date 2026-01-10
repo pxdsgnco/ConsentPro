@@ -119,6 +119,24 @@ class ConsentPro_Admin {
 		];
 
 		wp_localize_script( 'consentpro-admin', 'consentproPreviewConfig', $preview_config );
+
+		// Localize AJAX configuration for consent log.
+		wp_localize_script(
+			'consentpro-admin',
+			'consentproAdmin',
+			[
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'consentpro_admin_nonce' ),
+				'i18n'    => [
+					'confirmClear' => __( 'Are you sure you want to clear all consent log entries? This action cannot be undone.', 'consentpro' ),
+					'clearing'     => __( 'Clearing...', 'consentpro' ),
+					'clearLog'     => __( 'Clear Log', 'consentpro' ),
+					'loading'      => __( 'Loading...', 'consentpro' ),
+					'noEntries'    => __( 'No consent records found.', 'consentpro' ),
+					'errorLoading' => __( 'Error loading data. Please try again.', 'consentpro' ),
+				],
+			]
+		);
 	}
 
 	/**

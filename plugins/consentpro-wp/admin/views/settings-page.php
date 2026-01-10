@@ -64,19 +64,39 @@ $consentpro_show_preview = in_array( $consentpro_active_tab, [ 'appearance', 'ca
 		<aside class="consentpro-preview-panel" aria-labelledby="consentpro-preview-title">
 			<div class="consentpro-preview-header">
 				<h2 id="consentpro-preview-title"><?php esc_html_e( 'Banner Preview', 'consentpro' ); ?></h2>
-				<div class="consentpro-preview-controls" role="group" aria-label="<?php esc_attr_e( 'Preview layer toggle', 'consentpro' ); ?>">
-					<button type="button"
-							class="consentpro-preview-toggle consentpro-preview-toggle--active"
-							data-layer="1"
-							aria-pressed="true">
-						<?php esc_html_e( 'Layer 1', 'consentpro' ); ?>
-					</button>
-					<button type="button"
-							class="consentpro-preview-toggle"
-							data-layer="2"
-							aria-pressed="false">
-						<?php esc_html_e( 'Layer 2', 'consentpro' ); ?>
-					</button>
+				<div class="consentpro-preview-controls-wrapper">
+					<div class="consentpro-preview-controls" role="group" aria-label="<?php esc_attr_e( 'Preview layer toggle', 'consentpro' ); ?>">
+						<button type="button"
+								class="consentpro-preview-toggle consentpro-preview-toggle--active"
+								data-layer="1"
+								aria-pressed="true">
+							<?php esc_html_e( 'Layer 1', 'consentpro' ); ?>
+						</button>
+						<button type="button"
+								class="consentpro-preview-toggle"
+								data-layer="2"
+								aria-pressed="false">
+							<?php esc_html_e( 'Layer 2', 'consentpro' ); ?>
+						</button>
+					</div>
+					<div class="consentpro-viewport-controls" role="group" aria-label="<?php esc_attr_e( 'Preview viewport toggle', 'consentpro' ); ?>">
+						<button type="button"
+								class="consentpro-viewport-toggle"
+								data-viewport="desktop"
+								aria-pressed="true"
+								title="<?php esc_attr_e( 'Desktop view', 'consentpro' ); ?>">
+							<span class="dashicons dashicons-desktop"></span>
+							<span class="screen-reader-text"><?php esc_html_e( 'Desktop', 'consentpro' ); ?></span>
+						</button>
+						<button type="button"
+								class="consentpro-viewport-toggle"
+								data-viewport="mobile"
+								aria-pressed="false"
+								title="<?php esc_attr_e( 'Mobile view', 'consentpro' ); ?>">
+							<span class="dashicons dashicons-smartphone"></span>
+							<span class="screen-reader-text"><?php esc_html_e( 'Mobile', 'consentpro' ); ?></span>
+						</button>
+					</div>
 				</div>
 			</div>
 			<div class="consentpro-preview-frame-wrapper">
@@ -87,7 +107,7 @@ $consentpro_show_preview = in_array( $consentpro_active_tab, [ 'appearance', 'ca
 						aria-live="polite"></iframe>
 			</div>
 			<p class="consentpro-preview-note">
-				<?php esc_html_e( 'Preview updates when you save settings.', 'consentpro' ); ?>
+				<?php esc_html_e( 'Preview updates as you type. Save to apply changes to your site.', 'consentpro' ); ?>
 			</p>
 		</aside>
 		<?php endif; ?>
