@@ -11,7 +11,9 @@ export class BannerUI {
   // eslint-disable-next-line no-unused-vars
   private _boundKeyHandler: ((e: KeyboardEvent) => void) | null = null;
 
-  constructor(manager: ConsentManager) { this._manager = manager; }
+  constructor(manager: ConsentManager) {
+    this._manager = manager;
+  }
 
   init(containerId: string, config: BannerConfig): void {
     this._container = document.getElementById(containerId);
@@ -38,7 +40,9 @@ export class BannerUI {
     this._returnFocus();
   }
 
-  getConsent(): ReturnType<ConsentManager['getConsent']> { return this._manager.getConsent(); }
+  getConsent(): ReturnType<ConsentManager['getConsent']> {
+    return this._manager.getConsent();
+  }
 
   /**
    * Render Layer 1 - Quick actions banner
@@ -211,11 +215,21 @@ export class BannerUI {
   }
 
   private _handleAcceptAll(): void {
-    this._saveAndClose({ essential: true, analytics: true, marketing: true, personalization: true });
+    this._saveAndClose({
+      essential: true,
+      analytics: true,
+      marketing: true,
+      personalization: true,
+    });
   }
 
   private _handleRejectNonEssential(): void {
-    this._saveAndClose({ essential: true, analytics: false, marketing: false, personalization: false });
+    this._saveAndClose({
+      essential: true,
+      analytics: false,
+      marketing: false,
+      personalization: false,
+    });
   }
 
   /**
@@ -265,9 +279,16 @@ export class BannerUI {
       } else if (e.key === 'Tab') {
         const els = this._getFocusableElements();
         if (!els.length) return;
-        const first = els[0], last = els[els.length - 1], active = document.activeElement;
-        if (e.shiftKey && active === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); }
+        const first = els[0],
+          last = els[els.length - 1],
+          active = document.activeElement;
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     document.addEventListener('keydown', this._boundKeyHandler);

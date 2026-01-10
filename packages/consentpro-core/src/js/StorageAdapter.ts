@@ -10,7 +10,11 @@ const MAX_AGE = 31536000; // 365 days
 export class StorageAdapter {
   set(data: ConsentData): void {
     const json = JSON.stringify(data);
-    try { localStorage.setItem(STORAGE_KEY, json); } catch { /* ignore */ }
+    try {
+      localStorage.setItem(STORAGE_KEY, json);
+    } catch {
+      /* ignore */
+    }
     document.cookie = `${COOKIE_NAME}=${encodeURIComponent(json)}; max-age=${MAX_AGE}; path=/; SameSite=Lax`;
   }
 
@@ -18,14 +22,25 @@ export class StorageAdapter {
     try {
       const ls = localStorage.getItem(STORAGE_KEY);
       if (ls) return JSON.parse(ls) as ConsentData;
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     const c = this._getCookie(COOKIE_NAME);
-    if (c) try { return JSON.parse(decodeURIComponent(c)) as ConsentData; } catch { /* ignore */ }
+    if (c)
+      try {
+        return JSON.parse(decodeURIComponent(c)) as ConsentData;
+      } catch {
+        /* ignore */
+      }
     return null;
   }
 
   clear(): void {
-    try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
     document.cookie = `${COOKIE_NAME}=; max-age=0; path=/;`;
   }
 

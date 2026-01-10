@@ -2,13 +2,20 @@
 
 // Banner transition - Show (300ms ease-out) / Hide (200ms ease-in)
 .consentpro {
-  transition: transform $consentpro-hide-duration $consentpro-easing-in, visibility $consentpro-hide-duration;
+  transition:
+    transform $consentpro-hide-duration $consentpro-easing-in,
+    visibility $consentpro-hide-duration;
 
   &--visible {
-    transition: transform $consentpro-show-duration $consentpro-easing-out, visibility $consentpro-show-duration;
+    transition:
+      transform $consentpro-show-duration $consentpro-easing-out,
+      visibility $consentpro-show-duration;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    &, &--visible { transition: none; }
+    &,
+    &--visible {
+      transition: none;
+    }
   }
 }

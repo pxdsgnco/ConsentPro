@@ -28,8 +28,15 @@ export class ConsentManager {
 
   setConsent(categories: Partial<ConsentCategories>): void {
     const data: ConsentData = {
-      version: 1, timestamp: Date.now(), geo: this._config?.geo ?? null,
-      categories: { essential: true, analytics: categories.analytics ?? false, marketing: categories.marketing ?? false, personalization: categories.personalization ?? false },
+      version: 1,
+      timestamp: Date.now(),
+      geo: this._config?.geo ?? null,
+      categories: {
+        essential: true,
+        analytics: categories.analytics ?? false,
+        marketing: categories.marketing ?? false,
+        personalization: categories.personalization ?? false,
+      },
       hash: this._computeHash(),
     };
     this._storage.set(data);
@@ -43,11 +50,19 @@ export class ConsentManager {
     return !(this._config && c.hash !== this._computeHash());
   }
 
-  clearConsent(): void { this._storage.clear(); }
+  clearConsent(): void {
+    this._storage.clear();
+  }
 
-  private _computeHash(): string { return 'hash'; }
+  private _computeHash(): string {
+    return 'hash';
+  }
 
   private _dispatchEvent(data: ConsentData): void {
-    document.dispatchEvent(new CustomEvent('consentpro_consent', { detail: { categories: data.categories, timestamp: data.timestamp, geo: data.geo } }));
+    document.dispatchEvent(
+      new CustomEvent('consentpro_consent', {
+        detail: { categories: data.categories, timestamp: data.timestamp, geo: data.geo },
+      })
+    );
   }
 }

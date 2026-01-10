@@ -43,11 +43,15 @@ export class ScriptBlocker {
   }
 
   getBlockedScripts(): HTMLScriptElement[] {
-    return Array.from(document.querySelectorAll<HTMLScriptElement>(`script[type="text/plain"][${this._options.attributeName}]`));
+    return Array.from(
+      document.querySelectorAll<HTMLScriptElement>(
+        `script[type="text/plain"][${this._options.attributeName}]`
+      )
+    );
   }
 
   isCategoryConsented(category: keyof ConsentCategories): boolean {
-    return category === 'essential' || (this._currentConsent?.[category] === true);
+    return category === 'essential' || this._currentConsent?.[category] === true;
   }
 
   updateConsent(categories: ConsentCategories): void {
@@ -83,7 +87,11 @@ export class ScriptBlocker {
     for (const m of mutations) {
       if (m.type !== 'childList') continue;
       for (const n of m.addedNodes) {
-        if (n instanceof HTMLScriptElement && n.type === 'text/plain' && n.hasAttribute(this._options.attributeName)) {
+        if (
+          n instanceof HTMLScriptElement &&
+          n.type === 'text/plain' &&
+          n.hasAttribute(this._options.attributeName)
+        ) {
           this.unblockScript(n);
         }
         if (n instanceof Element) {
@@ -97,10 +105,17 @@ export class ScriptBlocker {
     this._executedScripts.add(original);
     const s = document.createElement('script');
     Array.from(original.attributes).forEach((a) => {
-      if (a.name !== 'type' && a.name !== this._options.attributeName) s.setAttribute(a.name, a.value);
+      if (a.name !== 'type' && a.name !== this._options.attributeName)
+        s.setAttribute(a.name, a.value);
     });
-    if (original.src) { s.async = false; s.src = original.src; }
-    else { s.textContent = original.textContent; }
-    original.parentNode ? original.parentNode.replaceChild(s, original) : document.body.appendChild(s);
+    if (original.src) {
+      s.async = false;
+      s.src = original.src;
+    } else {
+      s.textContent = original.textContent;
+    }
+    original.parentNode
+      ? original.parentNode.replaceChild(s, original)
+      : document.body.appendChild(s);
   }
 }

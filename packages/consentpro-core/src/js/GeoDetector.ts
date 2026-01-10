@@ -9,11 +9,17 @@ export class GeoDetector {
   private static readonly BANNER_SELECTOR = '#consentpro-banner';
   private static readonly CONFIG_ATTRIBUTE = 'data-config';
 
-  static parseConfigFromDOM(selector: string = GeoDetector.BANNER_SELECTOR): Partial<BannerConfig> | null {
+  static parseConfigFromDOM(
+    selector: string = GeoDetector.BANNER_SELECTOR
+  ): Partial<BannerConfig> | null {
     const el = document.querySelector(selector);
     const attr = el?.getAttribute(GeoDetector.CONFIG_ATTRIBUTE);
     if (!attr) return null;
-    try { return JSON.parse(attr) as Partial<BannerConfig>; } catch { return null; }
+    try {
+      return JSON.parse(attr) as Partial<BannerConfig>;
+    } catch {
+      return null;
+    }
   }
 
   static getGeoFromDOM(selector: string = GeoDetector.BANNER_SELECTOR): 'EU' | 'CA' | null {

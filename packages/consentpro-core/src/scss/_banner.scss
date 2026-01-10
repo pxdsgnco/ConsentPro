@@ -66,7 +66,9 @@
   font-size: $consentpro-font-size-base;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color .2s, border-color .2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
 
   &:focus-visible {
     outline: 2px solid $consentpro-primary;
