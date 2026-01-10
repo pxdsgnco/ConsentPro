@@ -1,15 +1,6 @@
-@use 'sass:color';
 @use 'variables' as *;
 
 // Layer 2 Settings Panel
-.consentpro__settings {
-  display: none;
-
-  &--visible {
-    display: block;
-  }
-}
-
 .consentpro__settings-header {
   display: flex;
   align-items: center;
@@ -33,9 +24,7 @@
   border-radius: $consentpro-radius-sm;
   color: $consentpro-text;
   cursor: pointer;
-  transition:
-    background-color 150ms,
-    border-color 150ms;
+  transition: background-color .15s, border-color .15s;
 
   svg {
     width: 20px;
@@ -129,7 +118,7 @@
     height: 28px;
     background-color: $consentpro-border;
     border-radius: 14px;
-    transition: background-color 200ms;
+    transition: background-color .2s;
   }
 
   // Thumb
@@ -143,7 +132,7 @@
     height: 24px;
     background-color: #fff;
     border-radius: 50%;
-    transition: left 200ms;
+    transition: left .2s;
     box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
   }
 
@@ -197,10 +186,10 @@
   color: $consentpro-primary;
   text-decoration: underline;
   text-underline-offset: 2px;
-  transition: color 150ms;
+  transition: color .15s;
 
   &:hover {
-    color: color.adjust($consentpro-primary, $lightness: -10%);
+    color: #1d4ed8;
     text-decoration: none;
   }
 
@@ -238,18 +227,12 @@
   background: $consentpro-background;
   border: 1px solid $consentpro-border;
   border-radius: $consentpro-radius;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
   font-family: $consentpro-font-family;
   font-size: $consentpro-font-size-sm;
   color: $consentpro-secondary;
   cursor: pointer;
-  transition:
-    color 150ms,
-    border-color 150ms,
-    box-shadow 150ms,
-    opacity $consentpro-show-duration $consentpro-easing-out,
-    visibility $consentpro-show-duration $consentpro-easing-out,
-    transform $consentpro-show-duration $consentpro-easing-out;
+  transition: color .15s, border-color .15s, box-shadow .15s, opacity .3s ease-out, visibility .3s ease-out, transform .3s ease-out;
 
   svg {
     width: 16px;

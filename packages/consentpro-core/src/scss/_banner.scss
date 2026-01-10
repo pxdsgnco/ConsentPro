@@ -66,9 +66,7 @@
   font-size: $consentpro-font-size-base;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    background-color 200ms,
-    border-color 200ms;
+  transition: background-color .2s, border-color .2s;
 
   &:focus-visible {
     outline: 2px solid $consentpro-primary;
@@ -81,7 +79,7 @@
     border-color: $consentpro-primary;
 
     &:hover {
-      background-color: color-mix(in srgb, $consentpro-primary 85%, #000);
+      background-color: #1d4ed8;
     }
   }
 

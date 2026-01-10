@@ -13,7 +13,6 @@ $consentpro-spacing-xs: 0.25rem !default;
 $consentpro-spacing-sm: 0.5rem !default;
 $consentpro-spacing-md: 1rem !default;
 $consentpro-spacing-lg: 1.5rem !default;
-$consentpro-spacing-xl: 2rem !default;
 
 // Typography
 $consentpro-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !default;
@@ -33,16 +32,8 @@ $consentpro-radius-sm: 0.25rem !default;
 // Touch targets (WCAG 2.5.5)
 $consentpro-touch-target: 44px !default;
 
-// Animation - Show
+// Animation
 $consentpro-show-duration: 300ms !default;
-$consentpro-easing-out: ease-out !default;
-
-// Animation - Hide (faster for snappy feel)
 $consentpro-hide-duration: 200ms !default;
+$consentpro-easing-out: ease-out !default;
 $consentpro-easing-in: ease-in !default;
-
-// Legacy aliases (deprecated)
-$consentpro-transition-duration: $consentpro-show-duration !default;
-$consentpro-transition-easing: $consentpro-easing-out !default;
-$consentpro-transition-duration-hide: $consentpro-hide-duration !default;
-$consentpro-transition-easing-hide: $consentpro-easing-in !default;

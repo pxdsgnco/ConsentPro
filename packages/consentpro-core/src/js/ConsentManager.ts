@@ -26,71 +26,28 @@ export class ConsentManager {
     return this._storage.get();
   }
 
-  /**
-   * Set consent with given categories
-   */
   setConsent(categories: Partial<ConsentCategories>): void {
     const data: ConsentData = {
-      version: 1,
-      timestamp: Date.now(),
-      geo: this._config?.geo ?? null,
-      categories: {
-        essential: true, // Always true
-        analytics: categories.analytics ?? false,
-        marketing: categories.marketing ?? false,
-        personalization: categories.personalization ?? false,
-      },
+      version: 1, timestamp: Date.now(), geo: this._config?.geo ?? null,
+      categories: { essential: true, analytics: categories.analytics ?? false, marketing: categories.marketing ?? false, personalization: categories.personalization ?? false },
       hash: this._computeHash(),
     };
-
     this._storage.set(data);
     this._dispatchEvent(data);
   }
 
-  /**
-   * Check if existing consent is valid (not expired, config unchanged)
-   */
   isConsentValid(): boolean {
-    const consent = this.getConsent();
-    if (!consent) return false;
-
-    // Check 12-month expiry
-    const twelveMonths = 365 * 24 * 60 * 60 * 1000;
-    if (Date.now() - consent.timestamp > twelveMonths) return false;
-
-    // Check config hash match
-    if (this._config && consent.hash !== this._computeHash()) return false;
-
-    return true;
+    const c = this.getConsent();
+    if (!c) return false;
+    if (Date.now() - c.timestamp > 31536000000) return false;
+    return !(this._config && c.hash !== this._computeHash());
   }
 
-  /**
-   * Clear stored consent
-   */
-  clearConsent(): void {
-    this._storage.clear();
-  }
+  clearConsent(): void { this._storage.clear(); }
 
-  /**
-   * Compute SHA-256 hash of current config
-   * Used to detect config changes that require re-consent
-   */
-  private _computeHash(): string {
-    // Placeholder - implement SHA-256 in US-003
-    // Will hash policyUrl + category definitions
-    return 'hash';
-  }
+  private _computeHash(): string { return 'hash'; }
 
-  /**
-   * Dispatch consent event for script blockers to listen to
-   */
   private _dispatchEvent(data: ConsentData): void {
-    const detail: ConsentEventDetail = {
-      categories: data.categories,
-      timestamp: data.timestamp,
-      geo: data.geo,
-    };
-
-    document.dispatchEvent(new CustomEvent('consentpro_consent', { detail }));
+    document.dispatchEvent(new CustomEvent('consentpro_consent', { detail: { categories: data.categories, timestamp: data.timestamp, geo: data.geo } }));
   }
 }

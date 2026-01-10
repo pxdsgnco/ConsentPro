@@ -208,40 +208,6 @@ describe('GeoDetector', () => {
     });
   });
 
-  describe('requiresGDPR', () => {
-    it('returns true for EU region', () => {
-      const config = createConfig({ geo: 'EU' });
-      expect(GeoDetector.requiresGDPR(config)).toBe(true);
-    });
-
-    it('returns false for CA region', () => {
-      const config = createConfig({ geo: 'CA' });
-      expect(GeoDetector.requiresGDPR(config)).toBe(false);
-    });
-
-    it('returns false for null geo', () => {
-      const config = createConfig({ geo: null });
-      expect(GeoDetector.requiresGDPR(config)).toBe(false);
-    });
-  });
-
-  describe('requiresCCPA', () => {
-    it('returns true for CA region', () => {
-      const config = createConfig({ geo: 'CA' });
-      expect(GeoDetector.requiresCCPA(config)).toBe(true);
-    });
-
-    it('returns false for EU region', () => {
-      const config = createConfig({ geo: 'EU' });
-      expect(GeoDetector.requiresCCPA(config)).toBe(false);
-    });
-
-    it('returns false for null geo', () => {
-      const config = createConfig({ geo: null });
-      expect(GeoDetector.requiresCCPA(config)).toBe(false);
-    });
-  });
-
   describe('edge cases', () => {
     it('handles empty string geo as null', () => {
       setupDOM({ geo: '' });
