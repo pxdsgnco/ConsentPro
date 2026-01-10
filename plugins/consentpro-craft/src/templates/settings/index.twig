@@ -112,10 +112,8 @@
 {% endblock %}
 
 {# Preview JavaScript for live updates #}
-{% block foot %}
-    {{ parent() }}
-    {% if showPreview %}
-        {% js %}
+{% if showPreview %}
+    {% js %}
             (function() {
                 const preview = document.getElementById('consentpro-preview-iframe');
                 if (!preview) return;
@@ -232,6 +230,5 @@
                     updatePreview();
                 });
             })();
-        {% endjs %}
-    {% endif %}
-{% endblock %}
+    {% endjs %}
+{% endif %}
