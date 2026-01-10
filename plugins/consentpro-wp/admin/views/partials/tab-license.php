@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $consentpro_license_key = get_option( 'consentpro_license_key', '' );
 $consentpro_license     = get_option( 'consentpro_license', [] );
-$is_pro                 = ConsentPro_License::is_pro();
-$grace_days             = ConsentPro_License::get_grace_days_remaining();
+$consentpro_is_pro      = ConsentPro_License::is_pro();
+$consentpro_grace_days  = ConsentPro_License::get_grace_days_remaining();
 ?>
 
 <div class="consentpro-license-container">
@@ -23,7 +23,7 @@ $grace_days             = ConsentPro_License::get_grace_days_remaining();
 		</div>
 		<div class="consentpro-license-card__body">
 			<div id="consentpro-license-status" class="consentpro-license-status-display">
-				<?php if ( $is_pro ) : ?>
+				<?php if ( $consentpro_is_pro ) : ?>
 					<div class="consentpro-license-indicator consentpro-license-indicator--active">
 						<span class="consentpro-license-indicator__icon dashicons dashicons-yes-alt"></span>
 						<div class="consentpro-license-indicator__info">
@@ -42,14 +42,14 @@ $grace_days             = ConsentPro_License::get_grace_days_remaining();
 							?>
 						</p>
 					<?php endif; ?>
-					<?php if ( $grace_days ) : ?>
+					<?php if ( $consentpro_grace_days ) : ?>
 						<p class="consentpro-license-grace-warning">
 							<span class="dashicons dashicons-warning"></span>
 							<?php
 							printf(
 								/* translators: %d: number of days */
 								esc_html__( 'Grace period: %d days remaining. Please check your license.', 'consentpro' ),
-								$grace_days
+								(int) $consentpro_grace_days
 							);
 							?>
 						</p>
@@ -125,7 +125,7 @@ $grace_days             = ConsentPro_License::get_grace_days_remaining();
 					<?php esc_html_e( 'Priority support', 'consentpro' ); ?>
 				</li>
 			</ul>
-			<?php if ( ! $is_pro ) : ?>
+			<?php if ( ! $consentpro_is_pro ) : ?>
 				<div class="consentpro-upgrade-cta">
 					<a href="https://consentpro.io/pricing" target="_blank" class="button button-primary">
 						<?php esc_html_e( 'Upgrade to Pro', 'consentpro' ); ?>

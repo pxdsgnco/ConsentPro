@@ -195,20 +195,13 @@ $consentpro_text_defaults = [
 				name="consentpro_appearance[custom_css]"
 				class="consentpro-custom-css-field"
 				rows="12"
-				placeholder="/* Custom banner styles */
-.consentpro-banner {
-  /* Your styles here */
-}"
+				placeholder="/* Custom banner styles */&#10;.consentpro-banner { /* Your styles here */ }"
 				aria-describedby="consentpro-custom-css-desc"
 			><?php echo esc_textarea( $consentpro_options['custom_css'] ?? '' ); ?></textarea>
 			<div class="consentpro-custom-css-help" id="consentpro-custom-css-desc">
 				<p><?php esc_html_e( 'Example: Change button border radius and banner shadow', 'consentpro' ); ?></p>
-				<code>.consentpro-banner {
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-}
-.consentpro-btn {
-  border-radius: 20px;
-}</code>
+				<code>.consentpro-banner { box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15); }
+.consentpro-btn { border-radius: 20px; }</code>
 			</div>
 		</div>
 	<?php else : ?>

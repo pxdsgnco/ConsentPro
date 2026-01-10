@@ -48,8 +48,8 @@ class ConsentPro_License {
 
 		// Check if we're in grace period (API failed but previously valid).
 		if ( ! empty( $license['grace_period_start'] ) && ! empty( $license['was_valid'] ) ) {
-			$grace_start  = (int) $license['grace_period_start'];
-			$grace_end    = $grace_start + ( self::GRACE_PERIOD_DAYS * DAY_IN_SECONDS );
+			$grace_start = (int) $license['grace_period_start'];
+			$grace_end   = $grace_start + ( self::GRACE_PERIOD_DAYS * DAY_IN_SECONDS );
 
 			// Still within grace period.
 			if ( time() < $grace_end ) {

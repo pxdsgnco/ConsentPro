@@ -832,7 +832,12 @@
     $container
       .removeClass('consentpro-license-message--success consentpro-license-message--error')
       .addClass('consentpro-license-message--' + type)
-      .html('<span class="dashicons dashicons-' + (type === 'success' ? 'yes' : 'no') + '"></span> ' + escapeHtml(message))
+      .html(
+        '<span class="dashicons dashicons-' +
+          (type === 'success' ? 'yes' : 'no') +
+          '"></span> ' +
+          escapeHtml(message)
+      )
       .show();
   }
 
