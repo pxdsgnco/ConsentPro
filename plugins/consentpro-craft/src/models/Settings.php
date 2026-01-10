@@ -227,7 +227,7 @@ class Settings extends Model
         return [
             // General settings
             [['enabled', 'geoEnabled'], 'boolean'],
-            [['policyUrl'], 'url', 'defaultScheme' => 'https'],
+            [['policyUrl'], 'url', 'defaultScheme' => 'https', 'skipOnEmpty' => true],
 
             // Color validation
             [
