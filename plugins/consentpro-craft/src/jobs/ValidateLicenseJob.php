@@ -35,7 +35,7 @@ class ValidateLicenseJob extends BaseJob
         }
 
         // Validate with remote API
-        $result = ConsentPro::getInstance()->license->validate($settings->licenseKey);
+        $result = ConsentPro::getInstance()->license->validateLicense($settings->licenseKey);
 
         if (!empty($result['valid'])) {
             Craft::info('[ConsentPro] License validation successful.', 'consentpro');

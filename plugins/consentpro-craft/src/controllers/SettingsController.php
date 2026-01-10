@@ -213,7 +213,7 @@ class SettingsController extends Controller
         }
 
         // Validate with remote API
-        $result = ConsentPro::getInstance()->license->validate($licenseKey);
+        $result = ConsentPro::getInstance()->license->validateLicense($licenseKey);
 
         // Save license key if valid
         if (!empty($result['valid'])) {

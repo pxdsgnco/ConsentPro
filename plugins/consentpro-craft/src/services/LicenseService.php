@@ -156,7 +156,7 @@ class LicenseService extends Component
      * @param string $key License key.
      * @return array Validation result with 'valid', 'tier', 'expires', 'error', and 'grace_period' keys.
      */
-    public function validate(string $key): array
+    public function validateLicense(string $key): array
     {
         $settings = ConsentPro::getInstance()->getSettings();
         $wasValid = $this->isPro();
