@@ -92,12 +92,13 @@ class SettingsController extends Controller
 
         // =========================================================================
         // Appearance Tab Fields - Colors (US-029)
+        // Craft's colorField submits values without # prefix, so normalize them
         // =========================================================================
 
-        $settings->colorPrimary = $request->getBodyParam('colorPrimary', '#2563eb');
-        $settings->colorSecondary = $request->getBodyParam('colorSecondary', '#64748b');
-        $settings->colorBackground = $request->getBodyParam('colorBackground', '#ffffff');
-        $settings->colorText = $request->getBodyParam('colorText', '#1e293b');
+        $settings->colorPrimary = $this->normalizeColor($request->getBodyParam('colorPrimary', '#2563eb'));
+        $settings->colorSecondary = $this->normalizeColor($request->getBodyParam('colorSecondary', '#64748b'));
+        $settings->colorBackground = $this->normalizeColor($request->getBodyParam('colorBackground', '#ffffff'));
+        $settings->colorText = $this->normalizeColor($request->getBodyParam('colorText', '#1e293b'));
 
         // =========================================================================
         // Appearance Tab Fields - Text (US-029)
@@ -161,7 +162,23 @@ class SettingsController extends Controller
         // Validation
         // =========================================================================
 
+        // DEBUG: Log settings before validation
+        Craft::info('[ConsentPro DEBUG] Settings before validation: ' . json_encode([
+            'enabled' => $settings->enabled,
+            'policyUrl' => $settings->policyUrl,
+            'geoEnabled' => $settings->geoEnabled,
+            'colorPrimary' => $settings->colorPrimary,
+            'colorSecondary' => $settings->colorSecondary,
+            'colorBackground' => $settings->colorBackground,
+            'colorText' => $settings->colorText,
+            'textHeading' => $settings->textHeading,
+            'categories' => $settings->categories,
+        ]), 'consentpro');
+
         if (!$settings->validate()) {
+            // DEBUG: Log validation errors
+            Craft::error('[ConsentPro DEBUG] Validation FAILED. Errors: ' . json_encode($settings->getErrors()), 'consentpro');
+
             Craft::$app->getSession()->setError(
                 Craft::t('consentpro', 'Couldn\'t save settings. Please check the form for errors.')
             );
@@ -173,17 +190,30 @@ class SettingsController extends Controller
             ]);
         }
 
+        // DEBUG: Log validation passed
+        Craft::info('[ConsentPro DEBUG] Validation PASSED', 'consentpro');
+
         // =========================================================================
         // Save to Project Config
         // =========================================================================
 
-        if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $settings->toArray())) {
+        // DEBUG: Log what we're about to save
+        $settingsArray = $settings->toArray();
+        Craft::info('[ConsentPro DEBUG] Attempting to save settings: ' . json_encode($settingsArray), 'consentpro');
+
+        if (!Craft::$app->getPlugins()->savePluginSettings($plugin, $settingsArray)) {
+            // DEBUG: Log save failure
+            Craft::error('[ConsentPro DEBUG] savePluginSettings FAILED', 'consentpro');
+
             Craft::$app->getSession()->setError(
                 Craft::t('consentpro', 'Couldn\'t save settings.')
             );
 
             return null;
         }
+
+        // DEBUG: Log save success
+        Craft::info('[ConsentPro DEBUG] Settings saved successfully!', 'consentpro');
 
         Craft::$app->getSession()->setNotice(
             Craft::t('consentpro', 'Settings saved.')
@@ -240,6 +270,22 @@ class SettingsController extends Controller
             'settings' => $settings,
             'config' => $consentService->getConfig(),
         ]);
+    }
+
+    /**
+     * Normalize color value to include # prefix.
+     * Craft's colorField submits values without the # prefix.
+     *
+     * @param string $color The color value from form input.
+     * @return string The normalized color with # prefix.
+     */
+    private function normalizeColor(string $color): string
+    {
+        $color = trim($color);
+        if ($color !== '' && $color[0] !== '#') {
+            return '#' . $color;
+        }
+        return $color;
     }
 
     /**

@@ -188,11 +188,11 @@ class ConsentPro extends Plugin
     /**
      * @inheritdoc
      */
-    protected function settingsHtml(): ?string
+    public function getSettingsResponse(): mixed
     {
-        return Craft::$app->getView()->renderTemplate(
-            'consentpro/settings/index',
-            ['settings' => $this->getSettings()]
+        // Redirect to our custom settings controller
+        return Craft::$app->getResponse()->redirect(
+            \craft\helpers\UrlHelper::cpUrl('consentpro/settings')
         );
     }
 }

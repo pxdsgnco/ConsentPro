@@ -5,6 +5,8 @@
  # @copyright Copyright (c) ConsentPro Team
  #}
 
+{% extends "_layouts/cp" %}
+
 {% import '_includes/forms.twig' as forms %}
 
 {# Define tabs #}
@@ -39,6 +41,9 @@
 
 {# Enable full page form #}
 {% set fullPageForm = true %}
+
+{# Page title #}
+{% set title = 'ConsentPro Settings'|t('consentpro') %}
 
 {% block content %}
     {{ actionInput('consentpro/settings/save') }}
