@@ -197,8 +197,13 @@ describe('ConsentManager', () => {
     });
 
     it('returns true for consent at exactly 12 months', () => {
+      // Use fake timers to avoid time drift between timestamp creation and validation
+      jest.useFakeTimers();
+      const now = Date.now();
+      jest.setSystemTime(now);
+
       // Set consent at exactly 12 months ago
-      const twelveMonthsAgo = Date.now() - (365 * 24 * 60 * 60 * 1000);
+      const twelveMonthsAgo = now - 365 * 24 * 60 * 60 * 1000;
       const borderlineConsent: ConsentData = {
         version: 1,
         timestamp: twelveMonthsAgo,
@@ -216,6 +221,8 @@ describe('ConsentManager', () => {
 
       // At exactly 12 months, should still be valid (not > 12 months)
       expect(manager.isConsentValid()).toBe(true);
+
+      jest.useRealTimers();
     });
 
     it('returns false for consent at 12 months + 1ms', () => {
