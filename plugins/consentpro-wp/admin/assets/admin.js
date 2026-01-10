@@ -4,6 +4,7 @@
  * @package ConsentPro
  */
 
+/* global jQuery */
 (function ($) {
 	'use strict';
 
@@ -17,7 +18,7 @@
 			if (typeof $.fn.wpColorPicker !== 'undefined') {
 				$field.wpColorPicker({
 					defaultColor: $field.data('default') || false,
-					change: function (event, ui) {
+					change: function () {
 						// Color changed - could add live preview here.
 					},
 					clear: function () {
