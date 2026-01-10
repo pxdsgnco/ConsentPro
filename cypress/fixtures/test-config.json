@@ -1,0 +1,48 @@
+{
+  "geo": null,
+  "geoEnabled": true,
+  "policyUrl": "https://example.com/privacy",
+  "categories": [
+    {
+      "id": "essential",
+      "name": "Essential",
+      "description": "Required for site functionality",
+      "required": true
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "description": "Help us understand usage",
+      "required": false
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "description": "Personalized advertisements",
+      "required": false
+    },
+    {
+      "id": "personalization",
+      "name": "Personalization",
+      "description": "Remember your preferences",
+      "required": false
+    }
+  ],
+  "text": {
+    "heading": "We value your privacy",
+    "description": "We use cookies to enhance your experience.",
+    "acceptAll": "Accept All",
+    "rejectNonEssential": "Reject Non-Essential",
+    "settings": "Cookie Settings",
+    "save": "Save Preferences",
+    "back": "Back",
+    "settingsTitle": "Privacy Preferences",
+    "footerToggle": "Privacy Settings"
+  },
+  "colors": {
+    "primary": "#2563eb",
+    "secondary": "#64748b",
+    "background": "#ffffff",
+    "text": "#1e293b"
+  }
+}
