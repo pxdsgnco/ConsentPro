@@ -17,11 +17,11 @@ dist/consentpro.d.ts     # TypeScript types
 
 ## Bundle Size
 
-| Asset | Size | Gzipped |
-|-------|------|---------|
-| consentpro.min.js | 9.8 KB | 3.1 KB |
-| consentpro.min.css | 6.0 KB | 1.7 KB |
-| **Total** | **15.8 KB** | **4.8 KB** |
+| Asset              | Size        | Gzipped    |
+| ------------------ | ----------- | ---------- |
+| consentpro.min.js  | 9.8 KB      | 3.1 KB     |
+| consentpro.min.css | 6.0 KB      | 1.7 KB     |
+| **Total**          | **15.8 KB** | **4.8 KB** |
 
 ## Usage
 
@@ -30,47 +30,62 @@ dist/consentpro.d.ts     # TypeScript types
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="stylesheet" href="consentpro.min.css">
-</head>
-<body>
-  <!-- Banner container -->
-  <aside id="consentpro-banner" class="consentpro"></aside>
+  <head>
+    <link rel="stylesheet" href="consentpro.min.css" />
+  </head>
+  <body>
+    <!-- Banner container -->
+    <aside id="consentpro-banner" class="consentpro"></aside>
 
-  <script src="consentpro.min.js"></script>
-  <script>
-    const storage = new ConsentPro.StorageAdapter();
-    const manager = new ConsentPro.ConsentManager(storage);
-    const banner = new ConsentPro.BannerUI(manager);
+    <script src="consentpro.min.js"></script>
+    <script>
+      const storage = new ConsentPro.StorageAdapter();
+      const manager = new ConsentPro.ConsentManager(storage);
+      const banner = new ConsentPro.BannerUI(manager);
 
-    banner.init('consentpro-banner', {
-      policyUrl: '/privacy',
-      categories: [
-        { id: 'essential', name: 'Essential', description: 'Required for site functionality', required: true },
-        { id: 'analytics', name: 'Analytics', description: 'Help us understand usage', required: false },
-        { id: 'marketing', name: 'Marketing', description: 'Personalized ads', required: false },
-        { id: 'personalization', name: 'Personalization', description: 'Remember preferences', required: false }
-      ],
-      text: {
-        heading: 'We value your privacy',
-        description: 'We use cookies to enhance your experience.',
-        acceptAll: 'Accept All',
-        rejectNonEssential: 'Reject Non-Essential',
-        settings: 'Cookie Settings',
-        save: 'Save Preferences',
-        back: 'Back',
-        settingsTitle: 'Privacy Preferences',
-        footerToggle: 'Privacy Settings'
+      banner.init('consentpro-banner', {
+        policyUrl: '/privacy',
+        categories: [
+          {
+            id: 'essential',
+            name: 'Essential',
+            description: 'Required for site functionality',
+            required: true,
+          },
+          {
+            id: 'analytics',
+            name: 'Analytics',
+            description: 'Help us understand usage',
+            required: false,
+          },
+          { id: 'marketing', name: 'Marketing', description: 'Personalized ads', required: false },
+          {
+            id: 'personalization',
+            name: 'Personalization',
+            description: 'Remember preferences',
+            required: false,
+          },
+        ],
+        text: {
+          heading: 'We value your privacy',
+          description: 'We use cookies to enhance your experience.',
+          acceptAll: 'Accept All',
+          rejectNonEssential: 'Reject Non-Essential',
+          settings: 'Cookie Settings',
+          save: 'Save Preferences',
+          back: 'Back',
+          settingsTitle: 'Privacy Preferences',
+          footerToggle: 'Privacy Settings',
+        },
+      });
+
+      banner.renderFooterToggle();
+
+      if (!manager.isConsentValid()) {
+        banner.show();
       }
-    });
-
-    banner.renderFooterToggle();
-
-    if (!manager.isConsentValid()) {
-      banner.show();
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
 ```
 
@@ -242,11 +257,11 @@ Block scripts until category consent is given:
 banner.init('container', {
   // ...
   colors: {
-    primary: '#2563eb',    // Primary button, accents
-    secondary: '#64748b',  // Secondary buttons
+    primary: '#2563eb', // Primary button, accents
+    secondary: '#64748b', // Secondary buttons
     background: '#ffffff', // Banner background
-    text: '#1e293b'        // Text color
-  }
+    text: '#1e293b', // Text color
+  },
 });
 ```
 

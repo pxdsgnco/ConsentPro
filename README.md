@@ -38,7 +38,7 @@ Add ConsentPro to your HTML:
 
 ```html
 <!-- CSS in <head> -->
-<link rel="stylesheet" href="dist/consentpro.min.css">
+<link rel="stylesheet" href="dist/consentpro.min.css" />
 
 <!-- Banner container -->
 <aside id="consentpro-banner" class="consentpro"></aside>
@@ -57,10 +57,30 @@ Add ConsentPro to your HTML:
   banner.init('consentpro-banner', {
     policyUrl: '/privacy-policy',
     categories: [
-      { id: 'essential', name: 'Essential', description: 'Required for site functionality', required: true },
-      { id: 'analytics', name: 'Analytics', description: 'Help us understand usage', required: false },
-      { id: 'marketing', name: 'Marketing', description: 'Personalized advertisements', required: false },
-      { id: 'personalization', name: 'Personalization', description: 'Remember your preferences', required: false }
+      {
+        id: 'essential',
+        name: 'Essential',
+        description: 'Required for site functionality',
+        required: true,
+      },
+      {
+        id: 'analytics',
+        name: 'Analytics',
+        description: 'Help us understand usage',
+        required: false,
+      },
+      {
+        id: 'marketing',
+        name: 'Marketing',
+        description: 'Personalized advertisements',
+        required: false,
+      },
+      {
+        id: 'personalization',
+        name: 'Personalization',
+        description: 'Remember your preferences',
+        required: false,
+      },
     ],
     text: {
       heading: 'We value your privacy',
@@ -71,8 +91,8 @@ Add ConsentPro to your HTML:
       save: 'Save Preferences',
       back: 'Back',
       settingsTitle: 'Privacy Preferences',
-      footerToggle: 'Privacy Settings'
-    }
+      footerToggle: 'Privacy Settings',
+    },
   });
 
   banner.renderFooterToggle();
@@ -162,10 +182,12 @@ Mark scripts with `type="text/plain"` and `data-consentpro="category"`:
 ## Storage
 
 Consent is stored in:
+
 - **localStorage**: `consentpro_consent` (primary)
 - **Cookie**: `consentpro` (fallback for Safari ITP)
 
 Data structure:
+
 ```json
 {
   "version": 1,
@@ -183,14 +205,14 @@ Data structure:
 
 ## Configuration
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `geo` | `'EU' \| 'CA' \| null` | User's detected region |
-| `geoEnabled` | `boolean` | Enable geo-based behavior |
-| `policyUrl` | `string` | Link to privacy policy |
-| `categories` | `CategoryDefinition[]` | Consent categories |
-| `text` | `TextConfig` | UI text strings |
-| `colors` | `ColorConfig` | Theme colors |
+| Option       | Type                   | Description               |
+| ------------ | ---------------------- | ------------------------- |
+| `geo`        | `'EU' \| 'CA' \| null` | User's detected region    |
+| `geoEnabled` | `boolean`              | Enable geo-based behavior |
+| `policyUrl`  | `string`               | Link to privacy policy    |
+| `categories` | `CategoryDefinition[]` | Consent categories        |
+| `text`       | `TextConfig`           | UI text strings           |
+| `colors`     | `ColorConfig`          | Theme colors              |
 
 ## Accessibility
 
