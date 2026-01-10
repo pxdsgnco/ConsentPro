@@ -1,0 +1,160 @@
+{#
+ # Categories Settings Tab (US-030)
+ #
+ # @link      https://consentpro.io
+ # @copyright Copyright (c) ConsentPro Team
+ #}
+
+{% import '_includes/forms.twig' as forms %}
+
+<h2>{{ 'Consent Categories'|t('consentpro') }}</h2>
+<p class="light">{{ 'Configure the consent categories shown in the settings panel. Customize the display name and description for each category.'|t('consentpro') }}</p>
+
+{# Category defaults #}
+{% set categoryDefaults = {
+    essential: {
+        name: 'Essential',
+        description: 'Required for the website to function properly. These cookies are always enabled.',
+    },
+    analytics: {
+        name: 'Analytics',
+        description: 'Help us understand how visitors interact with our website by collecting and reporting information anonymously.',
+    },
+    marketing: {
+        name: 'Marketing',
+        description: 'Used to track visitors across websites to display relevant advertisements.',
+    },
+    personalization: {
+        name: 'Personalization',
+        description: 'Allow the website to remember choices you make and provide enhanced, personalized features.',
+    },
+} %}
+
+{# Category card styles #}
+<style>
+    .consentpro-category-card {
+        background: var(--gray-050);
+        border: 1px solid var(--gray-200);
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .consentpro-category-card--essential {
+        background: var(--blue-050);
+        border-color: var(--blue-200);
+    }
+    .consentpro-category-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .consentpro-category-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    .consentpro-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 3px;
+    }
+    .consentpro-badge--required {
+        background: var(--blue-500);
+        color: white;
+    }
+    .consentpro-category-card .field {
+        margin-bottom: 16px;
+    }
+    .consentpro-category-card .field:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+{# =========================================================================
+   Essential Category (Always Enabled)
+   ========================================================================= #}
+
+{% set essentialCat = settings.categories.essential ?? {} %}
+
+<div class="consentpro-category-card consentpro-category-card--essential">
+    <div class="consentpro-category-header">
+        <h3>{{ 'Essential'|t('consentpro') }}</h3>
+        <span class="consentpro-badge consentpro-badge--required">{{ 'Always Enabled'|t('consentpro') }}</span>
+    </div>
+
+    {{ forms.textField({
+        label: 'Display Name'|t('consentpro'),
+        instructions: 'The name shown to visitors for this category.'|t('consentpro'),
+        id: 'categories-essential-name',
+        name: 'categories[essential][name]',
+        value: essentialCat.name ?? categoryDefaults.essential.name,
+        placeholder: categoryDefaults.essential.name,
+    }) }}
+
+    {{ forms.textareaField({
+        label: 'Description'|t('consentpro'),
+        instructions: 'Explains what this category is for. Basic HTML links are allowed.'|t('consentpro'),
+        id: 'categories-essential-description',
+        name: 'categories[essential][description]',
+        value: essentialCat.description ?? categoryDefaults.essential.description,
+        placeholder: categoryDefaults.essential.description,
+        rows: 3,
+    }) }}
+
+    {# Hidden field to ensure essential is always required #}
+    {{ hiddenInput('categories[essential][required]', '1') }}
+
+    <div class="field">
+        <div class="instructions">
+            <p class="light">{{ 'Essential cookies are always enabled and cannot be disabled by visitors. This is required for GDPR compliance (Article 6.1f - legitimate interest for site functionality).'|t('consentpro') }}</p>
+        </div>
+    </div>
+</div>
+
+{# =========================================================================
+   Other Categories (Analytics, Marketing, Personalization)
+   ========================================================================= #}
+
+{% for categoryId in ['analytics', 'marketing', 'personalization'] %}
+    {% set category = settings.categories[categoryId] ?? {} %}
+    {% set defaults = categoryDefaults[categoryId] %}
+
+    <div class="consentpro-category-card">
+        <div class="consentpro-category-header">
+            <h3>{{ defaults.name|t('consentpro') }}</h3>
+        </div>
+
+        {{ forms.textField({
+            label: 'Display Name'|t('consentpro'),
+            instructions: 'The name shown to visitors for this category.'|t('consentpro'),
+            id: 'categories-' ~ categoryId ~ '-name',
+            name: 'categories[' ~ categoryId ~ '][name]',
+            value: category.name ?? defaults.name,
+            placeholder: defaults.name,
+        }) }}
+
+        {{ forms.textareaField({
+            label: 'Description'|t('consentpro'),
+            instructions: 'Explains what this category is for. Basic HTML links allowed: <code>&lt;a href="..."&gt;link&lt;/a&gt;</code>.'|t('consentpro')|raw,
+            id: 'categories-' ~ categoryId ~ '-description',
+            name: 'categories[' ~ categoryId ~ '][description]',
+            value: category.description ?? defaults.description,
+            placeholder: defaults.description,
+            rows: 3,
+        }) }}
+
+        {{ forms.lightswitchField({
+            label: 'Pre-selected by Default'|t('consentpro'),
+            instructions: 'If enabled, this category will be pre-checked when visitors open the settings panel. Visitors can still opt out.'|t('consentpro'),
+            id: 'categories-' ~ categoryId ~ '-required',
+            name: 'categories[' ~ categoryId ~ '][required]',
+            on: category.required ?? false,
+        }) }}
+    </div>
+{% endfor %}

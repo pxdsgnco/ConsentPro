@@ -1,0 +1,71 @@
+{#
+ # License Settings Tab
+ #
+ # @link      https://consentpro.io
+ # @copyright Copyright (c) ConsentPro Team
+ #}
+
+{% import '_includes/forms.twig' as forms %}
+
+<h2>{{ 'License'|t('consentpro') }}</h2>
+<p class="light">{{ 'Enter your license key to unlock Pro features like custom CSS, analytics dashboard, and A/B testing.'|t('consentpro') }}</p>
+
+{{ forms.textField({
+    label: 'License Key'|t('consentpro'),
+    instructions: 'Enter your license key to unlock Pro features.'|t('consentpro'),
+    id: 'licenseKey',
+    name: 'licenseKey',
+    value: settings.licenseKey,
+    placeholder: 'XXXX-XXXX-XXXX-XXXX',
+    errors: settings.getErrors('licenseKey'),
+}) }}
+
+{# License Status Display #}
+{% set isPro = craft.consentpro.license.isPro() ?? false %}
+
+<div class="field">
+    <div class="heading">
+        <label>{{ 'License Status'|t('consentpro') }}</label>
+    </div>
+    <div class="input">
+        {% if isPro %}
+            <span class="status green"></span>
+            <span style="color: var(--green-600); font-weight: 600;">{{ 'Pro - Active'|t('consentpro') }}</span>
+        {% else %}
+            <span class="status"></span>
+            <span>{{ 'Core (Free)'|t('consentpro') }}</span>
+        {% endif %}
+    </div>
+    <div class="instructions">
+        {% if isPro %}
+            <p>{{ 'Your Pro license is active. You have access to all Pro features.'|t('consentpro') }}</p>
+        {% else %}
+            <p>{{ 'You are using the free Core version. Upgrade to Pro for additional features.'|t('consentpro') }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<hr>
+
+{# Pro Features List #}
+<div class="field">
+    <div class="heading">
+        <label>{{ 'Pro Features'|t('consentpro') }}</label>
+    </div>
+    <div class="input">
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>{{ 'Custom CSS injection for banner styling'|t('consentpro') }}</li>
+            <li>{{ 'Consent analytics dashboard'|t('consentpro') }}</li>
+            <li>{{ 'A/B testing for banner variants'|t('consentpro') }}</li>
+            <li>{{ 'Priority support'|t('consentpro') }}</li>
+        </ul>
+    </div>
+</div>
+
+{% if not isPro %}
+    <div class="field" style="margin-top: 24px;">
+        <a href="https://consentpro.io/pricing" target="_blank" class="btn submit">
+            {{ 'Upgrade to Pro'|t('consentpro') }}
+        </a>
+    </div>
+{% endif %}

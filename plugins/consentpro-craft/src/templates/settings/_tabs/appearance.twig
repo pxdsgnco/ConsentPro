@@ -1,0 +1,129 @@
+{#
+ # Appearance Settings Tab (US-029)
+ #
+ # @link      https://consentpro.io
+ # @copyright Copyright (c) ConsentPro Team
+ #}
+
+{% import '_includes/forms.twig' as forms %}
+
+{# =========================================================================
+   Colors Section
+   ========================================================================= #}
+
+<h2>{{ 'Colors'|t('consentpro') }}</h2>
+<p class="light">{{ 'Customize the banner color scheme to match your brand.'|t('consentpro') }}</p>
+
+{{ forms.colorField({
+    label: 'Primary Color'|t('consentpro'),
+    instructions: 'Used for buttons and interactive elements.'|t('consentpro'),
+    id: 'colorPrimary',
+    name: 'colorPrimary',
+    value: settings.colorPrimary,
+    errors: settings.getErrors('colorPrimary'),
+}) }}
+
+{{ forms.colorField({
+    label: 'Secondary Color'|t('consentpro'),
+    instructions: 'Used for secondary text, borders, and less prominent elements.'|t('consentpro'),
+    id: 'colorSecondary',
+    name: 'colorSecondary',
+    value: settings.colorSecondary,
+    errors: settings.getErrors('colorSecondary'),
+}) }}
+
+{{ forms.colorField({
+    label: 'Background Color'|t('consentpro'),
+    instructions: 'Banner background color.'|t('consentpro'),
+    id: 'colorBackground',
+    name: 'colorBackground',
+    value: settings.colorBackground,
+    errors: settings.getErrors('colorBackground'),
+}) }}
+
+{{ forms.colorField({
+    label: 'Text Color'|t('consentpro'),
+    instructions: 'Main text color.'|t('consentpro'),
+    id: 'colorText',
+    name: 'colorText',
+    value: settings.colorText,
+    errors: settings.getErrors('colorText'),
+}) }}
+
+<hr>
+
+{# =========================================================================
+   Banner Text Section
+   ========================================================================= #}
+
+<h2>{{ 'Banner Text'|t('consentpro') }}</h2>
+<p class="light">{{ 'Customize the text displayed on the consent banner. All text supports translation via Craft\'s translation system.'|t('consentpro') }}</p>
+
+{# Text field defaults #}
+{% set textDefaults = {
+    textHeading: 'We value your privacy',
+    textAccept: 'Accept All',
+    textReject: 'Reject Non-Essential',
+    textSettings: 'Cookie Settings',
+    textSave: 'Save Preferences',
+} %}
+
+{{ forms.textField({
+    label: 'Banner Heading'|t('consentpro'),
+    instructions: 'Main heading shown on the consent banner. Maximum 100 characters.'|t('consentpro'),
+    id: 'textHeading',
+    name: 'textHeading',
+    value: settings.textHeading,
+    maxlength: 100,
+    showCharsLeft: true,
+    placeholder: textDefaults.textHeading,
+    errors: settings.getErrors('textHeading'),
+}) }}
+
+{{ forms.textField({
+    label: 'Accept All Button'|t('consentpro'),
+    instructions: 'Text for the "Accept All" button. Maximum 30 characters.'|t('consentpro'),
+    id: 'textAccept',
+    name: 'textAccept',
+    value: settings.textAccept,
+    maxlength: 30,
+    showCharsLeft: true,
+    placeholder: textDefaults.textAccept,
+    errors: settings.getErrors('textAccept'),
+}) }}
+
+{{ forms.textField({
+    label: 'Reject Button'|t('consentpro'),
+    instructions: 'Text for the "Reject Non-Essential" button. Maximum 30 characters.'|t('consentpro'),
+    id: 'textReject',
+    name: 'textReject',
+    value: settings.textReject,
+    maxlength: 30,
+    showCharsLeft: true,
+    placeholder: textDefaults.textReject,
+    errors: settings.getErrors('textReject'),
+}) }}
+
+{{ forms.textField({
+    label: 'Settings Link'|t('consentpro'),
+    instructions: 'Text for the settings/preferences link. Maximum 30 characters.'|t('consentpro'),
+    id: 'textSettings',
+    name: 'textSettings',
+    value: settings.textSettings,
+    maxlength: 30,
+    showCharsLeft: true,
+    placeholder: textDefaults.textSettings,
+    errors: settings.getErrors('textSettings'),
+}) }}
+
+{{ forms.textField({
+    label: 'Save Button'|t('consentpro'),
+    instructions: 'Text for the save preferences button (shown in Layer 2). Maximum 30 characters.'|t('consentpro'),
+    id: 'textSave',
+    name: 'textSave',
+    value: settings.textSave,
+    maxlength: 30,
+    showCharsLeft: true,
+    placeholder: textDefaults.textSave,
+    errors: settings.getErrors('textSave'),
+}) }}

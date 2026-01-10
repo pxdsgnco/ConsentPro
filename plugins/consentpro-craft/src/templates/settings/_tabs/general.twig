@@ -1,0 +1,92 @@
+{#
+ # General Settings Tab (US-028)
+ #
+ # @link      https://consentpro.io
+ # @copyright Copyright (c) ConsentPro Team
+ #}
+
+{% import '_includes/forms.twig' as forms %}
+
+<h2>{{ 'General Settings'|t('consentpro') }}</h2>
+
+{# Environment Override Warning Template #}
+{% macro envWarning(varName) %}
+    <p class="warning with-icon">
+        {{ 'This setting is overridden by the {var} environment variable.'|t('consentpro', {var: '<code>' ~ varName ~ '</code>'})|raw }}
+    </p>
+{% endmacro %}
+
+{# Enable Banner #}
+{{ forms.lightswitchField({
+    label: 'Enable Banner'|t('consentpro'),
+    instructions: 'Show consent banner to visitors.'|t('consentpro'),
+    id: 'enabled',
+    name: 'enabled',
+    on: settings.getEnvValue('enabled'),
+    disabled: settings.isEnvOverride('enabled'),
+    errors: settings.getErrors('enabled'),
+}) }}
+
+{% if settings.isEnvOverride('enabled') %}
+    {{ _self.envWarning(settings.getEnvVarName('enabled')) }}
+{% endif %}
+
+<hr>
+
+{# Privacy Policy URL #}
+{{ forms.textField({
+    label: 'Privacy Policy URL'|t('consentpro'),
+    instructions: 'Link to your privacy policy page. Displayed in the consent banner.'|t('consentpro'),
+    id: 'policyUrl',
+    name: 'policyUrl',
+    value: settings.getEnvValue('policyUrl'),
+    type: 'url',
+    placeholder: 'https://example.com/privacy-policy',
+    disabled: settings.isEnvOverride('policyUrl'),
+    errors: settings.getErrors('policyUrl'),
+}) }}
+
+{% if settings.isEnvOverride('policyUrl') %}
+    {{ _self.envWarning(settings.getEnvVarName('policyUrl')) }}
+{% endif %}
+
+<hr>
+
+{# Geo-Targeting #}
+{{ forms.lightswitchField({
+    label: 'Geo-Targeting'|t('consentpro'),
+    instructions: 'Only show banner to EU and California visitors. When enabled, visitors from other regions will not see the consent banner.'|t('consentpro'),
+    id: 'geoEnabled',
+    name: 'geoEnabled',
+    on: settings.getEnvValue('geoEnabled'),
+    disabled: settings.isEnvOverride('geoEnabled'),
+    errors: settings.getErrors('geoEnabled'),
+}) }}
+
+{% if settings.isEnvOverride('geoEnabled') %}
+    {{ _self.envWarning(settings.getEnvVarName('geoEnabled')) }}
+{% endif %}
+
+<div class="field">
+    <div class="instructions">
+        <p>{{ 'Geo-detection requires Cloudflare (reads the CF-IPCountry header). If the header is missing, the banner will show to all visitors as a fail-safe for compliance.'|t('consentpro') }}</p>
+    </div>
+</div>
+
+<hr>
+
+{# Environment Variables Documentation #}
+<div class="field">
+    <div class="heading">
+        <label>{{ 'Environment Variables'|t('consentpro') }}</label>
+    </div>
+    <div class="instructions">
+        <p>{{ 'You can override these settings per environment using environment variables:'|t('consentpro') }}</p>
+        <ul>
+            <li><code>CONSENTPRO_ENABLED</code> &mdash; <code>true</code> / <code>false</code></li>
+            <li><code>CONSENTPRO_POLICY_URL</code> &mdash; URL string</li>
+            <li><code>CONSENTPRO_GEO_ENABLED</code> &mdash; <code>true</code> / <code>false</code></li>
+        </ul>
+        <p>{{ 'Environment variables take precedence over settings saved in the Control Panel.'|t('consentpro') }}</p>
+    </div>
+</div>

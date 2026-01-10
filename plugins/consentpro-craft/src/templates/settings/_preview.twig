@@ -1,0 +1,137 @@
+{#
+ # Live Preview Panel (US-029)
+ #
+ # @link      https://consentpro.io
+ # @copyright Copyright (c) ConsentPro Team
+ #}
+
+<aside class="consentpro-preview" aria-labelledby="consentpro-preview-title">
+    {# Preview Header #}
+    <div class="consentpro-preview__header">
+        <h3 id="consentpro-preview-title">{{ 'Banner Preview'|t('consentpro') }}</h3>
+
+        {# Layer Toggle #}
+        <div class="consentpro-preview__controls">
+            <div class="btngroup" role="group" aria-label="{{ 'Preview layer'|t('consentpro') }}">
+                <button type="button"
+                        class="btn small consentpro-preview-layer-toggle active"
+                        data-layer="1"
+                        aria-pressed="true">
+                    {{ 'Layer 1'|t('consentpro') }}
+                </button>
+                <button type="button"
+                        class="btn small consentpro-preview-layer-toggle"
+                        data-layer="2"
+                        aria-pressed="false">
+                    {{ 'Layer 2'|t('consentpro') }}
+                </button>
+            </div>
+
+            {# Viewport Toggle #}
+            <div class="btngroup" role="group" aria-label="{{ 'Preview viewport'|t('consentpro') }}">
+                <button type="button"
+                        class="btn small icon consentpro-preview-viewport-toggle active"
+                        data-viewport="desktop"
+                        aria-pressed="true"
+                        title="{{ 'Desktop view'|t('consentpro') }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </button>
+                <button type="button"
+                        class="btn small icon consentpro-preview-viewport-toggle"
+                        data-viewport="mobile"
+                        aria-pressed="false"
+                        title="{{ 'Mobile view'|t('consentpro') }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2"/>
+                        <line x1="12" y1="18" x2="12" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Preview Frame #}
+    <div class="consentpro-preview__frame">
+        <iframe id="consentpro-preview-iframe"
+                class="consentpro-preview__iframe"
+                title="{{ 'Consent banner preview'|t('consentpro') }}"
+                sandbox="allow-scripts allow-same-origin"
+                aria-live="polite"
+                src="{{ actionUrl('consentpro/settings/preview') }}">
+        </iframe>
+    </div>
+
+    {# Preview Note #}
+    <p class="consentpro-preview__note light">
+        {{ 'Preview updates as you type. Save to apply changes to your site.'|t('consentpro') }}
+    </p>
+</aside>
+
+{# Preview Styles #}
+<style>
+    .consentpro-preview {
+        background: var(--gray-050);
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .consentpro-preview__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 16px;
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .consentpro-preview__header h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .consentpro-preview__controls {
+        display: flex;
+        gap: 8px;
+    }
+
+    .consentpro-preview__frame {
+        background: var(--gray-100);
+        padding: 16px;
+        min-height: 300px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .consentpro-preview__iframe {
+        width: 100%;
+        height: 280px;
+        border: none;
+        background: transparent;
+        transition: width 0.3s ease;
+    }
+
+    .consentpro-preview__note {
+        padding: 8px 16px;
+        margin: 0;
+        font-size: 12px;
+        text-align: center;
+        background: white;
+        border-top: 1px solid var(--gray-200);
+    }
+
+    /* Active state for toggle buttons */
+    .consentpro-preview-layer-toggle.active,
+    .consentpro-preview-viewport-toggle.active {
+        background: var(--blue-500);
+        color: white;
+    }
+</style>

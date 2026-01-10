@@ -1,88 +1,228 @@
-{# ConsentPro Settings Template #}
+{#
+ # ConsentPro Settings Template
+ #
+ # @link      https://consentpro.io
+ # @copyright Copyright (c) ConsentPro Team
+ #}
 
 {% import '_includes/forms.twig' as forms %}
 
-{{ forms.lightswitchField({
-    label: 'Enable Banner'|t('consentpro'),
-    instructions: 'Show consent banner to visitors.'|t('consentpro'),
-    id: 'enabled',
-    name: 'enabled',
-    on: settings.enabled,
-}) }}
+{# Define tabs #}
+{% set tabs = {
+    general: {
+        label: 'General'|t('consentpro'),
+        url: url('consentpro/settings', {tab: 'general'}),
+    },
+    appearance: {
+        label: 'Appearance'|t('consentpro'),
+        url: url('consentpro/settings', {tab: 'appearance'}),
+    },
+    categories: {
+        label: 'Categories'|t('consentpro'),
+        url: url('consentpro/settings', {tab: 'categories'}),
+    },
+    license: {
+        label: 'License'|t('consentpro'),
+        url: url('consentpro/settings', {tab: 'license'}),
+    },
+} %}
 
-{{ forms.textField({
-    label: 'Privacy Policy URL'|t('consentpro'),
-    instructions: 'Link to your privacy policy page.'|t('consentpro'),
-    id: 'policyUrl',
-    name: 'policyUrl',
-    value: settings.policyUrl,
-    type: 'url',
-}) }}
+{# Set active tab #}
+{% set selectedTab = selectedTab ?? 'general' %}
 
-{{ forms.lightswitchField({
-    label: 'Geo-Targeting'|t('consentpro'),
-    instructions: 'Only show banner to EU and California visitors. Requires Cloudflare for geo-detection.'|t('consentpro'),
-    id: 'geoEnabled',
-    name: 'geoEnabled',
-    on: settings.geoEnabled,
-}) }}
+{# Show preview on Appearance and Categories tabs #}
+{% set showPreview = selectedTab in ['appearance', 'categories'] %}
 
-<hr>
+{# Enable full page form #}
+{% set fullPageForm = true %}
 
-<h2>{{ 'Appearance'|t('consentpro') }}</h2>
+{% block content %}
+    {{ actionInput('consentpro/settings/save') }}
+    {{ hiddenInput('selectedTab', selectedTab) }}
+    {{ redirectInput(url('consentpro/settings', {tab: selectedTab})) }}
 
-{{ forms.colorField({
-    label: 'Primary Color'|t('consentpro'),
-    instructions: 'Used for buttons and links.'|t('consentpro'),
-    id: 'colorPrimary',
-    name: 'colorPrimary',
-    value: settings.colorPrimary,
-}) }}
+    <div class="consentpro-settings{% if showPreview %} consentpro-settings--with-preview{% endif %}">
+        {# Main Content Area #}
+        <div class="consentpro-settings__content">
+            {# ============ GENERAL TAB ============ #}
+            <div id="tab-general"{% if selectedTab != 'general' %} class="hidden"{% endif %}>
+                {% include 'consentpro/settings/_tabs/general.twig' with {settings: settings} only %}
+            </div>
 
-{{ forms.colorField({
-    label: 'Secondary Color'|t('consentpro'),
-    instructions: 'Used for secondary text and borders.'|t('consentpro'),
-    id: 'colorSecondary',
-    name: 'colorSecondary',
-    value: settings.colorSecondary,
-}) }}
+            {# ============ APPEARANCE TAB ============ #}
+            <div id="tab-appearance"{% if selectedTab != 'appearance' %} class="hidden"{% endif %}>
+                {% include 'consentpro/settings/_tabs/appearance.twig' with {settings: settings} only %}
+            </div>
 
-{{ forms.colorField({
-    label: 'Background Color'|t('consentpro'),
-    id: 'colorBackground',
-    name: 'colorBackground',
-    value: settings.colorBackground,
-}) }}
+            {# ============ CATEGORIES TAB ============ #}
+            <div id="tab-categories"{% if selectedTab != 'categories' %} class="hidden"{% endif %}>
+                {% include 'consentpro/settings/_tabs/categories.twig' with {settings: settings} only %}
+            </div>
 
-{{ forms.colorField({
-    label: 'Text Color'|t('consentpro'),
-    id: 'colorText',
-    name: 'colorText',
-    value: settings.colorText,
-}) }}
+            {# ============ LICENSE TAB ============ #}
+            <div id="tab-license"{% if selectedTab != 'license' %} class="hidden"{% endif %}>
+                {% include 'consentpro/settings/_tabs/license.twig' with {settings: settings} only %}
+            </div>
+        </div>
 
-<hr>
-
-<h2>{{ 'License'|t('consentpro') }}</h2>
-
-{{ forms.textField({
-    label: 'License Key'|t('consentpro'),
-    instructions: 'Enter your license key to unlock Pro features.'|t('consentpro'),
-    id: 'licenseKey',
-    name: 'licenseKey',
-    value: settings.licenseKey,
-}) }}
-
-{% set isPro = craft.consentpro.license.isPro() %}
-<div class="field">
-    <div class="heading">
-        <label>{{ 'Status'|t('consentpro') }}</label>
-    </div>
-    <div class="input">
-        {% if isPro %}
-            <span class="status green"></span> {{ 'Pro - Active'|t('consentpro') }}
-        {% else %}
-            <span class="status"></span> {{ 'Core (Free)'|t('consentpro') }}
+        {# Live Preview Panel #}
+        {% if showPreview %}
+            <div class="consentpro-settings__preview">
+                {% include 'consentpro/settings/_preview.twig' with {settings: settings} only %}
+            </div>
         {% endif %}
     </div>
-</div>
+
+    {# Inline Styles for Settings Layout #}
+    <style>
+        .consentpro-settings {
+            display: block;
+        }
+        .consentpro-settings--with-preview {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+        }
+        @media (max-width: 1200px) {
+            .consentpro-settings--with-preview {
+                grid-template-columns: 1fr;
+            }
+            .consentpro-settings__preview {
+                order: -1;
+            }
+        }
+        .consentpro-settings__content {
+            min-width: 0;
+        }
+        .consentpro-settings__preview {
+            position: sticky;
+            top: 24px;
+            align-self: start;
+        }
+    </style>
+{% endblock %}
+
+{# Preview JavaScript for live updates #}
+{% block foot %}
+    {{ parent() }}
+    {% if showPreview %}
+        {% js %}
+            (function() {
+                const preview = document.getElementById('consentpro-preview-iframe');
+                if (!preview) return;
+
+                // Debounce helper
+                function debounce(fn, delay) {
+                    let timer;
+                    return function(...args) {
+                        clearTimeout(timer);
+                        timer = setTimeout(() => fn.apply(this, args), delay);
+                    };
+                }
+
+                // Update preview on field changes
+                const updatePreview = debounce(function() {
+                    const config = collectConfig();
+                    if (preview.contentWindow) {
+                        preview.contentWindow.postMessage({
+                            type: 'consentpro-preview-update',
+                            config: config
+                        }, '*');
+                    }
+                }, 300);
+
+                // Collect current form values
+                function collectConfig() {
+                    return {
+                        colors: {
+                            primary: document.getElementById('colorPrimary')?.value || '#2563eb',
+                            secondary: document.getElementById('colorSecondary')?.value || '#64748b',
+                            background: document.getElementById('colorBackground')?.value || '#ffffff',
+                            text: document.getElementById('colorText')?.value || '#1e293b',
+                        },
+                        text: {
+                            heading: document.getElementById('textHeading')?.value || 'We value your privacy',
+                            acceptAll: document.getElementById('textAccept')?.value || 'Accept All',
+                            rejectNonEssential: document.getElementById('textReject')?.value || 'Reject Non-Essential',
+                            settings: document.getElementById('textSettings')?.value || 'Cookie Settings',
+                            save: document.getElementById('textSave')?.value || 'Save Preferences',
+                        },
+                        categories: collectCategories(),
+                    };
+                }
+
+                // Collect category values
+                function collectCategories() {
+                    const cats = [];
+                    ['essential', 'analytics', 'marketing', 'personalization'].forEach(id => {
+                        const nameEl = document.querySelector('[name="categories[' + id + '][name]"]');
+                        const descEl = document.querySelector('[name="categories[' + id + '][description]"]');
+                        if (nameEl || descEl) {
+                            cats.push({
+                                id: id,
+                                name: nameEl?.value || id.charAt(0).toUpperCase() + id.slice(1),
+                                description: descEl?.value || '',
+                                required: id === 'essential',
+                            });
+                        }
+                    });
+                    return cats;
+                }
+
+                // Bind event listeners
+                const inputs = document.querySelectorAll(
+                    '#tab-appearance input, #tab-appearance textarea, ' +
+                    '#tab-categories input, #tab-categories textarea'
+                );
+
+                inputs.forEach(input => {
+                    input.addEventListener('input', updatePreview);
+                    input.addEventListener('change', updatePreview);
+                });
+
+                // Layer toggle buttons
+                document.querySelectorAll('.consentpro-preview-layer-toggle').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const layer = this.dataset.layer;
+                        document.querySelectorAll('.consentpro-preview-layer-toggle').forEach(b => {
+                            b.classList.remove('active');
+                            b.setAttribute('aria-pressed', 'false');
+                        });
+                        this.classList.add('active');
+                        this.setAttribute('aria-pressed', 'true');
+
+                        if (preview.contentWindow) {
+                            preview.contentWindow.postMessage({
+                                type: 'consentpro-preview-layer',
+                                layer: parseInt(layer)
+                            }, '*');
+                        }
+                    });
+                });
+
+                // Viewport toggle buttons
+                document.querySelectorAll('.consentpro-preview-viewport-toggle').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const viewport = this.dataset.viewport;
+                        document.querySelectorAll('.consentpro-preview-viewport-toggle').forEach(b => {
+                            b.classList.remove('active');
+                            b.setAttribute('aria-pressed', 'false');
+                        });
+                        this.classList.add('active');
+                        this.setAttribute('aria-pressed', 'true');
+
+                        const iframe = document.getElementById('consentpro-preview-iframe');
+                        if (iframe) {
+                            iframe.style.width = viewport === 'mobile' ? '375px' : '100%';
+                        }
+                    });
+                });
+
+                // Initial update when iframe loads
+                preview.addEventListener('load', function() {
+                    updatePreview();
+                });
+            })();
+        {% endjs %}
+    {% endif %}
+{% endblock %}

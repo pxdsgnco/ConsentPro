@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConsentPro Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            background: transparent;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        /* Banner Container */
+        .consentpro-banner {
+            background: var(--bg-color, #ffffff);
+            color: var(--text-color, #1e293b);
+            padding: 20px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 8px 8px 0 0;
+        }
+
+        /* Layer 1 - Quick Actions */
+        .consentpro-layer1 {
+            display: block;
+        }
+
+        .consentpro-layer1.hidden {
+            display: none;
+        }
+
+        .consentpro-heading {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .consentpro-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .consentpro-btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .consentpro-btn:hover {
+            opacity: 0.9;
+        }
+
+        .consentpro-btn--primary {
+            background: var(--primary-color, #2563eb);
+            color: white;
+        }
+
+        .consentpro-btn--secondary {
+            background: transparent;
+            color: var(--text-color, #1e293b);
+            border: 1px solid var(--secondary-color, #64748b);
+        }
+
+        .consentpro-link {
+            background: none;
+            border: none;
+            color: var(--primary-color, #2563eb);
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: underline;
+            padding: 10px 0;
+        }
+
+        /* Layer 2 - Settings Panel */
+        .consentpro-layer2 {
+            display: none;
+        }
+
+        .consentpro-layer2.visible {
+            display: block;
+        }
+
+        .consentpro-settings-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .consentpro-category {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--secondary-color, #e2e8f0);
+        }
+
+        .consentpro-category:last-child {
+            border-bottom: none;
+        }
+
+        .consentpro-category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .consentpro-category-name {
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .consentpro-category-desc {
+            font-size: 12px;
+            color: var(--secondary-color, #64748b);
+            margin-top: 4px;
+        }
+
+        .consentpro-toggle {
+            width: 40px;
+            height: 22px;
+            background: var(--secondary-color, #cbd5e1);
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .consentpro-toggle.active {
+            background: var(--primary-color, #2563eb);
+        }
+
+        .consentpro-toggle.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .consentpro-toggle::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .consentpro-toggle.active::after {
+            transform: translateX(18px);
+        }
+
+        .consentpro-layer2-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="consentpro-banner" id="consentpro-banner">
+        {# Layer 1 - Quick Actions #}
+        <div class="consentpro-layer1" id="consentpro-layer1">
+            <h2 class="consentpro-heading" id="preview-heading">{{ config.text.heading ?? 'We value your privacy' }}</h2>
+            <p>We use cookies to enhance your browsing experience and analyze our traffic.</p>
+            <div class="consentpro-buttons">
+                <button class="consentpro-btn consentpro-btn--primary" id="preview-accept">
+                    {{ config.text.acceptAll ?? 'Accept All' }}
+                </button>
+                <button class="consentpro-btn consentpro-btn--secondary" id="preview-reject">
+                    {{ config.text.rejectNonEssential ?? 'Reject Non-Essential' }}
+                </button>
+                <button class="consentpro-link" id="preview-settings-link">
+                    {{ config.text.settings ?? 'Cookie Settings' }}
+                </button>
+            </div>
+        </div>
+
+        {# Layer 2 - Settings Panel #}
+        <div class="consentpro-layer2" id="consentpro-layer2">
+            <h2 class="consentpro-settings-title">Cookie Settings</h2>
+
+            <div id="preview-categories">
+                {% for category in config.categories %}
+                    <div class="consentpro-category">
+                        <div class="consentpro-category-header">
+                            <span class="consentpro-category-name">{{ category.name }}</span>
+                            <div class="consentpro-toggle {{ category.required ? 'active disabled' : '' }}"
+                                 data-category="{{ category.id }}"></div>
+                        </div>
+                        <p class="consentpro-category-desc">{{ category.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="consentpro-layer2-buttons">
+                <button class="consentpro-btn consentpro-btn--primary" id="preview-save">
+                    {{ config.text.save ?? 'Save Preferences' }}
+                </button>
+                <button class="consentpro-link" id="preview-back">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Apply initial colors
+        const banner = document.getElementById('consentpro-banner');
+        const colors = {{ config.colors|json_encode|raw }};
+
+        function applyColors(colorConfig) {
+            banner.style.setProperty('--bg-color', colorConfig.background || '#ffffff');
+            banner.style.setProperty('--text-color', colorConfig.text || '#1e293b');
+            banner.style.setProperty('--primary-color', colorConfig.primary || '#2563eb');
+            banner.style.setProperty('--secondary-color', colorConfig.secondary || '#64748b');
+        }
+
+        applyColors(colors);
+
+        // Layer switching
+        const layer1 = document.getElementById('consentpro-layer1');
+        const layer2 = document.getElementById('consentpro-layer2');
+
+        document.getElementById('preview-settings-link')?.addEventListener('click', () => {
+            layer1.classList.add('hidden');
+            layer2.classList.add('visible');
+        });
+
+        document.getElementById('preview-back')?.addEventListener('click', () => {
+            layer1.classList.remove('hidden');
+            layer2.classList.remove('visible');
+        });
+
+        // Toggle clicks
+        document.querySelectorAll('.consentpro-toggle:not(.disabled)').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Listen for parent window updates
+        window.addEventListener('message', function(event) {
+            if (!event.data || !event.data.type) return;
+
+            if (event.data.type === 'consentpro-preview-update') {
+                const config = event.data.config;
+
+                // Update colors
+                if (config.colors) {
+                    applyColors(config.colors);
+                }
+
+                // Update text
+                if (config.text) {
+                    const heading = document.getElementById('preview-heading');
+                    const accept = document.getElementById('preview-accept');
+                    const reject = document.getElementById('preview-reject');
+                    const settingsLink = document.getElementById('preview-settings-link');
+                    const save = document.getElementById('preview-save');
+
+                    if (heading) heading.textContent = config.text.heading || 'We value your privacy';
+                    if (accept) accept.textContent = config.text.acceptAll || 'Accept All';
+                    if (reject) reject.textContent = config.text.rejectNonEssential || 'Reject Non-Essential';
+                    if (settingsLink) settingsLink.textContent = config.text.settings || 'Cookie Settings';
+                    if (save) save.textContent = config.text.save || 'Save Preferences';
+                }
+
+                // Update categories
+                if (config.categories && config.categories.length > 0) {
+                    const container = document.getElementById('preview-categories');
+                    container.innerHTML = config.categories.map(cat => `
+                        <div class="consentpro-category">
+                            <div class="consentpro-category-header">
+                                <span class="consentpro-category-name">${cat.name}</span>
+                                <div class="consentpro-toggle ${cat.required ? 'active disabled' : ''}"
+                                     data-category="${cat.id}"></div>
+                            </div>
+                            <p class="consentpro-category-desc">${cat.description}</p>
+                        </div>
+                    `).join('');
+
+                    // Re-bind toggle clicks
+                    document.querySelectorAll('.consentpro-toggle:not(.disabled)').forEach(toggle => {
+                        toggle.addEventListener('click', function() {
+                            this.classList.toggle('active');
+                        });
+                    });
+                }
+            }
+
+            if (event.data.type === 'consentpro-preview-layer') {
+                const layer = event.data.layer;
+                if (layer === 1) {
+                    layer1.classList.remove('hidden');
+                    layer2.classList.remove('visible');
+                } else if (layer === 2) {
+                    layer1.classList.add('hidden');
+                    layer2.classList.add('visible');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
