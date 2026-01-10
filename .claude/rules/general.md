@@ -5,6 +5,9 @@ enforce: true
 ---
 # ConsentPro Global Rules
 
+## Frontend UI: 
+Use design skill for banners/admin—WCAG AA, no dark patterns, equal prominence, 44px touch, slide animations. Generate wireframes/HTML/CSS stubs before code.
+
 ## Definition of Done [file:4]
 - Code reviewed/merged to main
 - Unit tests ≥80% coverage touched files
