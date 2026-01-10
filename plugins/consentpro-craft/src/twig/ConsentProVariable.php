@@ -28,6 +28,9 @@ class ConsentProVariable
     /**
      * Render the consent banner.
      *
+     * Outputs banner HTML container, registers CSS/JS assets, and includes
+     * the initialization script. This is the recommended method for most users.
+     *
      * @return Markup
      */
     public function banner(): Markup
@@ -37,6 +40,9 @@ class ConsentProVariable
         if (!$settings->enabled) {
             return new Markup('', 'UTF-8');
         }
+
+        // Register asset bundle for JS/CSS
+        Craft::$app->getView()->registerAssetBundle(ConsentProAsset::class);
 
         $config = ConsentPro::getInstance()->consent->getConfig();
 
@@ -54,14 +60,20 @@ class ConsentProVariable
             );
         }
 
+        // Add inline init script
+        $html .= sprintf(
+            '<script id="consentpro-init">%s</script>',
+            $this->getInitScript()
+        );
+
         return new Markup($html, 'UTF-8');
     }
 
     /**
-     * Output just the script and style tags.
+     * Output just the script and style tags with initialization.
      *
-     * Use this when you want to manually control asset placement
-     * without using the full banner() output.
+     * Use this when you want to manually control asset placement.
+     * Outputs CSS link, JS script, and initialization script.
      *
      * @return Markup
      */
@@ -84,9 +96,11 @@ class ConsentProVariable
 
         $html = sprintf(
             '<link rel="stylesheet" href="%s">' . "\n" .
-            '<script src="%s" defer></script>',
+            '<script src="%s" defer></script>' . "\n" .
+            '<script id="consentpro-init">%s</script>',
             htmlspecialchars($cssUrl, ENT_QUOTES, 'UTF-8'),
-            htmlspecialchars($jsUrl, ENT_QUOTES, 'UTF-8')
+            htmlspecialchars($jsUrl, ENT_QUOTES, 'UTF-8'),
+            $this->getInitScript()
         );
 
         return new Markup($html, 'UTF-8');
@@ -150,5 +164,49 @@ class ConsentProVariable
                 return ConsentPro::getInstance()->license->getLastValidated();
             }
         };
+    }
+
+    /**
+     * Get the inline initialization script.
+     *
+     * This script initializes the ConsentPro banner, manager, and script blocker
+     * after the main JS file loads. It handles DOMContentLoaded timing and
+     * exposes global helper methods.
+     *
+     * @return string
+     */
+    private function getInitScript(): string
+    {
+        return <<<'JS'
+(function(){
+'use strict';
+function initConsentPro(){
+if(typeof ConsentPro==='undefined'){return;}
+var config=ConsentPro.GeoDetector.parseConfigFromDOM('#consentpro-banner');
+if(!config){return;}
+if(!ConsentPro.GeoDetector.shouldShowBanner(config)){return;}
+var manager=new ConsentPro.ConsentManager();
+var banner=new ConsentPro.BannerUI(manager);
+var blocker=new ConsentPro.ScriptBlocker();
+banner.init('consentpro-banner',config);
+var consent=manager.getConsent();
+if(consent&&manager.isConsentValid()){
+blocker.init(consent.categories);
+banner.renderFooterToggle();
+}else{
+banner.show();
+blocker.init({essential:true,analytics:false,marketing:false,personalization:false});
+}
+window.ConsentPro.manager=manager;
+window.ConsentPro.show=function(){banner.show();};
+window.ConsentPro.getConsent=function(){return manager.getConsent();};
+}
+if(document.readyState==='loading'){
+document.addEventListener('DOMContentLoaded',initConsentPro);
+}else{
+initConsentPro();
+}
+})();
+JS;
     }
 }
