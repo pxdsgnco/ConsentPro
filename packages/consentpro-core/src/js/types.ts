@@ -67,6 +67,10 @@ export interface BannerText {
   settings: string;
   save: string;
   back: string;
+  /** Layer 2 panel title */
+  settingsTitle: string;
+  /** Footer toggle button text */
+  footerToggle: string;
 }
 
 /**
@@ -86,4 +90,16 @@ export interface ConsentEventDetail {
   categories: ConsentCategories;
   timestamp: number;
   geo: 'EU' | 'CA' | null;
+}
+
+/**
+ * Options for ScriptBlocker initialization
+ */
+export interface ScriptBlockerOptions {
+  /** Attribute name for consent category (default: 'data-consentpro') */
+  attributeName?: string;
+  /** Enable MutationObserver for dynamic scripts (default: true) */
+  observeDynamicScripts?: boolean;
+  /** Root element to observe for mutations (default: document.documentElement) */
+  observeRoot?: Element;
 }
