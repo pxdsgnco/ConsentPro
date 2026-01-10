@@ -77,7 +77,9 @@ Every story must satisfy these criteria before closure:
 
 -----
 
-## Iteration 3: Craft CMS Port + Licensing (E5 + E6)
+## Iteration 3: Craft CMS Port + Licensing (E5 + E6) ✅ COMPLETE
+
+**Status:** All 17 stories completed and merged to master.
 
 **Goal:** Working Craft plugin with CP settings, plus license validation for both platforms.
 
@@ -147,9 +149,9 @@ Every story must satisfy these criteria before closure:
 |---------|---------|-------|-------|-------------|---------------------|
 |1        |E1 + E2  |18     |35     |40           |✅ **COMPLETE**      |
 |2        |E3 + E4  |14     |34     |40           |✅ **COMPLETE**      |
-|3        |E5 + E6  |17     |37     |40           |🔲 Pending           |
+|3        |E5 + E6  |17     |37     |40           |✅ **COMPLETE**      |
 |4        |E7       |21     |43     |40           |🔲 Pending           |
-|**Total**|**E1-E7**|**70** |**149**|**160**      |**32/70 stories done**|
+|**Total**|**E1-E7**|**70** |**149**|**160**      |**49/70 stories done**|
 
 ### Iteration 4 Mitigation Options
 
@@ -231,15 +233,15 @@ Iteration 2: ✅ COMPLETE
                  └─→ US-020a/b (consent log) + US-021a/b (preview) ✓
                       └─→ US-022 (frontend) + US-023 (hooks) + US-026 (geo) ✓
 
-Iteration 3: 🔲 NEXT
+Iteration 3: ✅ COMPLETE
 [Iteration 2 complete] ✓
-  └─→ US-027 (Craft scaffold)
-       └─→ US-028, US-029, US-030, US-031a/b, US-032, US-033, US-036 (Craft features)
-  └─→ US-024a/b/c (WP license) ─→ US-025 (WP gating)
-  └─→ US-034a/b/c (Craft license) ─→ US-035 (Craft gating)
+  └─→ US-027 (Craft scaffold) ✓
+       └─→ US-028, US-029, US-030, US-031a/b, US-032, US-033, US-036 (Craft features) ✓
+  └─→ US-024a/b/c (WP license) ─→ US-025 (WP gating) ✓
+  └─→ US-034a/b/c (Craft license) ─→ US-035 (Craft gating) ✓
 
-Iteration 4: 🔲 PENDING
-[Iteration 3 complete]
+Iteration 4: 🔲 NEXT
+[Iteration 3 complete] ✓
   └─→ All US-037-047 can parallelize across team members
        └─→ Final integration testing
             └─→ Documentation + Release prep
@@ -263,9 +265,9 @@ Iteration 4: 🔲 PENDING
 
 |Metric            |Original  |Refined    |Current Status           |
 |------------------|----------|-----------|-------------------------|
-|Total Stories     |47        |70         |**32/70 complete (46%)** |
-|Total Points      |169       |149        |**69/149 delivered (46%)**|
-|Iterations Done   |-         |4          |**2/4 complete**         |
+|Total Stories     |47        |70         |**49/70 complete (70%)** |
+|Total Points      |169       |149        |**106/149 delivered (71%)**|
+|Iterations Done   |-         |4          |**3/4 complete**         |
 |Max Story Size    |5         |3          |All stories ≤3pt         |
 |Iteration Variance|Unbalanced|35/34/37/43|Even distribution        |
 
@@ -273,7 +275,7 @@ Iteration 4: 🔲 PENDING
 
 - ✅ **Iteration 1** (Core Foundation + Banner UI): 18 stories, 35 points — **COMPLETE**
 - ✅ **Iteration 2** (WordPress MVP): 14 stories, 34 points — **COMPLETE**
-- 🔲 **Iteration 3** (Craft CMS + Licensing): 17 stories, 37 points — **NEXT**
-- 🔲 **Iteration 4** (Compliance, QA & Release): 21 stories, 43 points — **PENDING**
+- ✅ **Iteration 3** (Craft CMS + Licensing): 17 stories, 37 points — **COMPLETE**
+- 🔲 **Iteration 4** (Compliance, QA & Release): 21 stories, 43 points — **NEXT**
 
-**Next milestone:** Iteration 3 — Craft CMS Port + Licensing (E5 + E6)
+**Next milestone:** Iteration 4 — Compliance, QA & Release (E7)
