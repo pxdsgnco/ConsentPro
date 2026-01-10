@@ -27,11 +27,22 @@ $consentpro-bp-mobile: 768px !default;
 // Layout
 $consentpro-max-width: 960px !default;
 $consentpro-z-index: 999999 !default;
-$consentpro-border-radius: 0.5rem !default;
+$consentpro-radius: 0.5rem !default;
+$consentpro-radius-sm: 0.25rem !default;
 
 // Touch targets (WCAG 2.5.5)
 $consentpro-touch-target: 44px !default;
 
-// Animation
-$consentpro-transition-duration: 300ms !default;
-$consentpro-transition-easing: ease-out !default;
+// Animation - Show
+$consentpro-show-duration: 300ms !default;
+$consentpro-easing-out: ease-out !default;
+
+// Animation - Hide (faster for snappy feel)
+$consentpro-hide-duration: 200ms !default;
+$consentpro-easing-in: ease-in !default;
+
+// Legacy aliases (deprecated)
+$consentpro-transition-duration: $consentpro-show-duration !default;
+$consentpro-transition-easing: $consentpro-easing-out !default;
+$consentpro-transition-duration-hide: $consentpro-hide-duration !default;
+$consentpro-transition-easing-hide: $consentpro-easing-in !default;

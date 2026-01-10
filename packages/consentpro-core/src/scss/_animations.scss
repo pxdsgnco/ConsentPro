@@ -1,14 +1,26 @@
 @use 'variables' as *;
 
-// Banner transition
+// Banner transition - Show (300ms ease-out) / Hide (200ms ease-in)
 .consentpro {
+  // Default: hide transition (faster, snappier)
   transition:
-    transform $consentpro-transition-duration $consentpro-transition-easing,
-    visibility $consentpro-transition-duration;
+    transform $consentpro-transition-duration-hide $consentpro-transition-easing-hide,
+    visibility $consentpro-transition-duration-hide;
+
+  // Override for show animation (slower, smoother)
+  &--visible {
+    transition:
+      transform $consentpro-transition-duration $consentpro-transition-easing,
+      visibility $consentpro-transition-duration;
+  }
 
   // Respect reduced motion preference
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+
+    &--visible {
+      transition: none;
+    }
   }
 }
 
