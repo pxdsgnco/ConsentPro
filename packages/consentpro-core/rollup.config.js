@@ -35,6 +35,7 @@ export default [
             drop_console: true,
             drop_debugger: true,
             pure_funcs: ['console.log'],
+            passes: 2,
           },
           mangle: {
             properties: {

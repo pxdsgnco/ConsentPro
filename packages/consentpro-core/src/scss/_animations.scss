@@ -2,67 +2,13 @@
 
 // Banner transition - Show (300ms ease-out) / Hide (200ms ease-in)
 .consentpro {
-  // Default: hide transition (faster, snappier)
-  transition:
-    transform $consentpro-transition-duration-hide $consentpro-transition-easing-hide,
-    visibility $consentpro-transition-duration-hide;
+  transition: transform $consentpro-hide-duration $consentpro-easing-in, visibility $consentpro-hide-duration;
 
-  // Override for show animation (slower, smoother)
   &--visible {
-    transition:
-      transform $consentpro-transition-duration $consentpro-transition-easing,
-      visibility $consentpro-transition-duration;
+    transition: transform $consentpro-show-duration $consentpro-easing-out, visibility $consentpro-show-duration;
   }
 
-  // Respect reduced motion preference
   @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &--visible {
-      transition: none;
-    }
-  }
-}
-
-// Slide-in from bottom
-@keyframes consentpro-slide-in {
-  from {
-    transform: translateY(100%);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-}
-
-// Slide-out to bottom
-@keyframes consentpro-slide-out {
-  from {
-    transform: translateY(0);
-  }
-
-  to {
-    transform: translateY(100%);
-  }
-}
-
-// Fade for layer transitions
-@keyframes consentpro-fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes consentpro-fade-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
+    &, &--visible { transition: none; }
   }
 }

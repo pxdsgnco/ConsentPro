@@ -329,7 +329,7 @@ describe('ConsentPro Script Blocking (US-012a & US-012b)', () => {
       cy.get('[data-action="accept"]').click();
 
       // Open footer toggle and change consent
-      cy.get('.consentpro-footer__toggle').click();
+      cy.get('.consentpro-footer-toggle').click();
       cy.get('[data-action="settings"]').click();
 
       // Toggle analytics off
