@@ -1,8 +1,4 @@
-import type {
-  ConsentCategories,
-  ConsentEventDetail,
-  ScriptBlockerOptions,
-} from './types';
+import type { ConsentCategories, ConsentEventDetail, ScriptBlockerOptions } from './types';
 
 /**
  * Default options for ScriptBlocker (observeRoot deferred for SSR safety)
@@ -47,8 +43,7 @@ export class ScriptBlocker {
     // Set observeRoot at runtime for SSR safety
     const runtimeDefaults = {
       ...DEFAULT_OPTIONS,
-      observeRoot:
-        typeof document !== 'undefined' ? document.documentElement : null,
+      observeRoot: typeof document !== 'undefined' ? document.documentElement : null,
     };
     this._options = { ...runtimeDefaults, ...options } as Required<ScriptBlockerOptions>;
     this._executedScripts = new WeakSet();
@@ -73,10 +68,7 @@ export class ScriptBlocker {
     this.processBlockedScripts();
 
     // Listen for future consent changes
-    document.addEventListener(
-      'consentpro_consent',
-      this._boundHandleConsentEvent
-    );
+    document.addEventListener('consentpro_consent', this._boundHandleConsentEvent);
 
     // Start observing for dynamically added scripts
     if (this._options.observeDynamicScripts) {
@@ -110,9 +102,9 @@ export class ScriptBlocker {
       return false;
     }
 
-    const category = script.getAttribute(
-      this._options.attributeName
-    ) as keyof ConsentCategories | null;
+    const category = script.getAttribute(this._options.attributeName) as
+      | keyof ConsentCategories
+      | null;
 
     if (!category) {
       return false;
@@ -199,10 +191,7 @@ export class ScriptBlocker {
    */
   destroy(): void {
     this.stopObserver();
-    document.removeEventListener(
-      'consentpro_consent',
-      this._boundHandleConsentEvent
-    );
+    document.removeEventListener('consentpro_consent', this._boundHandleConsentEvent);
     this._currentConsent = null;
     this._initialized = false;
   }
@@ -272,10 +261,7 @@ export class ScriptBlocker {
 
     // Copy attributes except type and data-consentpro
     Array.from(original.attributes).forEach((attr) => {
-      if (
-        attr.name !== 'type' &&
-        attr.name !== this._options.attributeName
-      ) {
+      if (attr.name !== 'type' && attr.name !== this._options.attributeName) {
         newScript.setAttribute(attr.name, attr.value);
       }
     });

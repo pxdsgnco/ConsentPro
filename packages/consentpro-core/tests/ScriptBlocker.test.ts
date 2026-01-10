@@ -24,9 +24,7 @@ describe('ScriptBlocker', () => {
   let blocker: ScriptBlocker;
 
   // Helper to create consent categories
-  const createConsent = (
-    overrides: Partial<ConsentCategories> = {}
-  ): ConsentCategories => ({
+  const createConsent = (overrides: Partial<ConsentCategories> = {}): ConsentCategories => ({
     essential: true,
     analytics: false,
     marketing: false,
@@ -113,9 +111,7 @@ describe('ScriptBlocker', () => {
 
         blocker.init(createConsent({ marketing: false }));
 
-        const scripts = document.querySelectorAll(
-          'script[data-consentpro="marketing"]'
-        );
+        const scripts = document.querySelectorAll('script[data-consentpro="marketing"]');
         expect(scripts.length).toBe(1);
         expect((scripts[0] as HTMLScriptElement).type).toBe('text/plain');
       });
@@ -131,9 +127,7 @@ describe('ScriptBlocker', () => {
           content: 'window.__testMarketingLoaded = true;',
         });
 
-        blocker.init(
-          createConsent({ analytics: false, marketing: false })
-        );
+        blocker.init(createConsent({ analytics: false, marketing: false }));
 
         expect(window.__testAnalyticsLoaded).toBe(false);
         expect(window.__testMarketingLoaded).toBe(false);
@@ -172,9 +166,7 @@ describe('ScriptBlocker', () => {
 
         blocker.init(createConsent({ analytics: true }));
 
-        const blockedScripts = document.querySelectorAll(
-          'script[type="text/plain"]'
-        );
+        const blockedScripts = document.querySelectorAll('script[type="text/plain"]');
         expect(blockedScripts.length).toBe(0);
       });
 
@@ -203,9 +195,7 @@ describe('ScriptBlocker', () => {
           content: 'window.__testEssentialLoaded = true;',
         });
 
-        blocker.init(
-          createConsent({ analytics: false, marketing: false })
-        );
+        blocker.init(createConsent({ analytics: false, marketing: false }));
 
         expect(window.__testEssentialLoaded).toBe(true);
       });
@@ -237,9 +227,7 @@ describe('ScriptBlocker', () => {
           content: 'window.__testMarketingLoaded = true;',
         });
 
-        blocker.init(
-          createConsent({ analytics: true, marketing: false })
-        );
+        blocker.init(createConsent({ analytics: true, marketing: false }));
 
         expect(window.__testEssentialLoaded).toBe(true);
         expect(window.__testAnalyticsLoaded).toBe(true);
@@ -255,15 +243,11 @@ describe('ScriptBlocker', () => {
         blocker.init(createConsent({ analytics: true }));
 
         // Original blocked script should be replaced
-        const blockedScripts = document.querySelectorAll(
-          'script[type="text/plain"]'
-        );
+        const blockedScripts = document.querySelectorAll('script[type="text/plain"]');
         expect(blockedScripts.length).toBe(0);
 
         // New script with src should exist
-        const executedScript = document.querySelector(
-          `script[src="${scriptSrc}"]`
-        );
+        const executedScript = document.querySelector(`script[src="${scriptSrc}"]`);
         expect(executedScript).not.toBeNull();
         expect(executedScript?.getAttribute('type')).toBeNull(); // No type = text/javascript
       });
@@ -371,9 +355,7 @@ describe('ScriptBlocker', () => {
         expect(window.__testAnalyticsLoaded).toBe(false);
 
         // Dispatch consent event with analytics enabled
-        dispatchConsentEvent(
-          createConsent({ analytics: true })
-        );
+        dispatchConsentEvent(createConsent({ analytics: true }));
 
         expect(window.__testAnalyticsLoaded).toBe(true);
       });
@@ -412,9 +394,7 @@ describe('ScriptBlocker', () => {
         blocker.init(createConsent({ analytics: false, marketing: false }));
 
         // Enable only analytics
-        dispatchConsentEvent(
-          createConsent({ analytics: true, marketing: false })
-        );
+        dispatchConsentEvent(createConsent({ analytics: true, marketing: false }));
 
         expect(window.__testAnalyticsLoaded).toBe(true);
         expect(window.__testMarketingLoaded).toBe(false);
