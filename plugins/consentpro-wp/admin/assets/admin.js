@@ -9,6 +9,33 @@
   'use strict';
 
   /**
+   * Debounce function to limit execution rate.
+   *
+   * @param {Function} func Function to debounce.
+   * @param {number} wait Wait time in milliseconds.
+   * @returns {Function} Debounced function.
+   */
+  function debounce(func, wait) {
+    var timeout;
+    return function executedFunction() {
+      var context = this;
+      var args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(function () {
+        func.apply(context, args);
+      }, wait);
+    };
+  }
+
+  /**
+   * Current preview state.
+   */
+  var previewState = {
+    layer: 1,
+    isMobile: false,
+  };
+
+  /**
    * Initialize WordPress color pickers on the Appearance tab.
    */
   function initColorPickers() {
@@ -18,11 +45,14 @@
       if (typeof $.fn.wpColorPicker !== 'undefined') {
         $field.wpColorPicker({
           defaultColor: $field.data('default') || false,
-          change: function () {
-            // Future: trigger live preview update (US-021b).
+          change: function (event, ui) {
+            // Update the input value immediately for buildPreviewHTML to read.
+            $field.val(ui.color.toString());
+            debouncedUpdatePreview();
           },
           clear: function () {
-            // Future: trigger live preview update (US-021b).
+            $field.val($field.data('default') || '');
+            debouncedUpdatePreview();
           },
         });
       }
@@ -41,6 +71,87 @@
     div.textContent = str;
     return div.innerHTML;
   }
+
+  /**
+   * Update preview configuration from form fields and refresh preview.
+   */
+  function updatePreviewFromFields() {
+    var config = window.consentproPreviewConfig || {};
+
+    // Get color values from color pickers.
+    config.colors = {
+      primary: $('#consentpro-color-primary').val() || '#2563eb',
+      secondary: $('#consentpro-color-secondary').val() || '#64748b',
+      background: $('#consentpro-color-background').val() || '#ffffff',
+      text: $('#consentpro-color-text').val() || '#1e293b',
+    };
+
+    // Get text values from text inputs.
+    config.text = {
+      heading:
+        $('#consentpro-text-heading').val() ||
+        $('#consentpro-text-heading').attr('placeholder') ||
+        'We value your privacy',
+      acceptAll:
+        $('#consentpro-text-accept').val() ||
+        $('#consentpro-text-accept').attr('placeholder') ||
+        'Accept All',
+      rejectNonEssential:
+        $('#consentpro-text-reject').val() ||
+        $('#consentpro-text-reject').attr('placeholder') ||
+        'Reject Non-Essential',
+      settings:
+        $('#consentpro-text-settings').val() ||
+        $('#consentpro-text-settings').attr('placeholder') ||
+        'Cookie Settings',
+      save:
+        $('#consentpro-text-save').val() ||
+        $('#consentpro-text-save').attr('placeholder') ||
+        'Save Preferences',
+      settingsTitle: config.text ? config.text.settingsTitle : 'Privacy Preferences',
+    };
+
+    // Get category values if on Categories tab.
+    if ($('#consentpro-essential-name').length) {
+      config.categories = getCategoriesFromFields();
+    }
+
+    window.consentproPreviewConfig = config;
+    updatePreviewContent(previewState.layer);
+  }
+
+  /**
+   * Get category configuration from form fields.
+   *
+   * @returns {Array} Categories array.
+   */
+  function getCategoriesFromFields() {
+    var categoryIds = ['essential', 'analytics', 'marketing', 'personalization'];
+    var defaults = {
+      essential: {
+        name: 'Essential',
+        description: 'Required for the website to function properly.',
+      },
+      analytics: { name: 'Analytics', description: 'Help us understand usage.' },
+      marketing: { name: 'Marketing', description: 'Personalized advertisements.' },
+      personalization: { name: 'Personalization', description: 'Remember your preferences.' },
+    };
+
+    return categoryIds.map(function (id) {
+      var $name = $('#consentpro-' + id + '-name');
+      var $desc = $('#consentpro-' + id + '-description');
+
+      return {
+        id: id,
+        name: $name.val() || $name.attr('placeholder') || defaults[id].name,
+        description: $desc.val() || $desc.attr('placeholder') || defaults[id].description,
+        required: id === 'essential',
+      };
+    });
+  }
+
+  // Create debounced version (300ms).
+  var debouncedUpdatePreview = debounce(updatePreviewFromFields, 300);
 
   /**
    * Build Layer 1 HTML structure (main banner).
@@ -278,6 +389,41 @@
   }
 
   /**
+   * Toggle mobile/desktop preview view.
+   *
+   * @param {boolean} isMobile Whether to show mobile view.
+   */
+  function setMobilePreview(isMobile) {
+    previewState.isMobile = isMobile;
+    var $wrapper = $('.consentpro-preview-frame-wrapper');
+    var $iframe = $('#consentpro-preview-iframe');
+
+    if (isMobile) {
+      $wrapper.addClass('consentpro-preview-frame-wrapper--mobile');
+      $iframe.css('width', '375px');
+    } else {
+      $wrapper.removeClass('consentpro-preview-frame-wrapper--mobile');
+      $iframe.css('width', '100%');
+    }
+
+    // Update toggle button states.
+    $('.consentpro-viewport-toggle').attr('aria-pressed', 'false');
+    $(
+      '.consentpro-viewport-toggle[data-viewport="' + (isMobile ? 'mobile' : 'desktop') + '"]'
+    ).attr('aria-pressed', 'true');
+  }
+
+  /**
+   * Initialize viewport toggle buttons.
+   */
+  function initViewportToggle() {
+    $('.consentpro-viewport-toggle').on('click', function () {
+      var viewport = $(this).data('viewport');
+      setMobilePreview(viewport === 'mobile');
+    });
+  }
+
+  /**
    * Initialize the preview panel.
    */
   function initPreview() {
@@ -291,6 +437,7 @@
     $('.consentpro-preview-toggle').on('click', function () {
       var $btn = $(this);
       var layer = parseInt($btn.data('layer'), 10);
+      previewState.layer = layer;
 
       // Update active states.
       $('.consentpro-preview-toggle')
@@ -301,11 +448,325 @@
       // Update preview content.
       updatePreviewContent(layer);
     });
+
+    // Initialize viewport toggle.
+    initViewportToggle();
+
+    // Bind live update listeners to text fields.
+    $(
+      '.consentpro-settings-content input[type="text"]:not(.consentpro-color-field), ' +
+        '.consentpro-settings-content textarea'
+    ).on('input', debouncedUpdatePreview);
+  }
+
+  // =====================
+  // Consent Log Functions
+  // =====================
+
+  /**
+   * Initialize consent log tab functionality.
+   */
+  function initConsentLog() {
+    var $container = $('#consentpro-metrics-container');
+    if (!$container.length) return;
+
+    // Load initial data.
+    loadMetrics();
+    loadLogEntries(1);
+
+    // Clear log button handler.
+    $('#consentpro-clear-log').on('click', function () {
+      var $btn = $(this);
+      var admin = window.consentproAdmin || {};
+      var confirmMsg = admin.i18n
+        ? admin.i18n.confirmClear
+        : 'Are you sure you want to clear all consent log entries?';
+
+      if (!confirm(confirmMsg)) {
+        return;
+      }
+
+      $btn.prop('disabled', true).text(admin.i18n ? admin.i18n.clearing : 'Clearing...');
+
+      $.post(admin.ajaxUrl, {
+        action: 'consentpro_clear_log',
+        nonce: admin.nonce,
+      })
+        .done(function (response) {
+          if (response.success) {
+            loadMetrics();
+            loadLogEntries(1);
+          } else {
+            alert(response.data.message || 'Error clearing log');
+          }
+        })
+        .fail(function () {
+          alert(admin.i18n ? admin.i18n.errorLoading : 'Error clearing log');
+        })
+        .always(function () {
+          $btn.prop('disabled', false).text(admin.i18n ? admin.i18n.clearLog : 'Clear Log');
+        });
+    });
+  }
+
+  /**
+   * Load consent metrics via AJAX.
+   */
+  function loadMetrics() {
+    var $container = $('#consentpro-metrics-container');
+    var admin = window.consentproAdmin || {};
+
+    $.post(admin.ajaxUrl, {
+      action: 'consentpro_get_metrics',
+      nonce: admin.nonce,
+      days: 30,
+    })
+      .done(function (response) {
+        if (response.success) {
+          renderMetrics(response.data);
+        } else {
+          $container.html(
+            '<p class="consentpro-error">' + escapeHtml(response.data.message) + '</p>'
+          );
+        }
+      })
+      .fail(function () {
+        $container.html(
+          '<p class="consentpro-error">' +
+            escapeHtml(admin.i18n ? admin.i18n.errorLoading : 'Error loading data') +
+            '</p>'
+        );
+      });
+  }
+
+  /**
+   * Render metrics HTML.
+   *
+   * @param {Object} metrics Metrics data.
+   */
+  function renderMetrics(metrics) {
+    var $container = $('#consentpro-metrics-container');
+    var admin = window.consentproAdmin || {};
+
+    if (metrics.total === 0) {
+      $container.html(
+        '<p class="consentpro-empty-state">' +
+          escapeHtml(admin.i18n ? admin.i18n.noEntries : 'No consent records found.') +
+          '</p>'
+      );
+      return;
+    }
+
+    var html =
+      '<div class="consentpro-metrics-grid">' +
+      '<div class="consentpro-metric-item">' +
+      '<span class="consentpro-metric-value">' +
+      metrics.total +
+      '</span>' +
+      '<span class="consentpro-metric-label">Total Consents</span>' +
+      '</div>' +
+      '<div class="consentpro-metric-item consentpro-metric-item--accept">' +
+      '<span class="consentpro-metric-value">' +
+      metrics.accept_percent +
+      '%</span>' +
+      '<span class="consentpro-metric-label">Accept All</span>' +
+      '</div>' +
+      '<div class="consentpro-metric-item consentpro-metric-item--custom">' +
+      '<span class="consentpro-metric-value">' +
+      metrics.custom_percent +
+      '%</span>' +
+      '<span class="consentpro-metric-label">Custom</span>' +
+      '</div>' +
+      '<div class="consentpro-metric-item consentpro-metric-item--reject">' +
+      '<span class="consentpro-metric-value">' +
+      metrics.reject_percent +
+      '%</span>' +
+      '<span class="consentpro-metric-label">Reject</span>' +
+      '</div>' +
+      '</div>';
+
+    // Add percentage bar.
+    html +=
+      '<div class="consentpro-metrics-bar-container">' +
+      '<div class="consentpro-metric-bar">' +
+      '<div class="consentpro-metric-bar-segment consentpro-metric-bar-segment--accept" ' +
+      'style="width:' +
+      metrics.accept_percent +
+      '%" ' +
+      'title="Accept All: ' +
+      metrics.accept_percent +
+      '%"></div>' +
+      '<div class="consentpro-metric-bar-segment consentpro-metric-bar-segment--custom" ' +
+      'style="width:' +
+      metrics.custom_percent +
+      '%" ' +
+      'title="Custom: ' +
+      metrics.custom_percent +
+      '%"></div>' +
+      '<div class="consentpro-metric-bar-segment consentpro-metric-bar-segment--reject" ' +
+      'style="width:' +
+      metrics.reject_percent +
+      '%" ' +
+      'title="Reject: ' +
+      metrics.reject_percent +
+      '%"></div>' +
+      '</div>' +
+      '</div>';
+
+    $container.html(html);
+  }
+
+  /**
+   * Load log entries via AJAX.
+   *
+   * @param {number} page Page number.
+   */
+  function loadLogEntries(page) {
+    var $container = $('#consentpro-log-table-container');
+    var $pagination = $('#consentpro-log-pagination');
+    var admin = window.consentproAdmin || {};
+
+    $container.html(
+      '<p class="consentpro-loading">' +
+        escapeHtml(admin.i18n ? admin.i18n.loading : 'Loading...') +
+        '</p>'
+    );
+
+    $.post(admin.ajaxUrl, {
+      action: 'consentpro_get_log_entries',
+      nonce: admin.nonce,
+      page: page,
+      per_page: 50,
+    })
+      .done(function (response) {
+        if (response.success) {
+          renderLogTable(response.data.entries);
+          renderPagination(response.data, $pagination);
+        } else {
+          $container.html(
+            '<p class="consentpro-error">' + escapeHtml(response.data.message) + '</p>'
+          );
+        }
+      })
+      .fail(function () {
+        $container.html(
+          '<p class="consentpro-error">' +
+            escapeHtml(admin.i18n ? admin.i18n.errorLoading : 'Error loading data') +
+            '</p>'
+        );
+      });
+  }
+
+  /**
+   * Render log table HTML.
+   *
+   * @param {Array} entries Log entries.
+   */
+  function renderLogTable(entries) {
+    var $container = $('#consentpro-log-table-container');
+    var admin = window.consentproAdmin || {};
+
+    if (!entries || entries.length === 0) {
+      $container.html(
+        '<p class="consentpro-empty-state">' +
+          escapeHtml(admin.i18n ? admin.i18n.noEntries : 'No consent records found.') +
+          '</p>'
+      );
+      return;
+    }
+
+    var html =
+      '<table class="consentpro-log-table">' +
+      '<thead><tr>' +
+      '<th>Timestamp</th>' +
+      '<th>Type</th>' +
+      '<th>Categories</th>' +
+      '<th>Region</th>' +
+      '</tr></thead><tbody>';
+
+    entries.forEach(function (entry) {
+      var categories = {};
+      try {
+        categories = JSON.parse(entry.categories);
+      } catch {
+        categories = {};
+      }
+      var catList = Object.keys(categories)
+        .filter(function (k) {
+          return categories[k];
+        })
+        .join(', ');
+
+      var typeClass = 'consentpro-consent-type--' + entry.consent_type;
+      var typeLabel = entry.consent_type.replace(/_/g, ' ');
+      typeLabel = typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1);
+
+      html +=
+        '<tr>' +
+        '<td>' +
+        escapeHtml(entry.timestamp) +
+        '</td>' +
+        '<td><span class="consentpro-consent-type ' +
+        typeClass +
+        '">' +
+        escapeHtml(typeLabel) +
+        '</span></td>' +
+        '<td>' +
+        escapeHtml(catList || '-') +
+        '</td>' +
+        '<td>' +
+        escapeHtml(entry.region || '-') +
+        '</td>' +
+        '</tr>';
+    });
+
+    html += '</tbody></table>';
+    $container.html(html);
+  }
+
+  /**
+   * Render pagination controls.
+   *
+   * @param {Object} data Pagination data.
+   * @param {jQuery} $container Pagination container.
+   */
+  function renderPagination(data, $container) {
+    if (data.total_pages <= 1) {
+      $container.empty();
+      return;
+    }
+
+    var html =
+      '<button type="button" class="button" data-page="' +
+      (data.page - 1) +
+      '"' +
+      (data.page <= 1 ? ' disabled' : '') +
+      '>&laquo; Prev</button>' +
+      '<span class="page-info">Page ' +
+      data.page +
+      ' of ' +
+      data.total_pages +
+      '</span>' +
+      '<button type="button" class="button" data-page="' +
+      (data.page + 1) +
+      '"' +
+      (data.page >= data.total_pages ? ' disabled' : '') +
+      '>Next &raquo;</button>';
+
+    $container.html(html);
+
+    $container.find('button').on('click', function () {
+      var page = $(this).data('page');
+      if (page > 0 && page <= data.total_pages) {
+        loadLogEntries(page);
+      }
+    });
   }
 
   // Initialize on DOM ready.
   $(document).ready(function () {
     initColorPickers();
     initPreview();
+    initConsentLog();
   });
 })(jQuery);

@@ -65,5 +65,9 @@ class ConsentPro_Activator {
 
 		// Flush rewrite rules.
 		flush_rewrite_rules();
+
+		// Create consent log table.
+		require_once CONSENTPRO_PLUGIN_DIR . 'includes/class-consentpro-consent-log.php';
+		ConsentPro_Consent_Log::create_table();
 	}
 }
