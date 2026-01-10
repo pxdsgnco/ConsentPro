@@ -1,4 +1,4 @@
-import type { ConsentData, ConsentCategories, ConsentEventDetail, BannerConfig } from './types';
+import type { ConsentData, ConsentCategories, BannerConfig } from './types';
 import { StorageAdapter } from './StorageAdapter';
 
 /**
