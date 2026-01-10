@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-01-10
 
 ### Added
+
 - Initial release for Craft CMS 5.x
 - Plugin scaffold with PHP 8.2+ requirement
 - Settings model with validation for colors, URLs, and license key

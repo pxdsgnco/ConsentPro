@@ -12,6 +12,7 @@ GDPR/CCPA-compliant consent banner for Craft CMS with geo-targeting, category-ba
 ### Via Composer (Recommended)
 
 1. Add the plugin via Composer:
+
    ```bash
    composer require consentpro/craft-plugin
    ```
@@ -21,6 +22,7 @@ GDPR/CCPA-compliant consent banner for Craft CMS with geo-targeting, category-ba
    - Click "Install" next to ConsentPro
 
    Or via CLI:
+
    ```bash
    php craft plugin/install consentpro
    ```
@@ -85,8 +87,11 @@ Block scripts until consent is given using the `data-consentpro` attribute:
 
 ```html
 <!-- Analytics script (blocked until analytics consent) -->
-<script type="text/plain" data-consentpro="analytics"
-        src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
+<script
+  type="text/plain"
+  data-consentpro="analytics"
+  src="https://www.googletagmanager.com/gtag/js?id=GA_ID"
+></script>
 
 <!-- Marketing script (blocked until marketing consent) -->
 <script type="text/plain" data-consentpro="marketing">
