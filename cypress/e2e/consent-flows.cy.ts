@@ -330,7 +330,10 @@ describe('ConsentPro Consent Flows', () => {
       cy.get('[data-action="accept"]').click();
 
       // Footer toggle should now be visible
-      cy.get('.consentpro-footer-toggle').should('not.have.class', 'consentpro-footer-toggle--hidden');
+      cy.get('.consentpro-footer-toggle').should(
+        'not.have.class',
+        'consentpro-footer-toggle--hidden'
+      );
     });
 
     it('should reopen banner when footer toggle is clicked', () => {

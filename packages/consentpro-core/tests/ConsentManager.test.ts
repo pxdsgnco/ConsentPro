@@ -12,10 +12,30 @@ describe('ConsentManager', () => {
     geoEnabled: true,
     policyUrl: 'https://example.com/privacy',
     categories: [
-      { id: 'essential', name: 'Essential', description: 'Required for site functionality', required: true },
-      { id: 'analytics', name: 'Analytics', description: 'Help us understand usage', required: false },
-      { id: 'marketing', name: 'Marketing', description: 'Personalized advertisements', required: false },
-      { id: 'personalization', name: 'Personalization', description: 'Remember your preferences', required: false },
+      {
+        id: 'essential',
+        name: 'Essential',
+        description: 'Required for site functionality',
+        required: true,
+      },
+      {
+        id: 'analytics',
+        name: 'Analytics',
+        description: 'Help us understand usage',
+        required: false,
+      },
+      {
+        id: 'marketing',
+        name: 'Marketing',
+        description: 'Personalized advertisements',
+        required: false,
+      },
+      {
+        id: 'personalization',
+        name: 'Personalization',
+        description: 'Remember your preferences',
+        required: false,
+      },
     ],
     text: {
       heading: 'We value your privacy',
@@ -176,7 +196,7 @@ describe('ConsentManager', () => {
 
     it('returns false for expired consent (>12 months)', () => {
       // Set consent with past timestamp
-      const thirteenMonthsAgo = Date.now() - (13 * 30 * 24 * 60 * 60 * 1000);
+      const thirteenMonthsAgo = Date.now() - 13 * 30 * 24 * 60 * 60 * 1000;
       const expiredConsent: ConsentData = {
         version: 1,
         timestamp: thirteenMonthsAgo,
@@ -227,7 +247,7 @@ describe('ConsentManager', () => {
 
     it('returns false for consent at 12 months + 1ms', () => {
       // Set consent just past 12 months
-      const justExpired = Date.now() - (365 * 24 * 60 * 60 * 1000) - 1;
+      const justExpired = Date.now() - 365 * 24 * 60 * 60 * 1000 - 1;
       const expiredConsent: ConsentData = {
         version: 1,
         timestamp: justExpired,
@@ -247,7 +267,7 @@ describe('ConsentManager', () => {
     });
 
     it('returns true for recent consent (1 day ago)', () => {
-      const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+      const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
       const recentConsent: ConsentData = {
         version: 1,
         timestamp: oneDayAgo,
@@ -267,7 +287,7 @@ describe('ConsentManager', () => {
     });
 
     it('returns true for consent 6 months ago', () => {
-      const sixMonthsAgo = Date.now() - (6 * 30 * 24 * 60 * 60 * 1000);
+      const sixMonthsAgo = Date.now() - 6 * 30 * 24 * 60 * 60 * 1000;
       const consent: ConsentData = {
         version: 1,
         timestamp: sixMonthsAgo,
