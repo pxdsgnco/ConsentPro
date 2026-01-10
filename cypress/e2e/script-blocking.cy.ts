@@ -57,15 +57,9 @@ describe('ConsentPro Script Blocking (US-012a & US-012b)', () => {
     });
 
     it('should have scripts with type="text/plain" before consent', () => {
-      cy.get('script[type="text/plain"][data-consentpro="analytics"]').should(
-        'exist'
-      );
-      cy.get('script[type="text/plain"][data-consentpro="marketing"]').should(
-        'exist'
-      );
-      cy.get(
-        'script[type="text/plain"][data-consentpro="personalization"]'
-      ).should('exist');
+      cy.get('script[type="text/plain"][data-consentpro="analytics"]').should('exist');
+      cy.get('script[type="text/plain"][data-consentpro="marketing"]').should('exist');
+      cy.get('script[type="text/plain"][data-consentpro="personalization"]').should('exist');
     });
 
     it('should keep scripts inert even after page interaction', () => {
@@ -123,23 +117,11 @@ describe('ConsentPro Script Blocking (US-012a & US-012b)', () => {
       cy.get('[data-category="analytics"]').click();
 
       // Verify analytics is now checked
-      cy.get('[data-category="analytics"]').should(
-        'have.attr',
-        'aria-checked',
-        'true'
-      );
+      cy.get('[data-category="analytics"]').should('have.attr', 'aria-checked', 'true');
 
       // Verify marketing and personalization are still off
-      cy.get('[data-category="marketing"]').should(
-        'have.attr',
-        'aria-checked',
-        'false'
-      );
-      cy.get('[data-category="personalization"]').should(
-        'have.attr',
-        'aria-checked',
-        'false'
-      );
+      cy.get('[data-category="marketing"]').should('have.attr', 'aria-checked', 'false');
+      cy.get('[data-category="personalization"]').should('have.attr', 'aria-checked', 'false');
 
       // Save preferences
       cy.get('[data-action="save"]').click();
@@ -217,10 +199,7 @@ describe('ConsentPro Script Blocking (US-012a & US-012b)', () => {
       cy.reload();
 
       // Wait for page to load (banner should not be visible)
-      cy.get('#consentpro-banner').should(
-        'not.have.class',
-        'consentpro--visible'
-      );
+      cy.get('#consentpro-banner').should('not.have.class', 'consentpro--visible');
 
       // Scripts should have executed on reload
       cy.window().then((win) => {
@@ -378,10 +357,7 @@ describe('ConsentPro Script Blocking (US-012a & US-012b)', () => {
       cy.get('[data-action="accept"]').click();
 
       // Page should still function
-      cy.get('#consentpro-banner').should(
-        'not.have.class',
-        'consentpro--visible'
-      );
+      cy.get('#consentpro-banner').should('not.have.class', 'consentpro--visible');
     });
   });
 });
