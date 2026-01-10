@@ -94,6 +94,72 @@ class ConsentPro_Admin {
 			$this->version,
 			true
 		);
+
+		// Localize preview configuration.
+		$appearance = get_option( 'consentpro_appearance', [] );
+		$categories = get_option( 'consentpro_categories', [] );
+
+		$preview_config = [
+			'cssUrl'     => CONSENTPRO_PLUGIN_URL . 'assets/consentpro.min.css',
+			'colors'     => [
+				'primary'    => $appearance['color_primary'] ?? '#2563eb',
+				'secondary'  => $appearance['color_secondary'] ?? '#64748b',
+				'background' => $appearance['color_background'] ?? '#ffffff',
+				'text'       => $appearance['color_text'] ?? '#1e293b',
+			],
+			'text'       => [
+				'heading'            => $appearance['text_heading'] ?? '',
+				'acceptAll'          => $appearance['text_accept'] ?? '',
+				'rejectNonEssential' => $appearance['text_reject'] ?? '',
+				'settings'           => $appearance['text_settings'] ?? '',
+				'save'               => $appearance['text_save'] ?? '',
+				'settingsTitle'      => __( 'Privacy Preferences', 'consentpro' ),
+			],
+			'categories' => $this->format_preview_categories( $categories ),
+		];
+
+		wp_localize_script( 'consentpro-admin', 'consentproPreviewConfig', $preview_config );
+	}
+
+	/**
+	 * Format categories for preview.
+	 *
+	 * @param array $categories Saved categories.
+	 * @return array Formatted categories for JavaScript.
+	 */
+	private function format_preview_categories( array $categories ): array {
+		$defaults = [
+			'essential'       => [
+				'name'        => __( 'Essential', 'consentpro' ),
+				'description' => __( 'Required for the website to function properly.', 'consentpro' ),
+			],
+			'analytics'       => [
+				'name'        => __( 'Analytics', 'consentpro' ),
+				'description' => __( 'Help us understand how visitors interact with our website.', 'consentpro' ),
+			],
+			'marketing'       => [
+				'name'        => __( 'Marketing', 'consentpro' ),
+				'description' => __( 'Used to display relevant advertisements.', 'consentpro' ),
+			],
+			'personalization' => [
+				'name'        => __( 'Personalization', 'consentpro' ),
+				'description' => __( 'Remember your preferences for enhanced features.', 'consentpro' ),
+			],
+		];
+
+		$formatted = [];
+
+		foreach ( [ 'essential', 'analytics', 'marketing', 'personalization' ] as $id ) {
+			$cat         = $categories[ $id ] ?? [];
+			$formatted[] = [
+				'id'          => $id,
+				'name'        => ! empty( $cat['name'] ) ? $cat['name'] : $defaults[ $id ]['name'],
+				'description' => ! empty( $cat['description'] ) ? $cat['description'] : $defaults[ $id ]['description'],
+				'required'    => 'essential' === $id,
+			];
+		}
+
+		return $formatted;
 	}
 
 	/**
