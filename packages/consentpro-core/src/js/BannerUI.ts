@@ -305,6 +305,8 @@ export class BannerUI {
   private _showSettings(): void {
     this._currentLayer = 2;
     this._renderLayer2();
+    // Move focus into settings panel after rendering (accessibility fix)
+    this._focusFirstElement();
   }
 
   /**
@@ -313,6 +315,8 @@ export class BannerUI {
   private _showBanner(): void {
     this._currentLayer = 1;
     this._renderLayer1();
+    // Restore focus after returning to Layer 1
+    this._focusFirstElement();
   }
 
   /**
