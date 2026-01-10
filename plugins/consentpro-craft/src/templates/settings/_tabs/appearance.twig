@@ -127,3 +127,47 @@
     placeholder: textDefaults.textSave,
     errors: settings.getErrors('textSave'),
 }) }}
+
+<hr>
+
+{# =========================================================================
+   Custom CSS Section (Pro Feature)
+   ========================================================================= #}
+
+<h2>{{ 'Custom CSS'|t('consentpro') }}</h2>
+
+{% set isPro = craft.consentpro.license.isPro() ?? false %}
+
+{% if isPro %}
+    <p class="light">{{ 'Add custom CSS to style the consent banner. Styles are injected on the frontend.'|t('consentpro') }}</p>
+
+    {{ forms.textareaField({
+        label: 'Custom CSS'|t('consentpro'),
+        instructions: 'Enter custom CSS to style the consent banner.'|t('consentpro'),
+        id: 'customCss',
+        name: 'customCss',
+        value: settings.customCss,
+        rows: 12,
+        class: 'code',
+        errors: settings.getErrors('customCss'),
+    }) }}
+
+    <div class="field">
+        <div class="heading">
+            <label>{{ 'CSS Example'|t('consentpro') }}</label>
+        </div>
+        <div class="input">
+            <pre style="background: var(--gray-050); padding: 12px; border-radius: 4px; font-size: 12px; overflow-x: auto;"><code>.consentpro-banner { box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15); }
+.consentpro-btn { border-radius: 20px; }</code></pre>
+        </div>
+    </div>
+{% else %}
+    {# Pro Upgrade Notice #}
+    <div class="pane" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; text-align: center;">
+        <h3 style="color: white; margin-top: 0;">{{ 'Custom CSS is a Pro Feature'|t('consentpro') }}</h3>
+        <p style="margin-bottom: 16px;">{{ 'Upgrade to ConsentPro Pro to add custom CSS styling to your consent banner.'|t('consentpro') }}</p>
+        <a href="https://consentpro.io/pricing" target="_blank" class="btn" style="background: white; color: #667eea;">
+            {{ 'Upgrade to Pro'|t('consentpro') }}
+        </a>
+    </div>
+{% endif %}

@@ -45,6 +45,15 @@ class ConsentProVariable
             htmlspecialchars(json_encode($config), ENT_QUOTES, 'UTF-8')
         );
 
+        // Add custom CSS if available (Pro feature)
+        $customCss = ConsentPro::getInstance()->consent->getCustomCss();
+        if (!empty($customCss)) {
+            $html .= sprintf(
+                '<style id="consentpro-custom-css">%s</style>',
+                htmlspecialchars($customCss, ENT_QUOTES, 'UTF-8')
+            );
+        }
+
         return new Markup($html, 'UTF-8');
     }
 
@@ -104,6 +113,13 @@ class ConsentProVariable
     /**
      * Get license helper.
      *
+     * Provides access to license methods in templates:
+     * - {{ craft.consentpro.license.isPro() }}
+     * - {{ craft.consentpro.license.isEnterprise() }}
+     * - {{ craft.consentpro.license.getLicenseData() }}
+     * - {{ craft.consentpro.license.getGraceDaysRemaining() }}
+     * - {{ craft.consentpro.license.getLastValidated() }}
+     *
      * @return object
      */
     public function getLicense(): object
@@ -112,6 +128,26 @@ class ConsentProVariable
             public function isPro(): bool
             {
                 return ConsentPro::getInstance()->license->isPro();
+            }
+
+            public function isEnterprise(): bool
+            {
+                return ConsentPro::getInstance()->license->isEnterprise();
+            }
+
+            public function getLicenseData(): array
+            {
+                return ConsentPro::getInstance()->license->getLicenseData();
+            }
+
+            public function getGraceDaysRemaining(): ?int
+            {
+                return ConsentPro::getInstance()->license->getGraceDaysRemaining();
+            }
+
+            public function getLastValidated(): ?int
+            {
+                return ConsentPro::getInstance()->license->getLastValidated();
             }
         };
     }

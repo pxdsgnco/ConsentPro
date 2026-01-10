@@ -7,43 +7,91 @@
 
 {% import '_includes/forms.twig' as forms %}
 
+{% set isPro = craft.consentpro.license.isPro() ?? false %}
+{% set licenseData = craft.consentpro.license.getLicenseData() %}
+{% set graceDays = craft.consentpro.license.getGraceDaysRemaining() %}
+{% set lastValidated = craft.consentpro.license.getLastValidated() %}
+
 <h2>{{ 'License'|t('consentpro') }}</h2>
 <p class="light">{{ 'Enter your license key to unlock Pro features like custom CSS, analytics dashboard, and A/B testing.'|t('consentpro') }}</p>
 
-{{ forms.textField({
-    label: 'License Key'|t('consentpro'),
-    instructions: 'Enter your license key to unlock Pro features.'|t('consentpro'),
-    id: 'licenseKey',
-    name: 'licenseKey',
-    value: settings.licenseKey,
-    placeholder: 'XXXX-XXXX-XXXX-XXXX',
-    errors: settings.getErrors('licenseKey'),
-}) }}
+{# Grace Period Warning #}
+{% if graceDays %}
+    <div class="pane" style="background: #fef3c7; border-left: 4px solid #f59e0b; margin-bottom: 24px; padding: 16px;">
+        <p style="margin: 0; color: #92400e;">
+            <span class="icon" data-icon="alert"></span>
+            <strong>{{ 'Grace Period Active'|t('consentpro') }}</strong>
+            &mdash;
+            {{ 'License validation failed. {days} days remaining before Pro features are disabled.'|t('consentpro', { days: graceDays }) }}
+        </p>
+    </div>
+{% endif %}
 
-{# License Status Display #}
-{% set isPro = craft.consentpro.license.isPro() ?? false %}
+{# License Status Card #}
+<div class="pane" style="margin-bottom: 24px;">
+    <h3 style="margin-top: 0;">{{ 'License Status'|t('consentpro') }}</h3>
+    <div id="consentpro-license-status">
+        {% if isPro %}
+            <p>
+                <span class="status green"></span>
+                <span style="color: var(--green-600); font-weight: 600;">
+                    {{ 'Active'|t('consentpro') }} &mdash; {{ licenseData.tier|capitalize }}
+                </span>
+            </p>
+            {% if licenseData.expires %}
+                <p class="light" style="margin-bottom: 0;">
+                    {{ 'Expires: {date}'|t('consentpro', { date: licenseData.expires|date('F j, Y') }) }}
+                </p>
+            {% endif %}
+        {% else %}
+            <p>
+                <span class="status"></span>
+                <span>{{ 'Core (Free)'|t('consentpro') }}</span>
+            </p>
+            <p class="light" style="margin-bottom: 0;">
+                {{ 'Enter a license key below to unlock Pro features.'|t('consentpro') }}
+            </p>
+        {% endif %}
+    </div>
+    {% if lastValidated %}
+        <p class="light" style="font-size: 12px; margin-top: 12px; margin-bottom: 0;">
+            {{ 'Last validated: {date}'|t('consentpro', { date: lastValidated|datetime }) }}
+        </p>
+    {% endif %}
+</div>
 
+{# License Key Input with Validate Button #}
 <div class="field">
     <div class="heading">
-        <label>{{ 'License Status'|t('consentpro') }}</label>
-    </div>
-    <div class="input">
-        {% if isPro %}
-            <span class="status green"></span>
-            <span style="color: var(--green-600); font-weight: 600;">{{ 'Pro - Active'|t('consentpro') }}</span>
-        {% else %}
-            <span class="status"></span>
-            <span>{{ 'Core (Free)'|t('consentpro') }}</span>
-        {% endif %}
+        <label for="licenseKey">{{ 'License Key'|t('consentpro') }}</label>
     </div>
     <div class="instructions">
-        {% if isPro %}
-            <p>{{ 'Your Pro license is active. You have access to all Pro features.'|t('consentpro') }}</p>
-        {% else %}
-            <p>{{ 'You are using the free Core version. Upgrade to Pro for additional features.'|t('consentpro') }}</p>
-        {% endif %}
+        <p>{{ 'Enter your license key to unlock Pro features.'|t('consentpro') }}</p>
     </div>
+    <div class="input" style="display: flex; gap: 10px; align-items: flex-start;">
+        <input type="text"
+               id="licenseKey"
+               name="licenseKey"
+               class="text"
+               style="flex: 1; max-width: 400px;"
+               value="{{ settings.licenseKey }}"
+               placeholder="XXXX-XXXX-XXXX-XXXX"
+               autocomplete="off">
+        <button type="button" id="consentpro-validate-btn" class="btn">
+            {{ 'Validate License'|t('consentpro') }}
+        </button>
+    </div>
+    {% if settings.getErrors('licenseKey') %}
+        <ul class="errors">
+            {% for error in settings.getErrors('licenseKey') %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </div>
+
+{# Validation Message Area #}
+<div id="consentpro-license-message" style="display: none; margin-top: 12px;"></div>
 
 <hr>
 
@@ -56,7 +104,7 @@
         <ul style="margin: 0; padding-left: 20px;">
             <li>{{ 'Custom CSS injection for banner styling'|t('consentpro') }}</li>
             <li>{{ 'Consent analytics dashboard'|t('consentpro') }}</li>
-            <li>{{ 'A/B testing for banner variants'|t('consentpro') }}</li>
+            <li>{{ 'Consent event logging'|t('consentpro') }}</li>
             <li>{{ 'Priority support'|t('consentpro') }}</li>
         </ul>
     </div>
@@ -69,3 +117,89 @@
         </a>
     </div>
 {% endif %}
+
+{# Inline JavaScript for License Validation #}
+{% js %}
+(function() {
+    var validateBtn = document.getElementById('consentpro-validate-btn');
+    var licenseInput = document.getElementById('licenseKey');
+    var messageDiv = document.getElementById('consentpro-license-message');
+
+    if (!validateBtn || !licenseInput || !messageDiv) {
+        return;
+    }
+
+    validateBtn.addEventListener('click', function() {
+        var licenseKey = licenseInput.value.trim();
+
+        if (!licenseKey) {
+            showMessage('error', '{{ 'Please enter a license key.'|t('consentpro')|e('js') }}');
+            return;
+        }
+
+        // Show loading state
+        validateBtn.classList.add('loading');
+        validateBtn.disabled = true;
+        messageDiv.style.display = 'none';
+
+        // Make AJAX request
+        Craft.sendActionRequest('POST', 'consentpro/settings/validate-license', {
+            data: {
+                licenseKey: licenseKey
+            }
+        })
+        .then(function(response) {
+            validateBtn.classList.remove('loading');
+            validateBtn.disabled = false;
+
+            if (response.data.valid) {
+                showMessage('success', '{{ 'License validated successfully! Tier: '|t('consentpro')|e('js') }}' + response.data.tier);
+                // Reload page to update UI
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1500);
+            } else if (response.data.grace_period) {
+                showMessage('warning', '{{ 'License validation failed but grace period is active. '|t('consentpro')|e('js') }}' + (response.data.error || ''));
+            } else {
+                showMessage('error', response.data.error || '{{ 'Invalid license key.'|t('consentpro')|e('js') }}');
+            }
+        })
+        .catch(function(error) {
+            validateBtn.classList.remove('loading');
+            validateBtn.disabled = false;
+            showMessage('error', error.response?.data?.message || '{{ 'An error occurred while validating the license.'|t('consentpro')|e('js') }}');
+        });
+    });
+
+    function showMessage(type, message) {
+        var bgColor, textColor, borderColor;
+
+        switch (type) {
+            case 'success':
+                bgColor = '#dcfce7';
+                textColor = '#166534';
+                borderColor = '#22c55e';
+                break;
+            case 'warning':
+                bgColor = '#fef3c7';
+                textColor = '#92400e';
+                borderColor = '#f59e0b';
+                break;
+            case 'error':
+            default:
+                bgColor = '#fee2e2';
+                textColor = '#dc2626';
+                borderColor = '#ef4444';
+                break;
+        }
+
+        messageDiv.style.display = 'block';
+        messageDiv.style.padding = '12px 16px';
+        messageDiv.style.borderRadius = '4px';
+        messageDiv.style.backgroundColor = bgColor;
+        messageDiv.style.color = textColor;
+        messageDiv.style.borderLeft = '4px solid ' + borderColor;
+        messageDiv.textContent = message;
+    }
+})();
+{% endjs %}

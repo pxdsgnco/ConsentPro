@@ -22,6 +22,7 @@ use consentpro\consentpro\services\ConsentService;
 use consentpro\consentpro\services\LicenseService;
 use consentpro\consentpro\twig\ConsentProVariable;
 use consentpro\consentpro\twig\ConsentProExtension;
+use consentpro\consentpro\jobs\ValidateLicenseJob;
 use yii\base\Event;
 
 /**
@@ -92,6 +93,11 @@ class ConsentPro extends Plugin
             }
         );
 
+        // Schedule weekly license validation
+        if (Craft::$app->getRequest()->getIsCpRequest() && !Craft::$app->getRequest()->getIsConsoleRequest()) {
+            $this->scheduleValidationJob();
+        }
+
         Craft::info('ConsentPro plugin loaded', __METHOD__);
     }
 
@@ -101,6 +107,42 @@ class ConsentPro extends Plugin
     protected function createSettingsModel(): ?Model
     {
         return new Settings();
+    }
+
+    /**
+     * Schedule weekly license validation job.
+     *
+     * Only pushes a job if:
+     * - A license key is configured
+     * - Last validation was more than 7 days ago (or never)
+     */
+    private function scheduleValidationJob(): void
+    {
+        $settings = $this->getSettings();
+
+        // Skip if no license key
+        if (empty($settings->licenseKey)) {
+            return;
+        }
+
+        // Check if validation needed (7 days = 604800 seconds)
+        $lastValidated = $settings->licenseLastValidated ?? 0;
+        $weekAgo = time() - 604800;
+
+        if ($lastValidated < $weekAgo) {
+            // Push job to queue (avoid duplicates by using a unique ID)
+            $queue = Craft::$app->getQueue();
+
+            // Check if job already in queue (simple debounce via cache)
+            $cache = Craft::$app->getCache();
+            $cacheKey = 'consentpro_validation_job_scheduled';
+
+            if (!$cache->get($cacheKey)) {
+                $queue->push(new ValidateLicenseJob());
+                // Mark as scheduled for 1 hour to prevent duplicate pushes
+                $cache->set($cacheKey, true, 3600);
+            }
+        }
     }
 
     /**

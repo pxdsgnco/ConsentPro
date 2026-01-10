@@ -192,6 +192,23 @@ class ConsentService extends Component
     }
 
     /**
+     * Get custom CSS for banner styling.
+     *
+     * Only returns CSS if user has a Pro license.
+     *
+     * @return string
+     */
+    public function getCustomCss(): string
+    {
+        // Only return custom CSS for Pro users
+        if (!ConsentPro::getInstance()->license->isPro()) {
+            return '';
+        }
+
+        return ConsentPro::getInstance()->getSettings()->customCss ?? '';
+    }
+
+    /**
      * Check if banner should be shown based on geo and settings.
      *
      * @return bool

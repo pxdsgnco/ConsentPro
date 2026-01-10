@@ -144,6 +144,14 @@ class SettingsController extends Controller
         }
 
         // =========================================================================
+        // Custom CSS (Pro Only)
+        // =========================================================================
+
+        if (ConsentPro::getInstance()->license->isPro()) {
+            $settings->customCss = $this->sanitizeCss($request->getBodyParam('customCss', ''));
+        }
+
+        // =========================================================================
         // License Tab Fields
         // =========================================================================
 
@@ -182,6 +190,40 @@ class SettingsController extends Controller
         );
 
         return $this->redirectToPostedUrl();
+    }
+
+    /**
+     * Validate license key via AJAX.
+     *
+     * @return Response
+     */
+    public function actionValidateLicense(): Response
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $request = Craft::$app->getRequest();
+        $licenseKey = trim($request->getRequiredBodyParam('licenseKey'));
+
+        if (empty($licenseKey)) {
+            return $this->asJson([
+                'valid' => false,
+                'error' => Craft::t('consentpro', 'Please enter a license key.'),
+            ]);
+        }
+
+        // Validate with remote API
+        $result = ConsentPro::getInstance()->license->validate($licenseKey);
+
+        // Save license key if valid
+        if (!empty($result['valid'])) {
+            $plugin = ConsentPro::getInstance();
+            $settings = $plugin->getSettings();
+            $settings->licenseKey = $licenseKey;
+            Craft::$app->getPlugins()->savePluginSettings($plugin, $settings->toArray());
+        }
+
+        return $this->asJson($result);
     }
 
     /**
@@ -277,5 +319,31 @@ class SettingsController extends Controller
         }
 
         return $sanitized;
+    }
+
+    /**
+     * Sanitize CSS input to prevent XSS.
+     *
+     * @param string $css The raw CSS input.
+     * @return string The sanitized CSS.
+     */
+    private function sanitizeCss(string $css): string
+    {
+        // Remove script tags
+        $css = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $css);
+
+        // Remove javascript: URLs
+        $css = preg_replace('/javascript\s*:/i', '', $css);
+
+        // Remove expression()
+        $css = preg_replace('/expression\s*\(/i', '', $css);
+
+        // Remove behavior:
+        $css = preg_replace('/behavior\s*:/i', '', $css);
+
+        // Remove -moz-binding
+        $css = preg_replace('/-moz-binding\s*:/i', '', $css);
+
+        return trim($css);
     }
 }

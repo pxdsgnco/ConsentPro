@@ -128,6 +128,26 @@ class Settings extends Model
      */
     public string $licenseKey = '';
 
+    /**
+     * Timestamp of last successful license validation.
+     */
+    public ?int $licenseLastValidated = null;
+
+    /**
+     * Timestamp when grace period started (API failure with previously valid license).
+     */
+    public ?int $licenseGracePeriodStart = null;
+
+    /**
+     * Whether license was valid before grace period started.
+     */
+    public bool $licenseWasValid = false;
+
+    /**
+     * Custom CSS for banner styling (Pro feature).
+     */
+    public string $customCss = '';
+
     // =========================================================================
     // Environment Variable Support (US-028)
     // =========================================================================
@@ -224,8 +244,11 @@ class Settings extends Model
             // Categories validation
             [['categories'], 'validateCategories'],
 
-            // License key
+            // License key and metadata
             [['licenseKey'], 'string', 'max' => 255],
+            [['licenseLastValidated', 'licenseGracePeriodStart'], 'integer'],
+            [['licenseWasValid'], 'boolean'],
+            [['customCss'], 'string'],
         ];
     }
 
