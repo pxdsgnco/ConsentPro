@@ -115,20 +115,44 @@ class ConsentPro_Banner {
 	 * @return array
 	 */
 	private function format_categories( array $categories ): array {
-		$formatted = [
-			[
-				'id'          => 'essential',
+		// Default category descriptions.
+		$defaults = [
+			'essential'       => [
 				'name'        => __( 'Essential', 'consentpro' ),
 				'description' => __( 'Required for the website to function properly.', 'consentpro' ),
-				'required'    => true,
+			],
+			'analytics'       => [
+				'name'        => __( 'Analytics', 'consentpro' ),
+				'description' => __( 'Help us understand how visitors interact with our website.', 'consentpro' ),
+			],
+			'marketing'       => [
+				'name'        => __( 'Marketing', 'consentpro' ),
+				'description' => __( 'Used to display relevant advertisements.', 'consentpro' ),
+			],
+			'personalization' => [
+				'name'        => __( 'Personalization', 'consentpro' ),
+				'description' => __( 'Remember your preferences for enhanced features.', 'consentpro' ),
 			],
 		];
 
-		foreach ( $categories as $id => $category ) {
+		$formatted = [];
+
+		// Essential is always first and always required.
+		$essential   = $categories['essential'] ?? [];
+		$formatted[] = [
+			'id'          => 'essential',
+			'name'        => ! empty( $essential['name'] ) ? $essential['name'] : $defaults['essential']['name'],
+			'description' => ! empty( $essential['description'] ) ? $essential['description'] : $defaults['essential']['description'],
+			'required'    => true,
+		];
+
+		// Add other categories in consistent order.
+		foreach ( [ 'analytics', 'marketing', 'personalization' ] as $id ) {
+			$category    = $categories[ $id ] ?? [];
 			$formatted[] = [
 				'id'          => $id,
-				'name'        => $category['name'] ?? ucfirst( $id ),
-				'description' => $category['description'] ?? '',
+				'name'        => ! empty( $category['name'] ) ? $category['name'] : $defaults[ $id ]['name'],
+				'description' => ! empty( $category['description'] ) ? $category['description'] : $defaults[ $id ]['description'],
 				'required'    => false,
 			];
 		}
@@ -142,14 +166,28 @@ class ConsentPro_Banner {
 	 * @return array
 	 */
 	private function get_text(): array {
+		$appearance = get_option( 'consentpro_appearance', [] );
+
 		return [
-			'heading'            => __( 'We value your privacy', 'consentpro' ),
+			'heading'            => ! empty( $appearance['text_heading'] )
+				? $appearance['text_heading']
+				: __( 'We value your privacy', 'consentpro' ),
 			'description'        => __( 'We use cookies to enhance your browsing experience and analyze our traffic.', 'consentpro' ),
-			'acceptAll'          => __( 'Accept All', 'consentpro' ),
-			'rejectNonEssential' => __( 'Reject Non-Essential', 'consentpro' ),
-			'settings'           => __( 'Settings', 'consentpro' ),
-			'save'               => __( 'Save Preferences', 'consentpro' ),
+			'acceptAll'          => ! empty( $appearance['text_accept'] )
+				? $appearance['text_accept']
+				: __( 'Accept All', 'consentpro' ),
+			'rejectNonEssential' => ! empty( $appearance['text_reject'] )
+				? $appearance['text_reject']
+				: __( 'Reject Non-Essential', 'consentpro' ),
+			'settings'           => ! empty( $appearance['text_settings'] )
+				? $appearance['text_settings']
+				: __( 'Cookie Settings', 'consentpro' ),
+			'save'               => ! empty( $appearance['text_save'] )
+				? $appearance['text_save']
+				: __( 'Save Preferences', 'consentpro' ),
 			'back'               => __( 'Back', 'consentpro' ),
+			'settingsTitle'      => __( 'Privacy Preferences', 'consentpro' ),
+			'footerToggle'       => __( 'Privacy Settings', 'consentpro' ),
 		];
 	}
 }
