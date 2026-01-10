@@ -103,6 +103,15 @@ class ConsentPro extends Plugin
     /**
      * @inheritdoc
      */
+    protected function afterUninstall(): void
+    {
+        // Remove plugin settings from project config
+        Craft::$app->getProjectConfig()->remove('plugins.consentpro');
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function settingsHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate(
