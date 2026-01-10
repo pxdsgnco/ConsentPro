@@ -65,6 +65,9 @@ class ConsentPro_Public {
 			$this->version,
 			true
 		);
+
+		// Add init script inline after the main script.
+		wp_add_inline_script( 'consentpro', $this->get_init_script(), 'after' );
 	}
 
 	/**
@@ -157,12 +160,10 @@ class ConsentPro_Public {
 
 		$banner = new ConsentPro_Banner();
 		$banner->render();
-
-		$this->output_init_script();
 	}
 
 	/**
-	 * Output inline initialization script.
+	 * Get inline initialization script.
 	 *
 	 * The core JS (IIFE) exports window.ConsentPro with:
 	 * - ConsentManager
@@ -170,10 +171,10 @@ class ConsentPro_Public {
 	 * - GeoDetector
 	 * - ScriptBlocker
 	 *
-	 * @return void
+	 * @return string Initialization script.
 	 */
-	private function output_init_script(): void {
-		$init_script = <<<'JS'
+	private function get_init_script(): string {
+		return <<<'JS'
 (function(){
 'use strict';
 function initConsentPro(){
@@ -204,8 +205,6 @@ initConsentPro();
 }
 })();
 JS;
-
-		printf( '<script id="consentpro-init">%s</script>', $init_script ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static script, no user input.
 	}
 
 	/**
