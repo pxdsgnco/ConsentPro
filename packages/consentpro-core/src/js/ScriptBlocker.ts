@@ -39,6 +39,7 @@ export class ScriptBlocker {
   private _executedScripts: WeakSet<HTMLScriptElement>;
   private _observer: MutationObserver | null = null;
   private _currentConsent: ConsentCategories | null = null;
+  // eslint-disable-next-line no-unused-vars
   private _boundHandleConsentEvent: (event: Event) => void;
   private _initialized = false;
 
