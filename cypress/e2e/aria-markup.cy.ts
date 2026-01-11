@@ -82,7 +82,11 @@ describe('US-039a: ARIA Markup Audit', () => {
   // ===========================================
   describe('aria-describedby provides context', () => {
     it('should have aria-describedby in Layer 1', () => {
-      cy.get('#consentpro-banner').should('have.attr', 'aria-describedby', 'consentpro-description');
+      cy.get('#consentpro-banner').should(
+        'have.attr',
+        'aria-describedby',
+        'consentpro-description'
+      );
 
       // Verify the description exists
       cy.get('#consentpro-description').should('exist');
