@@ -5,9 +5,7 @@ describe('StorageAdapter', () => {
   let adapter: StorageAdapter;
 
   // Helper to create valid consent data
-  const createConsentData = (
-    overrides: Partial<ConsentData> = {}
-  ): ConsentData => ({
+  const createConsentData = (overrides: Partial<ConsentData> = {}): ConsentData => ({
     version: 1,
     timestamp: Date.now(),
     geo: null,
@@ -94,10 +92,7 @@ describe('StorageAdapter', () => {
 
       // Spy on document.cookie setter
       let setCookieValue = '';
-      const originalDescriptor = Object.getOwnPropertyDescriptor(
-        Document.prototype,
-        'cookie'
-      );
+      const originalDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie');
       Object.defineProperty(document, 'cookie', {
         get: () => setCookieValue,
         set: (val: string) => {
@@ -488,12 +483,8 @@ describe('StorageAdapter', () => {
       const data = createConsentData();
       adapter.set(data);
 
-      const fromLocal = JSON.parse(
-        localStorage.getItem('consentpro_consent')!
-      );
-      const fromCookie = JSON.parse(
-        decodeURIComponent(getCookie('consentpro')!)
-      );
+      const fromLocal = JSON.parse(localStorage.getItem('consentpro_consent')!);
+      const fromCookie = JSON.parse(decodeURIComponent(getCookie('consentpro')!));
 
       expect(fromLocal).toEqual(fromCookie);
     });
