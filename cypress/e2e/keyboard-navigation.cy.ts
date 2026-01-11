@@ -46,7 +46,8 @@ describe('US-038: Keyboard Navigation Audit', () => {
           const elements = Array.from($elements);
           const actions = elements.map((el) => {
             if (el.classList.contains('consentpro__back')) return 'back';
-            if (el.classList.contains('consentpro__toggle')) return el.getAttribute('data-category');
+            if (el.classList.contains('consentpro__toggle'))
+              return el.getAttribute('data-category');
             if (el.classList.contains('consentpro__policy-link')) return 'policy';
             return el.getAttribute('data-action');
           });
