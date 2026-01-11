@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Live region announcements for "Preferences saved"
   - 44px minimum touch targets
   - 4.5:1 text contrast ratio
+  - No-JS graceful degradation with `<noscript>` fallback notice
 
 - **Build & Testing**
   - Rollup build pipeline outputting IIFE bundle + CSS
