@@ -301,6 +301,166 @@ if ( ! defined( 'CONSENTPRO_PLUGIN_URL' ) ) {
 	define( 'CONSENTPRO_PLUGIN_URL', 'https://example.com/wp-content/plugins/consentpro/' );
 }
 
+// Define version constant for testing.
+if ( ! defined( 'CONSENTPRO_VERSION' ) ) {
+	define( 'CONSENTPRO_VERSION', '1.0.0' );
+}
+
+// Define DAY_IN_SECONDS for testing.
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+	define( 'DAY_IN_SECONDS', 86400 );
+}
+
+if ( ! function_exists( 'wp_remote_post' ) ) {
+	/**
+	 * Mock wp_remote_post for testing.
+	 *
+	 * @param string $url  URL to post to.
+	 * @param array  $args Arguments.
+	 * @return array|WP_Error
+	 */
+	function wp_remote_post( $url, $args = [] ) {
+		global $consentpro_test_remote_response;
+		if ( isset( $consentpro_test_remote_response ) ) {
+			return $consentpro_test_remote_response;
+		}
+		return [ 'body' => '{}', 'response' => [ 'code' => 200 ] ];
+	}
+}
+
+if ( ! function_exists( 'wp_remote_retrieve_body' ) ) {
+	/**
+	 * Mock wp_remote_retrieve_body for testing.
+	 *
+	 * @param array $response Response array.
+	 * @return string
+	 */
+	function wp_remote_retrieve_body( $response ) {
+		return is_array( $response ) && isset( $response['body'] ) ? $response['body'] : '';
+	}
+}
+
+if ( ! function_exists( 'is_wp_error' ) ) {
+	/**
+	 * Mock is_wp_error for testing.
+	 *
+	 * @param mixed $thing Thing to check.
+	 * @return bool
+	 */
+	function is_wp_error( $thing ) {
+		return $thing instanceof WP_Error;
+	}
+}
+
+if ( ! class_exists( 'WP_Error' ) ) {
+	/**
+	 * Mock WP_Error class for testing.
+	 */
+	class WP_Error {
+		/**
+		 * Error code.
+		 *
+		 * @var string
+		 */
+		private $code;
+
+		/**
+		 * Error message.
+		 *
+		 * @var string
+		 */
+		private $message;
+
+		/**
+		 * Constructor.
+		 *
+		 * @param string $code    Error code.
+		 * @param string $message Error message.
+		 */
+		public function __construct( $code = '', $message = '' ) {
+			$this->code    = $code;
+			$this->message = $message;
+		}
+
+		/**
+		 * Get error message.
+		 *
+		 * @return string
+		 */
+		public function get_error_message() {
+			return $this->message;
+		}
+
+		/**
+		 * Get error code.
+		 *
+		 * @return string
+		 */
+		public function get_error_code() {
+			return $this->code;
+		}
+	}
+}
+
+if ( ! function_exists( 'home_url' ) ) {
+	/**
+	 * Mock home_url for testing.
+	 *
+	 * @param string $path Path to append.
+	 * @return string
+	 */
+	function home_url( $path = '' ) {
+		return 'https://example.com' . $path;
+	}
+}
+
+if ( ! function_exists( 'wp_next_scheduled' ) ) {
+	/**
+	 * Mock wp_next_scheduled for testing.
+	 *
+	 * @param string $hook Action hook.
+	 * @return int|false
+	 */
+	function wp_next_scheduled( $hook ) {
+		global $consentpro_test_scheduled;
+		return isset( $consentpro_test_scheduled[ $hook ] ) ? $consentpro_test_scheduled[ $hook ] : false;
+	}
+}
+
+if ( ! function_exists( 'wp_schedule_event' ) ) {
+	/**
+	 * Mock wp_schedule_event for testing.
+	 *
+	 * @param int    $timestamp Timestamp.
+	 * @param string $recurrence Recurrence.
+	 * @param string $hook Action hook.
+	 * @return bool
+	 */
+	function wp_schedule_event( $timestamp, $recurrence, $hook ) {
+		global $consentpro_test_scheduled;
+		$consentpro_test_scheduled[ $hook ] = $timestamp;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'current_time' ) ) {
+	/**
+	 * Mock current_time for testing.
+	 *
+	 * @param string $type Type (mysql or timestamp).
+	 * @param bool   $gmt  Whether to use GMT.
+	 * @return string|int
+	 */
+	function current_time( $type, $gmt = false ) {
+		if ( 'mysql' === $type ) {
+			return gmdate( 'Y-m-d H:i:s' );
+		}
+		return time();
+	}
+}
+
 // Load plugin files for testing.
 require_once dirname( __DIR__ ) . '/admin/class-consentpro-settings.php';
 require_once dirname( __DIR__ ) . '/public/class-consentpro-banner.php';
+require_once dirname( __DIR__ ) . '/includes/class-consentpro-license.php';
+require_once dirname( __DIR__ ) . '/includes/class-consentpro-consent-log.php';
