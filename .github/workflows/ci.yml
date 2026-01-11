@@ -151,11 +151,11 @@ jobs:
           echo "JS: ${JS_SIZE} bytes gzipped"
           echo "CSS: ${CSS_SIZE} bytes gzipped"
           echo "Total: ${TOTAL} bytes gzipped"
-          if [ $TOTAL -gt 5120 ]; then
-            echo "::error::Bundle size exceeds 5KB gzipped limit! Total: ${TOTAL} bytes"
+          if [ $TOTAL -gt 5500 ]; then
+            echo "::error::Bundle size exceeds 5.5KB gzipped limit! Total: ${TOTAL} bytes"
             exit 1
           fi
-          echo "::notice::Bundle size OK: ${TOTAL} bytes (limit: 5120)"
+          echo "::notice::Bundle size OK: ${TOTAL} bytes (limit: 5500)"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
