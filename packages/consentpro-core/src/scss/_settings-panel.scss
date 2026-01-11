@@ -56,7 +56,6 @@
   padding: 0;
   list-style: none;
 
-
   // US-037a: Ensure categories can scroll on mobile if content exceeds viewport
   @media (max-width: $consentpro-bp-mobile) {
     max-height: 45vh;
