@@ -24,12 +24,14 @@ describe('US-040a: Performance Audit', () => {
         onBeforeLoad: (win) => {
           // Track any layout shifts
           (win as any).layoutShifts = [];
-          const observer = new (win as any).PerformanceObserver((list: PerformanceObserverEntryList) => {
-            for (const entry of list.getEntries()) {
-              if ((entry as any).hadRecentInput) continue;
-              (win as any).layoutShifts.push((entry as any).value);
+          const observer = new (win as any).PerformanceObserver(
+            (list: PerformanceObserverEntryList) => {
+              for (const entry of list.getEntries()) {
+                if ((entry as any).hadRecentInput) continue;
+                (win as any).layoutShifts.push((entry as any).value);
+              }
             }
-          });
+          );
           observer.observe({ type: 'layout-shift', buffered: true });
         },
       });
@@ -58,12 +60,14 @@ describe('US-040a: Performance Audit', () => {
       // Set up CLS tracking after page load
       cy.window().then((win) => {
         (win as any).layoutShifts = [];
-        const observer = new (win as any).PerformanceObserver((list: PerformanceObserverEntryList) => {
-          for (const entry of list.getEntries()) {
-            if ((entry as any).hadRecentInput) continue;
-            (win as any).layoutShifts.push((entry as any).value);
+        const observer = new (win as any).PerformanceObserver(
+          (list: PerformanceObserverEntryList) => {
+            for (const entry of list.getEntries()) {
+              if ((entry as any).hadRecentInput) continue;
+              (win as any).layoutShifts.push((entry as any).value);
+            }
           }
-        });
+        );
         observer.observe({ type: 'layout-shift', buffered: false });
       });
 
@@ -123,15 +127,17 @@ describe('US-040a: Performance Audit', () => {
           // Track resource timing
           (win as any).resourcesLoaded = [];
 
-          const observer = new (win as any).PerformanceObserver((list: PerformanceObserverEntryList) => {
-            for (const entry of list.getEntries()) {
-              (win as any).resourcesLoaded.push({
-                name: entry.name,
-                duration: entry.duration,
-                type: (entry as any).initiatorType,
-              });
+          const observer = new (win as any).PerformanceObserver(
+            (list: PerformanceObserverEntryList) => {
+              for (const entry of list.getEntries()) {
+                (win as any).resourcesLoaded.push({
+                  name: entry.name,
+                  duration: entry.duration,
+                  type: (entry as any).initiatorType,
+                });
+              }
             }
-          });
+          );
           observer.observe({ type: 'resource', buffered: true });
         },
       });
