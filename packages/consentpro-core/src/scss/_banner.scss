@@ -14,6 +14,13 @@
   background-color: $consentpro-background;
   box-shadow: 0 -4px 20px rgb(0 0 0 / 10%);
 
+  // US-037a: Prevent horizontal scroll
+  overflow-x: hidden;
+
+  // US-037a: Constrain max height on mobile for Layer 2 scrolling
+  max-height: 85vh;
+  overflow-y: auto;
+
   // Hidden by default
   transform: translateY(100%);
   visibility: hidden;
@@ -28,6 +35,14 @@
   max-width: $consentpro-max-width;
   margin: 0 auto;
   padding: $consentpro-spacing-lg;
+
+  // US-037a: Prevent horizontal overflow from content
+  overflow-x: hidden;
+
+  @media (max-width: $consentpro-bp-mobile) {
+    // US-037a: Reduce padding on mobile for more content space
+    padding: $consentpro-spacing-md;
+  }
 }
 
 .consentpro__content {
