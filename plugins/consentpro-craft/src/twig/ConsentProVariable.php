@@ -66,7 +66,32 @@ class ConsentProVariable
             $this->getInitScript()
         );
 
+        // US-047: No-JS graceful degradation notice
+        $html .= $this->getNoscriptHtml();
+
         return new Markup($html, 'UTF-8');
+    }
+
+    /**
+     * Get noscript fallback HTML.
+     *
+     * Displays a static notice when JavaScript is disabled, informing users
+     * that consent management requires JavaScript, while assuring them that
+     * no tracking scripts will run without their consent.
+     *
+     * @return string
+     */
+    private function getNoscriptHtml(): string
+    {
+        $message = Craft::t(
+            'consentpro',
+            'JavaScript is required to manage cookie preferences. Non-essential cookies are blocked by default.'
+        );
+
+        return sprintf(
+            '<noscript><div class="consentpro-noscript" role="status"><p class="consentpro-noscript__text">%s</p></div></noscript>',
+            htmlspecialchars($message, ENT_QUOTES, 'UTF-8')
+        );
     }
 
     /**

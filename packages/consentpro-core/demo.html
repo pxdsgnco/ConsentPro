@@ -718,6 +718,16 @@
     <!-- Banner container -->
     <aside id="consentpro-banner" class="consentpro"></aside>
 
+    <!-- US-047: No-JS graceful degradation notice -->
+    <noscript>
+      <div class="consentpro-noscript" role="status">
+        <p class="consentpro-noscript__text">
+          JavaScript is required to manage cookie preferences. Non-essential cookies are blocked by
+          default.
+        </p>
+      </div>
+    </noscript>
+
     <!-- Example blocked scripts (for demonstration) -->
     <script type="text/plain" data-consentpro="analytics" data-script-name="Google Analytics">
       console.log('[Demo] Google Analytics script executed!');

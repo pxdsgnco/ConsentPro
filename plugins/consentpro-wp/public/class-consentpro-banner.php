@@ -81,6 +81,36 @@ class ConsentPro_Banner {
 			'<div id="consentpro-banner" class="consentpro" role="dialog" aria-labelledby="consentpro-heading" aria-modal="false" data-config="%s"></div>',
 			esc_attr( wp_json_encode( $config ) )
 		);
+
+		// US-047: No-JS graceful degradation notice.
+		$this->render_noscript();
+	}
+
+	/**
+	 * Render noscript fallback notice.
+	 *
+	 * Displays a static notice when JavaScript is disabled, informing users
+	 * that consent management requires JavaScript, while assuring them that
+	 * no tracking scripts will run without their consent.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function render_noscript(): void {
+		?>
+		<noscript>
+			<div class="consentpro-noscript" role="status">
+				<p class="consentpro-noscript__text">
+					<?php
+					esc_html_e(
+						'JavaScript is required to manage cookie preferences. Non-essential cookies are blocked by default.',
+						'consentpro'
+					);
+					?>
+				</p>
+			</div>
+		</noscript>
+		<?php
 	}
 
 	/**
