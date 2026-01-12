@@ -1,6 +1,6 @@
 ---
 description: Development workflows, release process, common gotchas
-globs: ["**/package.json", "**/composer.json", "**/*.php", "**/CHANGELOG*", "**/release*"]
+globs: ["**/package.json", "**/composer.json", "**/*.php", "**/CHANGELOG.md", "**/release.md"]
 ---
 # ConsentPro Development Workflows
 
