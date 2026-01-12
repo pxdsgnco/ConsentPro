@@ -5,7 +5,7 @@ globs: ["packages/consentpro-core/src/**/*.ts", "packages/consentpro-core/src/**
 # ConsentPro Core TS Rules [file:3][file:4]
 
 ## Classes
-- ConsentManager: getConsent(): ConsentData|null, setConsent(cats), dispatch consentproconsent
+- ConsentManager: getConsent(): ConsentData|null, setConsent(cats), dispatch consentpro_consent
 - StorageAdapter: dual localStorage/cookie, clear()
 - GeoDetector: data-config → EU/CA/null, shouldShowBanner()
 
